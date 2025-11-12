@@ -17,8 +17,6 @@ This guide is for **developers** who want to:
 - 🧪 Add tests and improve coverage
 - ⚡ Optimize C++ performance
 
-**Not a student?** See [Student Guide](../docs/student-guide.md)  
-**Not an instructor?** See [../repo/README.md](../repo/README.md)
 
 ---
 
@@ -1990,4 +1988,3 @@ covr::package_coverage()  # Coverage maintained
 
 **Questions?** Open an issue or email rcagub@up.edu.ph
 
-**Found a security flaw?** You might get hired! See [../repo/README.md](../repo/README.md) for the challenge.
