@@ -7,7 +7,8 @@ using namespace Rcpp;
 // GITHUB CONFIGURATION - Hidden in compiled binary
 // ============================================================================
 
-static const std::string GITHUB_BASE = "https://raw.githubusercontent.com/KingSSIBAL/repo";
+static const std::string GITHUB_BASE = "https://raw.githubusercontent.com/KingSSIBAL/R-Function-checker/main/repo";
+
 
 // ============================================================================
 // GET GITHUB URLS - Hidden in compiled binary
