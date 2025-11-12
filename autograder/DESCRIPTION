@@ -1,17 +1,15 @@
 Package: autograder
 Title: Automated R Function Testing and Grading
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: 
     person("Agub", "Reijel", 
            email = "rcagub@up.edu.ph", 
            role = c("aut", "cre"))
 Description: 
-    An automated grading system for R programming assignments. Securely fetches 
-    test cases from a remote repository and compares student implementations 
-    against reference solutions. Supports weighted scoring, hidden tests, type 
-    checking, and tolerance-based comparisons. Designed for educational use in 
-    statistics and data science courses with security features to protect test 
-    cases and instructor solutions.
+    An automated grading system for R programming assignments with advanced
+    features including parallel test execution, improved error handling, custom
+    feedback, and AES encryption for test case protection. Securely fetches test
+    cases from remote repositories and provides detailed feedback to students.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -19,9 +17,11 @@ RoxygenNote: 7.3.3
 LinkingTo: Rcpp
 Imports: 
     Rcpp (>= 1.0.0),
-    curl
+    curl,
+    parallel
 Suggests:
-    testthat (>= 3.0.0)
-SystemRequirements: C++11
+    testthat (>= 3.0.0),
+    covr,
 URL: https://github.com/KingSSIBAL/R-Function-checker
 BugReports: https://github.com/KingSSIBAL/R-Function-checker/issues
+Config/testthat/edition: 3

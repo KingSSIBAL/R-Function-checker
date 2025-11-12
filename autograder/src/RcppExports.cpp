@@ -10,6 +10,19 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// cpp_compare_fast
+LogicalVector cpp_compare_fast(SEXP obj1, SEXP obj2, double tolerance);
+RcppExport SEXP _autograder_cpp_compare_fast(SEXP obj1SEXP, SEXP obj2SEXP, SEXP toleranceSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type obj1(obj1SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type obj2(obj2SEXP);
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_compare_fast(obj1, obj2, tolerance));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_fetch_function_content
 CharacterVector cpp_fetch_function_content(const std::string& function_name);
 RcppExport SEXP _autograder_cpp_fetch_function_content(SEXP function_nameSEXP) {
@@ -45,6 +58,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_autograder_cpp_compare_fast", (DL_FUNC) &_autograder_cpp_compare_fast, 3},
     {"_autograder_cpp_fetch_function_content", (DL_FUNC) &_autograder_cpp_fetch_function_content, 1},
     {"_autograder_cpp_fetch_problems_list", (DL_FUNC) &_autograder_cpp_fetch_problems_list, 0},
     {"_autograder_cpp_compare_identical", (DL_FUNC) &_autograder_cpp_compare_identical, 2},

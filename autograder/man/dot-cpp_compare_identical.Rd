@@ -2,19 +2,11 @@
 % Please edit documentation in R/RcppExports.R
 \name{.cpp_compare_identical}
 \alias{.cpp_compare_identical}
-\title{Compare two outputs for identical match (hidden in compiled binary)}
+\title{Legacy comparison function (kept for compatibility)}
 \usage{
 .cpp_compare_identical(obj1, obj2)
 }
-\arguments{
-\item{obj1}{First object}
-
-\item{obj2}{Second object}
-}
-\value{
-Logical vector. TRUE if identical, FALSE otherwise
-}
 \description{
-Compare two outputs for identical match (hidden in compiled binary)
+Legacy comparison function (kept for compatibility)
 }
 \keyword{internal}

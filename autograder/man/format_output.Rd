@@ -2,11 +2,11 @@
 % Please edit documentation in R/autograder.R
 \name{format_output}
 \alias{format_output}
-\title{Format output for display (truncate if too long)}
+\title{Improved format output with smart truncation}
 \usage{
-format_output(obj, max_length = 100)
+format_output(obj, max_length = 200, preserve_structure = TRUE)
 }
 \description{
-Format output for display (truncate if too long)
+Improved format output with smart truncation
 }
 \keyword{internal}

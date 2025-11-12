@@ -8,7 +8,9 @@ autograder(
   function_name,
   verbose = TRUE,
   show_hidden = FALSE,
-  show_progress = FALSE
+  show_progress = FALSE,
+  use_parallel = TRUE,
+  show_hints = TRUE
 )
 }
 \arguments{
@@ -19,6 +21,10 @@ autograder(
 \item{show_hidden}{Logical. Show details for hidden tests? Default FALSE.}
 
 \item{show_progress}{Logical. Show progress bar for many tests? Default FALSE.}
+
+\item{use_parallel}{Logical. Use parallel processing for tests? Default TRUE for 10+ tests.}
+
+\item{show_hints}{Logical. Show hints for failed tests? Default TRUE.}
 }
 \value{
 Invisibly returns a list with:
@@ -28,11 +34,12 @@ Invisibly returns a list with:
 \item \code{total}: Total number of tests
 \item \code{score}: Points earned (if points specified)
 \item \code{max_score}: Maximum points (if points specified)
+\item \code{pass_rate}: Percentage of tests passed
 }
 }
 \description{
 Tests student implementation against reference outputs with support for
-points, descriptions, hidden tests, type checking, and tolerance.
+points, descriptions, hidden tests, type checking, tolerance, and parallel execution.
 }
 \examples{
 \dontrun{

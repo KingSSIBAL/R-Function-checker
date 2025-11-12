@@ -11,11 +11,4 @@ preview_tests(function_name)
 }
 \description{
 Shows test case inputs and descriptions for non-hidden tests only.
-Hidden tests are not revealed to maintain assessment integrity.
-}
-\examples{
-\dontrun{
-preview_tests("fibonacci")
-}
-
 }

@@ -2,11 +2,11 @@
 % Please edit documentation in R/RcppExports.R
 \name{.cpp_fetch_problems_list}
 \alias{.cpp_fetch_problems_list}
-\title{Securely fetch problems list (URL hidden)}
+\title{Securely fetch problems list}
 \usage{
 .cpp_fetch_problems_list()
 }
 \description{
-Securely fetch problems list (URL hidden)
+Securely fetch problems list
 }
 \keyword{internal}

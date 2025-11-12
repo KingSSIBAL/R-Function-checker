@@ -2,11 +2,11 @@
 % Please edit documentation in R/RcppExports.R
 \name{.cpp_fetch_function_content}
 \alias{.cpp_fetch_function_content}
-\title{Securely fetch function content (URL hidden)}
+\title{Securely fetch function content with improved error handling}
 \usage{
 .cpp_fetch_function_content(function_name)
 }
 \description{
-Securely fetch function content (URL hidden)
+Securely fetch function content with improved error handling
 }
 \keyword{internal}

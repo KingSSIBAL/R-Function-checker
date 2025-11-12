@@ -2,11 +2,11 @@
 % Please edit documentation in R/autograder.R
 \name{validate_test_cases}
 \alias{validate_test_cases}
-\title{Validate test case structure}
+\title{Improved validate test cases with stricter checks}
 \usage{
 validate_test_cases(test_data, function_name)
 }
 \description{
-Validate test case structure
+Improved validate test cases with stricter checks
 }
 \keyword{internal}

@@ -7,11 +7,5 @@
 list_problems()
 }
 \description{
-Shows all available functions that can be tested with autograder.
-}
-\examples{
-\dontrun{
-list_problems()
-}
-
+List available problems
 }
