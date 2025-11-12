@@ -20,13 +20,6 @@ std::string cpp_get_function_url(const std::string& function_name) {
   return GITHUB_BASE + "/functions/" + function_name + ".R";
 }
 
-//' Get GitHub URL for test data (hidden in compiled binary)
-//' @keywords internal
-// [[Rcpp::export(".cpp_get_testdata_url")]]
-std::string cpp_get_testdata_url() {
-  return GITHUB_BASE + "/test_data.R";  // ← Changed from .rds to .R
-}
-
 // ============================================================================
 // COMPARISON - Hidden in compiled binary
 // ============================================================================

@@ -8,27 +8,13 @@ NULL
 #' then compares student implementation against reference outputs.
 #'
 #' @param function_name Character. Name of the function to test.
-#'   Examples: "fibonacci", "sort_asc", "merge_sorted"
 #'
-#' @details
-#' Your function should be named: student_{function_name}
-#'
-#' For example, if testing "fibonacci", define:
-#' \code{student_fibonacci <- function(n) { ... }}
-#'
-#' @return
-#' Invisibly returns a list with:
-#' \itemize{
-#'   \item \code{passed}: Number of tests passed
-#'   \item \code{failed}: Number of tests failed
-#'   \item \code{total}: Total number of tests
-#' }
+#' @return Invisibly returns a list with passed, failed, and total counts.
 #'
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' # Define your implementation
 #' student_fibonacci <- function(n) {
 #'   if (n <= 0) return(numeric(0))
 #'   if (n == 1) return(1)
@@ -38,8 +24,6 @@ NULL
 #'   }
 #'   fib
 #' }
-#'
-#' # Run autograder
 #' autograder("fibonacci")
 #' }
 #'
@@ -51,19 +35,24 @@ autograder <- function(function_name) {
     stop("function_name must be a single character string")
   }
   
-  # ===== GET GITHUB URLS (Hidden in compiled binary) =====
+  # ===== GET GITHUB URL (Hidden in compiled binary) =====
   
-  GITHUB_FUNCTION_URL <- .cpp_get_function_url(function_name)
-  GITHUB_TESTDATA_URL <- .cpp_get_testdata_url()
+  GITHUB_URL <- .cpp_get_function_url(function_name)
   
   cat(sprintf("Fetching %s from GitHub...\n", function_name))
   
-  # ===== FETCH INSTRUCTOR FUNCTION FROM GITHUB =====
+  # ===== FETCH AND LOAD INSTRUCTOR FILE =====
   
-  instructor_code <- tryCatch({
+  instructor_env <- tryCatch({
     temp_file <- tempfile()
-    download.file(GITHUB_FUNCTION_URL, temp_file, mode = "w", quiet = TRUE)
-    readLines(temp_file)
+    download.file(GITHUB_URL, temp_file, mode = "w", quiet = TRUE)
+    
+    # Read and evaluate R code
+    code <- readLines(temp_file)
+    env <- new.env()
+    eval(parse(text = code), envir = env)
+    
+    env
   }, error = function(e) {
     stop(sprintf(
       "Function '%s' not found on GitHub.\nError: %s",
@@ -71,18 +60,8 @@ autograder <- function(function_name) {
     ))
   })
   
-  # ===== LOAD INSTRUCTOR FUNCTION =====
+  # ===== EXTRACT INSTRUCTOR FUNCTION =====
   
-  instructor_env <- new.env()
-  
-  tryCatch(
-    eval(parse(text = instructor_code), envir = instructor_env),
-    error = function(e) {
-      stop(sprintf("Failed to load instructor function: %s", e$message))
-    }
-  )
-  
-  # Extract the function (first function found in the file)
   instructor_fun <- NULL
   for (name in ls(instructor_env)) {
     obj <- get(name, envir = instructor_env)
@@ -93,46 +72,19 @@ autograder <- function(function_name) {
   }
   
   if (is.null(instructor_fun)) {
-    stop(sprintf("No function found in instructor code for '%s'", function_name))
+    stop(sprintf("No function found in '%s.R'", function_name))
   }
   
-  # ===== FETCH TEST DATA FROM GITHUB =====
+  # ===== EXTRACT TEST CASES =====
   
-  all_test_data <- tryCatch({
-    temp_file <- tempfile()
-    download.file(GITHUB_TESTDATA_URL, temp_file, mode = "w", quiet = TRUE)
-    
-    # Read R code
-    test_code <- readLines(temp_file)
-    
-    # Evaluate in isolated environment
-    eval_env <- new.env()
-    eval(parse(text = test_code), envir = eval_env)
-    
-    # Extract test_data variable
-    if (!exists("test_data", envir = eval_env)) {
-      stop("test_data variable not found in test_data.R")
-    }
-    
-    get("test_data", envir = eval_env)
-  }, error = function(e) {
-    stop(sprintf("Failed to fetch or read test data.\nError: %s", e$message))
-  })
-
-  # ===== EXTRACT TEST CASES FOR THIS FUNCTION =====
-  
-  if (!(function_name %in% names(all_test_data))) {
-    available <- paste(names(all_test_data), collapse = ", ")
-    stop(sprintf(
-      "Test cases for '%s' not found.\nAvailable functions: %s",
-      function_name, available
-    ))
+  if (!exists("test_cases", envir = instructor_env)) {
+    stop(sprintf("No test_cases found in '%s.R'", function_name))
   }
   
-  test_data <- all_test_data[[function_name]]
+  test_data <- get("test_cases", envir = instructor_env)
   
   if (!("inputs" %in% names(test_data))) {
-    stop(sprintf("Test data for '%s' must have 'inputs' field", function_name))
+    stop(sprintf("test_cases must have 'inputs' field in '%s.R'", function_name))
   }
   
   # ===== CHECK STUDENT FUNCTION EXISTS =====
@@ -141,7 +93,7 @@ autograder <- function(function_name) {
   
   if (!exists(student_fun_name, envir = .GlobalEnv, mode = "function")) {
     stop(sprintf(
-      "Function '%s' not found in your environment.\nPlease define: %s <- function(...) { ... }",
+      "Function '%s' not found.\nDefine: %s <- function(...) { ... }",
       student_fun_name, student_fun_name
     ))
   }

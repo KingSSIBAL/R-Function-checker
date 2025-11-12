@@ -2,14 +2,12 @@
 # INSTRUCTOR FUNCTION
 # =============================================================================
 
-fibonacci <- function(n) {
-  if (n <= 0) return(numeric(0))
-  if (n == 1) return(1)
-  fib <- c(1, 1)
-  for (i in 3:n) {
-    fib[i] <- fib[i-1] + fib[i-2]
-  }
-  fib
+factorial <- function(n) {
+  if (n < 0) stop("n must be non-negative")
+  if (n == 0 || n == 1) return(1)
+  result <- 1
+  for (i in 2:n) result <- result * i
+  result
 }
 
 # =============================================================================
@@ -18,9 +16,9 @@ fibonacci <- function(n) {
 
 test_cases <- list(
   inputs = list(
+    list(0),
     list(1),
     list(5),
-    list(10),
-    list(15)
+    list(10)
   )
 )
