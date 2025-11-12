@@ -10,7 +10,7 @@ using namespace Rcpp;
 // ============================================================================
 
 // These URLs are compiled into binary and NOT visible to students
-static const std::string GITHUB_BASE = "https://raw.githubusercontent.com/YOUR_ORG/instructor-repo/main";
+static const std::string GITHUB_BASE = "https://raw.githubusercontent.com/KingSSIBAL/instructor-repo/main";
 
 // ============================================================================
 // CURL CALLBACK
