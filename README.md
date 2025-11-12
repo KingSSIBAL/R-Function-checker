@@ -32,10 +32,6 @@ list_problems()
 autograder("fibonacci")
 ```
 
-## For Instructors
-
-See [`repo/README.md`](repo/README.md) for test case creation instructions.
-
 ## License
 
 MIT License © 2025 Reijel Agub
