@@ -1,0 +1,28 @@
+Package: autograder
+Title: Secure Autograder with Dynamic GitHub Integration
+Version: 0.1.0
+Authors@R: 
+    person("Agub", "Reijel", 
+           email = "rcagub@up.edu.ph", 
+           role = c("aut", "cre"))
+Description: 
+    An automated grading system that fetches test cases from GitHub,
+    with compiled C++ core for security.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+LinkingTo: 
+    Rcpp,
+    curl
+Imports: 
+    Rcpp,
+    curl
+SystemRequirements: 
+    C++11,
+    libcurl (>= 7.28.0),
+    openssl
+Suggests:
+    testthat (>= 3.0.0)
+URL: https://github.com/KingSSIBAL/R-Function-checker
+BugReports: https://github.com/KingSSIBAL/R-Function-checker/issues

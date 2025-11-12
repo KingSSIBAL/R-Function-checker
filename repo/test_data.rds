@@ -1,0 +1,13 @@
+# Create test data - INPUTS ONLY
+test_data <- list(
+  fibonacci = list(
+    inputs = list(
+      list(1),
+      list(5),
+      list(10)
+    )
+  )
+)
+
+# Save
+saveRDS(test_data, "repo/test_data.rds")
