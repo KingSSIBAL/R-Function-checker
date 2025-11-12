@@ -21,16 +21,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// cpp_get_testdata_url
-std::string cpp_get_testdata_url();
-RcppExport SEXP _autograder_cpp_get_testdata_url() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(cpp_get_testdata_url());
-    return rcpp_result_gen;
-END_RCPP
-}
 // cpp_compare_identical
 LogicalVector cpp_compare_identical(SEXP obj1, SEXP obj2);
 RcppExport SEXP _autograder_cpp_compare_identical(SEXP obj1SEXP, SEXP obj2SEXP) {
@@ -46,7 +36,6 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_autograder_cpp_get_function_url", (DL_FUNC) &_autograder_cpp_get_function_url, 1},
-    {"_autograder_cpp_get_testdata_url", (DL_FUNC) &_autograder_cpp_get_testdata_url, 0},
     {"_autograder_cpp_compare_identical", (DL_FUNC) &_autograder_cpp_compare_identical, 2},
     {NULL, NULL, 0}
 };

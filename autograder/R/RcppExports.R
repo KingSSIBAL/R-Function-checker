@@ -7,12 +7,6 @@
     .Call(`_autograder_cpp_get_function_url`, function_name)
 }
 
-#' Get GitHub URL for test data (hidden in compiled binary)
-#' @keywords internal
-.cpp_get_testdata_url <- function() {
-    .Call(`_autograder_cpp_get_testdata_url`)
-}
-
 #' Compare two outputs for identical match (hidden in compiled binary)
 #'
 #' @param obj1 First object
