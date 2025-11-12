@@ -2,5 +2,6 @@
 
 export(autograder)
 export(list_problems)
+export(preview_tests)
 importFrom(Rcpp,sourceCpp)
 useDynLib(autograder, .registration=TRUE)

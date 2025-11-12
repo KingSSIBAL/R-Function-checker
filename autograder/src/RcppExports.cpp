@@ -10,14 +10,24 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// cpp_get_function_url
-std::string cpp_get_function_url(const std::string& function_name);
-RcppExport SEXP _autograder_cpp_get_function_url(SEXP function_nameSEXP) {
+// cpp_fetch_function_content
+CharacterVector cpp_fetch_function_content(const std::string& function_name);
+RcppExport SEXP _autograder_cpp_fetch_function_content(SEXP function_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type function_name(function_nameSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_get_function_url(function_name));
+    rcpp_result_gen = Rcpp::wrap(cpp_fetch_function_content(function_name));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_fetch_problems_list
+CharacterVector cpp_fetch_problems_list();
+RcppExport SEXP _autograder_cpp_fetch_problems_list() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(cpp_fetch_problems_list());
     return rcpp_result_gen;
 END_RCPP
 }
@@ -35,7 +45,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_autograder_cpp_get_function_url", (DL_FUNC) &_autograder_cpp_get_function_url, 1},
+    {"_autograder_cpp_fetch_function_content", (DL_FUNC) &_autograder_cpp_fetch_function_content, 1},
+    {"_autograder_cpp_fetch_problems_list", (DL_FUNC) &_autograder_cpp_fetch_problems_list, 0},
     {"_autograder_cpp_compare_identical", (DL_FUNC) &_autograder_cpp_compare_identical, 2},
     {NULL, NULL, 0}
 };

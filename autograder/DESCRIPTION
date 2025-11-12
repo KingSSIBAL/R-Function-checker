@@ -1,19 +1,27 @@
 Package: autograder
-Title: Secure Autograder with Dynamic GitHub Integration
-Version: 0.1.0
+Title: Automated R Function Testing and Grading
+Version: 0.2.0
 Authors@R: 
     person("Agub", "Reijel", 
            email = "rcagub@up.edu.ph", 
            role = c("aut", "cre"))
 Description: 
-    An automated grading system that fetches test cases from GitHub,
-    with compiled C++ core for security.
+    An automated grading system for R programming assignments. Securely fetches 
+    test cases from a remote repository and compares student implementations 
+    against reference solutions. Supports weighted scoring, hidden tests, type 
+    checking, and tolerance-based comparisons. Designed for educational use in 
+    statistics and data science courses with security features to protect test 
+    cases and instructor solutions.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 LinkingTo: Rcpp
-Imports: Rcpp
+Imports: 
+    Rcpp (>= 1.0.0),
+    curl
+Suggests:
+    testthat (>= 3.0.0)
 SystemRequirements: C++11
 URL: https://github.com/KingSSIBAL/R-Function-checker
 BugReports: https://github.com/KingSSIBAL/R-Function-checker/issues

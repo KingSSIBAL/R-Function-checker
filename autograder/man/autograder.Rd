@@ -4,7 +4,12 @@
 \alias{autograder}
 \title{Run autograder by function name}
 \usage{
-autograder(function_name, verbose = TRUE, show_hidden = FALSE)
+autograder(
+  function_name,
+  verbose = TRUE,
+  show_hidden = FALSE,
+  show_progress = FALSE
+)
 }
 \arguments{
 \item{function_name}{Character. Name of the function to test.}
@@ -12,6 +17,8 @@ autograder(function_name, verbose = TRUE, show_hidden = FALSE)
 \item{verbose}{Logical. Show detailed output for each test? Default TRUE.}
 
 \item{show_hidden}{Logical. Show details for hidden tests? Default FALSE.}
+
+\item{show_progress}{Logical. Show progress bar for many tests? Default FALSE.}
 }
 \value{
 Invisibly returns a list with:
