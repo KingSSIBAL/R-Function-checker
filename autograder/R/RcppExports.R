@@ -4,13 +4,13 @@
 #' Get GitHub URL for instructor function (hidden in compiled binary)
 #' @keywords internal
 .cpp_get_function_url <- function(function_name) {
-    .Call('_autograder_cpp_get_function_url', PACKAGE = 'autograder', function_name)
+    .Call(`_autograder_cpp_get_function_url`, function_name)
 }
 
 #' Get GitHub URL for test data (hidden in compiled binary)
 #' @keywords internal
 .cpp_get_testdata_url <- function() {
-    .Call('_autograder_cpp_get_testdata_url', PACKAGE = 'autograder')
+    .Call(`_autograder_cpp_get_testdata_url`)
 }
 
 #' Compare two outputs for identical match (hidden in compiled binary)
@@ -20,6 +20,6 @@
 #' @return Logical vector. TRUE if identical, FALSE otherwise
 #' @keywords internal
 .cpp_compare_identical <- function(obj1, obj2) {
-    .Call('_autograder_cpp_compare_identical', PACKAGE = 'autograder', obj1, obj2)
+    .Call(`_autograder_cpp_compare_identical`, obj1, obj2)
 }
 
