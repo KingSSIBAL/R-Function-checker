@@ -4,17 +4,28 @@
 \alias{autograder}
 \title{Run autograder by function name}
 \usage{
-autograder(function_name)
+autograder(function_name, verbose = TRUE, show_hidden = FALSE)
 }
 \arguments{
 \item{function_name}{Character. Name of the function to test.}
+
+\item{verbose}{Logical. Show detailed output for each test? Default TRUE.}
+
+\item{show_hidden}{Logical. Show details for hidden tests? Default FALSE.}
 }
 \value{
-Invisibly returns a list with passed, failed, and total counts.
+Invisibly returns a list with:
+\itemize{
+\item \code{passed}: Number of tests passed
+\item \code{failed}: Number of tests failed
+\item \code{total}: Total number of tests
+\item \code{score}: Points earned (if points specified)
+\item \code{max_score}: Maximum points (if points specified)
+}
 }
 \description{
-Fetches instructor function and test cases from GitHub,
-then compares student implementation against reference outputs.
+Tests student implementation against reference outputs with support for
+points, descriptions, hidden tests, type checking, and tolerance.
 }
 \examples{
 \dontrun{
