@@ -98,23 +98,27 @@ autograder <- function(function_name) {
   
   # ===== FETCH TEST DATA FROM GITHUB =====
   
-  testdata_raw <- tryCatch({
+  all_test_data <- tryCatch({
     temp_file <- tempfile()
-    download.file(GITHUB_TESTDATA_URL, temp_file, mode = "wb", quiet = TRUE)
-    readBin(temp_file, "raw", file.size(temp_file))
-  }, error = function(e) {
-    stop(sprintf("Test data not found on GitHub.\nError: %s", e$message))
-  })
-  
-  # ===== DESERIALIZE TEST DATA =====
-  
-  all_test_data <- tryCatch(
-    unserialize(testdata_raw),
-    error = function(e) {
-      stop(sprintf("Failed to deserialize test data: %s", e$message))
+    download.file(GITHUB_TESTDATA_URL, temp_file, mode = "w", quiet = TRUE)
+    
+    # Read R code
+    test_code <- readLines(temp_file)
+    
+    # Evaluate in isolated environment
+    eval_env <- new.env()
+    eval(parse(text = test_code), envir = eval_env)
+    
+    # Extract test_data variable
+    if (!exists("test_data", envir = eval_env)) {
+      stop("test_data variable not found in test_data.R")
     }
-  )
-  
+    
+    get("test_data", envir = eval_env)
+  }, error = function(e) {
+    stop(sprintf("Failed to fetch or read test data.\nError: %s", e$message))
+  })
+
   # ===== EXTRACT TEST CASES FOR THIS FUNCTION =====
   
   if (!(function_name %in% names(all_test_data))) {

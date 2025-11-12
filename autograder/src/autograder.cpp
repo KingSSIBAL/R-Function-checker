@@ -9,7 +9,6 @@ using namespace Rcpp;
 
 static const std::string GITHUB_BASE = "https://raw.githubusercontent.com/KingSSIBAL/R-Function-checker/main/repo";
 
-
 // ============================================================================
 // GET GITHUB URLS - Hidden in compiled binary
 // ============================================================================
@@ -25,7 +24,7 @@ std::string cpp_get_function_url(const std::string& function_name) {
 //' @keywords internal
 // [[Rcpp::export(".cpp_get_testdata_url")]]
 std::string cpp_get_testdata_url() {
-  return GITHUB_BASE + "/test_data.rds";
+  return GITHUB_BASE + "/test_data.R";  // ← Changed from .rds to .R
 }
 
 // ============================================================================
