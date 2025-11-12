@@ -2,14 +2,13 @@
 # INSTRUCTOR FUNCTION
 # =============================================================================
 
-factorial <- function(n) {
-  if (n < 0) stop("n must be non-negative")
-  if (n == 0 || n == 1) return(1)
-  result <- 1
-  for (i in 2:n) {
-    result <- result * i
+sum_vector <- function(x) {
+  if (length(x) == 0) return(0)
+  total <- 0
+  for (val in x) {
+    total <- total + val
   }
-  result
+  total
 }
 
 # =============================================================================
@@ -18,25 +17,25 @@ factorial <- function(n) {
 
 test_cases <- list(
   inputs = list(
-    list(0),
-    list(1),
-    list(5),
-    list(10),
-    list(12)     # Hidden
+    list(c(1, 2, 3)),
+    list(c(10, 20, 30)),
+    list(numeric(0)),
+    list(c(-5, 5, -10, 10)),
+    list(c(1.5, 2.5, 3.0))   # Hidden with floats
   ),
   
   descriptions = c(
-    "Base case: 0! = 1",
-    "Base case: 1! = 1",
-    "Small: 5!",
-    "Medium: 10!",
-    "Large: 12!"
+    "Simple sum: [1,2,3]",
+    "Larger numbers: [10,20,30]",
+    "Empty vector",
+    "Mixed positive/negative",
+    "Floating point numbers"
   ),
   
-  points = c(1, 1, 2, 3, 3),
+  points = c(2, 2, 2, 2, 2),
   
   hidden = c(FALSE, FALSE, FALSE, FALSE, TRUE),
   
   expected_type = "numeric",
-  tolerance = 1e-10
+  tolerance = 1e-8
 )
