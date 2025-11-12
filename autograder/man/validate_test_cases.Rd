@@ -2,11 +2,80 @@
 % Please edit documentation in R/autograder.R
 \name{validate_test_cases}
 \alias{validate_test_cases}
-\title{Improved validate test cases with stricter checks}
+\title{Validate and normalize test case structure}
 \usage{
 validate_test_cases(test_data, function_name)
 }
+\arguments{
+\item{test_data}{List containing test case configuration}
+
+\item{function_name}{Name of function (for error messages)}
+}
+\value{
+Validated and normalized test_data with all fields present
+}
 \description{
-Improved validate test cases with stricter checks
+Performs comprehensive validation of test case data structure with
+strict error checking. Ensures all test components are properly formatted
+and consistent.
+
+Required Fields:
+\itemize{
+\item \strong{inputs}: list of input argument lists (REQUIRED)
+}
+
+Optional Fields (with defaults):
+\itemize{
+\item \strong{descriptions}: character vector of test descriptions
+\item \strong{hidden}: logical vector indicating hidden tests
+\item \strong{points}: numeric vector of point values per test
+\item \strong{tolerance}: single numeric for floating-point comparison
+\item \strong{expected_type}: single character specifying expected output type
+\item \strong{hints}: character vector of hints for failed tests
+\item \strong{comparison_fn}: custom comparison function
+}
+}
+\details{
+Validation Strategy:
+
+\strong{Critical Fields (STOP on error):}
+\itemize{
+\item Missing inputs: Hard error (can't proceed)
+\item Mismatched lengths: Hard error (data corruption)
+\item Invalid types: Hard error (wrong configuration)
+}
+
+\strong{Optional Fields (WARN and fix):}
+\itemize{
+\item Missing: Fill with defaults
+\item Wrong format: Warn and ignore
+\item Can proceed: Yes
+}
+
+Error Messages:
+\itemize{
+\item Clear indication of what's wrong
+\item Tells user to contact instructor (config issue)
+\item Never blames the student for instructor errors
+}
+}
+\examples{
+\dontrun{
+# Valid test case
+test_data <- list(
+  inputs = list(list(1), list(2)),
+  descriptions = c("Test 1", "Test 2"),
+  points = c(1, 2)
+)
+validated <- validate_test_cases(test_data, "my_function")
+
+# Missing optional fields - filled with defaults
+test_data_minimal <- list(
+  inputs = list(list(1))
+)
+validated <- validate_test_cases(test_data_minimal, "my_function")
+# Returns: descriptions = "Test 1", hidden = FALSE, points = 1, tolerance = 1e-10
+}
+
 }
 \keyword{internal}

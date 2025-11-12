@@ -6,7 +6,28 @@
 \usage{
 function_not_found_error(function_name, call = NULL)
 }
+\arguments{
+\item{function_name}{Name of the function that wasn't found}
+
+\item{call}{The call that generated the error (usually NULL)}
+}
+\value{
+An S3 object of class c("function_not_found_error", "error", "condition")
+}
 \description{
-Custom error for missing functions
+Creates a structured error when a requested function doesn't exist in
+the repository. Provides helpful guidance on what to do next.
+}
+\details{
+This error includes:
+\itemize{
+\item Function name that was requested
+\item Suggestion to use list_problems()
+\item Common troubleshooting steps
+}
+
+User Experience:
+Instead of: "Error: HTTP 404"
+Students see: "Function 'fibonaci' not found. Use list_problems() to see available functions."
 }
 \keyword{internal}

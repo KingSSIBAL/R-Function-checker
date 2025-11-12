@@ -2,11 +2,30 @@
 % Please edit documentation in R/autograder.R
 \name{test_execution_error}
 \alias{test_execution_error}
-\title{Custom error for test execution}
+\title{Custom error for test execution failures}
 \usage{
 test_execution_error(message, test_number, call = NULL)
 }
+\arguments{
+\item{message}{Description of what went wrong}
+
+\item{test_number}{Which test failed (1-based index)}
+
+\item{call}{The call that generated the error}
+}
+\value{
+An S3 object of class c("test_execution_error", "error", "condition")
+}
 \description{
-Custom error for test execution
+Creates a structured error when a specific test case fails to execute.
+Includes test number for precise debugging.
+}
+\details{
+Used when:
+\itemize{
+\item Test setup fails
+\item Input arguments are invalid
+\item Unexpected runtime error in test harness
+}
 }
 \keyword{internal}

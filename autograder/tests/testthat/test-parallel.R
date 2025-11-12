@@ -1,5 +1,19 @@
 # tests/testthat/test-parallel.R
 
+# Skip parallel tests during R CMD check (process limits)
+skip_on_cran()
+skip_if(
+  identical(Sys.getenv("_R_CHECK_LIMIT_CORES_"), "TRUE"),
+  "Parallel tests skipped during formal checks"
+)
+
+# Skip parallel tests during R CMD check (process limits)
+skip_on_cran()
+skip_if(
+  identical(Sys.getenv("_R_CHECK_LIMIT_CORES_"), "TRUE"),
+  "Parallel tests skipped during formal checks"
+)
+
 test_that("run_tests_sequential returns correct structure", {
   student_fun <- function(x) x * 2
   instructor_fun <- function(x) x * 2

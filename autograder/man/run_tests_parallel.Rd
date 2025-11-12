@@ -2,7 +2,7 @@
 % Please edit documentation in R/autograder.R
 \name{run_tests_parallel}
 \alias{run_tests_parallel}
-\title{Run tests in parallel}
+\title{Run tests in parallel using multiple CPU cores}
 \usage{
 run_tests_parallel(
   student_fun,
@@ -12,7 +12,59 @@ run_tests_parallel(
   use_parallel = TRUE
 )
 }
-\description{
-Run tests in parallel
+\arguments{
+\item{student_fun}{Student's function implementation}
+
+\item{instructor_fun}{Instructor's reference implementation}
+
+\item{test_data}{Validated test case data}
+
+\item{tolerance}{Numeric tolerance for comparisons}
+
+\item{use_parallel}{Whether to actually use parallel (TRUE) or fall back (FALSE)}
 }
+\value{
+List of test results, each containing:
+\itemize{
+\item student: student output or error object
+\item expected: expected output or error object
+\item index: test number (1-based)
+}
+}
+\description{
+Executes test cases in parallel for improved performance on multi-core
+systems. Automatically falls back to sequential for small test sets.
+
+Parallel Execution Strategy:
+\itemize{
+\item Create cluster with n cores (leave 1 free for system)
+\item Export student_fun, instructor_fun, tolerance to workers
+\item Distribute test indices across workers
+\item Each worker: runs test, catches errors, returns result
+\item Main process: collects results, cleans up cluster
+}
+}
+\details{
+Performance Characteristics:
+\itemize{
+\item Setup cost: ~100-200ms (cluster creation)
+\item Per-test overhead: ~10ms (serialization)
+\item Speedup: typically 2-4x on 4-core system
+\item Worth it for: ≥10 tests
+}
+
+Core Allocation Strategy:
+\itemize{
+\item Detect available cores
+\item Use cores - 1 (keep system responsive)
+\item Cap at 4 cores (diminishing returns beyond this)
+\item Example: 8-core system → use 4 cores
+}
+}
+\section{Resource Management}{
+
+Cluster is always stopped via on.exit(), even if errors occur.
+This prevents orphaned R processes.
+}
+
 \keyword{internal}

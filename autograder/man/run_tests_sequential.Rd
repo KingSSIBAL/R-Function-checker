@@ -2,11 +2,53 @@
 % Please edit documentation in R/autograder.R
 \name{run_tests_sequential}
 \alias{run_tests_sequential}
-\title{Run tests sequentially}
+\title{Run tests sequentially (one after another)}
 \usage{
 run_tests_sequential(student_fun, instructor_fun, test_data, tolerance)
 }
+\arguments{
+\item{student_fun}{Student's function}
+
+\item{instructor_fun}{Instructor's reference function}
+
+\item{test_data}{Validated test case data}
+
+\item{tolerance}{Numeric tolerance}
+}
+\value{
+List of test results (same structure as parallel version)
+}
 \description{
-Run tests sequentially
+Executes test cases one at a time in order. Used for:
+\itemize{
+\item Small test sets (<10 tests)
+\item When use_parallel = FALSE
+\item Debugging (easier to trace)
+}
+
+Advantages over Parallel:
+\itemize{
+\item No setup overhead
+\item Easier debugging (linear execution)
+\item More predictable
+\item Better for small test sets
+}
+}
+\details{
+Execution Flow:
+For each test:
+1. Extract input arguments
+2. Call student function (catch errors)
+3. Call instructor function (catch errors)
+4. Package results
+5. Move to next test
+
+Error Handling:
+Errors are captured, not thrown. This allows:
+\itemize{
+\item All tests to run (one failure doesn't stop others)
+\item Detailed error reporting for each test
+\item Graceful handling of student code errors
+}
 }
 \keyword{internal}

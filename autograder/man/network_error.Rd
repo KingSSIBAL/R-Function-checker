@@ -2,11 +2,39 @@
 % Please edit documentation in R/autograder.R
 \name{network_error}
 \alias{network_error}
-\title{Custom error for network issues}
+\title{Custom error for network-related issues}
 \usage{
 network_error(message, call = NULL)
 }
+\arguments{
+\item{message}{Human-readable error message describing the network issue}
+
+\item{call}{The call that generated the error (usually NULL or sys.call())}
+}
+\value{
+An S3 object of class c("network_error", "error", "condition")
+}
 \description{
-Custom error for network issues
+Creates a structured error object for network failures. This allows
+calling code to handle network issues specifically, separate from
+other types of errors.
+}
+\details{
+Common network issues this error represents:
+\itemize{
+\item No internet connection
+\item Server unreachable
+\item Timeout (>30 seconds)
+\item DNS resolution failure
+\item Firewall blocking connection
+}
+}
+\examples{
+\dontrun{
+if (!curl::has_internet()) {
+  stop(network_error("No internet connection detected"))
+}
+}
+
 }
 \keyword{internal}

@@ -2,11 +2,52 @@
 % Please edit documentation in R/autograder.R
 \name{fetch_instructor_code}
 \alias{fetch_instructor_code}
-\title{Securely fetch and load instructor code}
+\title{Securely fetch and load instructor code from repository}
 \usage{
 fetch_instructor_code(function_name)
 }
-\description{
-Securely fetch and load instructor code
+\arguments{
+\item{function_name}{Name of function to fetch (validated in C++)}
 }
+\value{
+Environment containing:
+\itemize{
+\item Instructor's function implementation
+\item test_cases list with all test data
+}
+}
+\description{
+Downloads instructor's reference implementation and test cases from
+GitHub repository with comprehensive error handling.
+
+Security Measures:
+\enumerate{
+\item Input validation via C++ (prevents path traversal)
+\item HTTPS transport (encrypted in transit)
+\item Error message sanitization (no path exposure)
+\item Timeout handling (30 seconds)
+}
+}
+\details{
+Workflow:
+\enumerate{
+\item Call C++ function to download code
+\item Create new isolated environment
+\item Parse and evaluate code in that environment
+\item Return environment for extraction
+}
+
+Error Handling:
+\itemize{
+\item Invalid name → InvalidInputError
+\item Network issue → network_error
+\item 404 error → function_not_found_error
+\item Other → generic error
+}
+}
+\section{Side Effects}{
+
+Creates temporary file (automatically cleaned up by R)
+}
+
 \keyword{internal}

@@ -2,10 +2,50 @@
 % Please edit documentation in R/autograder.R
 \name{list_problems}
 \alias{list_problems}
-\title{List available problems}
+\title{List available problems/functions to test}
 \usage{
 list_problems()
 }
+\value{
+Invisibly returns character vector of problem names
+}
 \description{
-List available problems
+Displays all functions available for testing. Shows usage instructions
+and how to preview test cases.
+
+Problem Discovery:
+\enumerate{
+\item Attempts to fetch from repository (_problems.R)
+\item Falls back to default list if fetch fails
+\item Returns problems invisibly for programmatic access
+}
+}
+\section{Display Format}{
+
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Available problems:
+
+  - fibonacci
+  - factorial
+  - sum_vector
+
+Usage:
+  student_<function_name> <- function(...) \{ ... \}
+  autograder('<function_name>')
+
+Preview tests:
+  preview_tests('<function_name>')
+}\if{html}{\out{</div>}}
+}
+
+\examples{
+\dontrun{
+# See available functions
+list_problems()
+
+# Capture list programmatically
+problems <- list_problems()
+print(problems)  # c("fibonacci", "factorial", ...)
+}
+
 }

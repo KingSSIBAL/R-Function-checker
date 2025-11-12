@@ -14,35 +14,83 @@ autograder(
 )
 }
 \arguments{
-\item{function_name}{Character. Name of the function to test.}
+\item{function_name}{Character. Name of the function to test.
+Must match a function in the repository (see list_problems()).
+Example: "fibonacci", "factorial", "sum_vector"}
 
-\item{verbose}{Logical. Show detailed output for each test? Default TRUE.}
+\item{verbose}{Logical. Show detailed output for each test?
+TRUE (default): Shows inputs, expected, actual output for failures
+FALSE: Shows only test result (PASS/FAIL) and summary}
 
-\item{show_hidden}{Logical. Show details for hidden tests? Default FALSE.}
+\item{show_hidden}{Logical. Show details for hidden tests?
+FALSE (default): Hidden tests show only PASS/FAIL
+TRUE: Hidden tests show full details (for instructor review)}
 
-\item{show_progress}{Logical. Show progress bar for many tests? Default FALSE.}
+\item{show_progress}{Logical. Show progress bar for many tests?
+FALSE (default): No progress bar
+TRUE: Shows progress bar if ≥6 tests}
 
-\item{use_parallel}{Logical. Use parallel processing for tests? Default TRUE for 10+ tests.}
+\item{use_parallel}{Logical. Use parallel processing?
+TRUE (default): Automatic parallel for ≥10 tests
+FALSE: Always use sequential execution}
 
-\item{show_hints}{Logical. Show hints for failed tests? Default TRUE.}
+\item{show_hints}{Logical. Show hints for failed tests?
+TRUE (default): Display instructor hints when available
+FALSE: Hide hints (for exams/assessments)}
 }
 \value{
-Invisibly returns a list with:
+Invisibly returns a list with test results:
 \itemize{
-\item \code{passed}: Number of tests passed
-\item \code{failed}: Number of tests failed
-\item \code{total}: Total number of tests
-\item \code{score}: Points earned (if points specified)
-\item \code{max_score}: Maximum points (if points specified)
-\item \code{pass_rate}: Percentage of tests passed
+\item \code{passed}: Integer. Number of tests passed
+\item \code{failed}: Integer. Number of tests failed
+\item \code{total}: Integer. Total number of tests
+\item \code{score}: Numeric. Points earned
+\item \code{max_score}: Numeric. Maximum possible points
+\item \code{pass_rate}: Numeric. Percentage of tests passed (0-100)
 }
 }
 \description{
 Tests student implementation against reference outputs with support for
-points, descriptions, hidden tests, type checking, tolerance, and parallel execution.
+points, descriptions, hidden tests, type checking, tolerance, parallel
+execution, and detailed feedback.
+
+This is the main function students use to test their work.
 }
+\section{Usage Workflow}{
+
+\enumerate{
+\item See available problems: \code{list_problems()}
+\item Preview test cases: \code{preview_tests("function_name")}
+\item Define your function: \code{student_function_name <- function(...) { ... }}
+\item Run autograder: \code{autograder("function_name")}
+\item Review feedback and improve your code
+\item Repeat until all tests pass
+}
+}
+
+\section{Performance}{
+
+\itemize{
+\item Sequential mode: ~100-500ms per test (depends on function complexity)
+\item Parallel mode: ~50-200ms per test on 4-core system
+\item Network fetch: ~1-3 seconds (cached by OS after first call)
+}
+}
+
+\section{Error Messages}{
+
+The function provides specific, actionable error messages:
+\itemize{
+\item "Function not found" → Use list_problems()
+\item "Type mismatch" → Check your return type
+\item "Length mismatch" → Check loop bounds or edge cases
+\item "Network error" → Check internet connection
+}
+}
+
 \examples{
 \dontrun{
+# 1. Define your solution
 student_fibonacci <- function(n) {
   if (n <= 0) return(numeric(0))
   if (n == 1) return(1)
@@ -52,7 +100,17 @@ student_fibonacci <- function(n) {
   }
   fib
 }
-autograder("fibonacci")
+
+# 2. Run autograder
+result <- autograder("fibonacci")
+
+# 3. Check your score
+print(result$pass_rate)  # 100 if all passed
+
+# 4. Run with different options
+autograder("fibonacci", verbose = FALSE)           # Minimal output
+autograder("fibonacci", show_hints = TRUE)         # Show hints
+autograder("fibonacci", use_parallel = FALSE)      # Force sequential
 }
 
 }

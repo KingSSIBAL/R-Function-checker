@@ -262,18 +262,18 @@ test_execution_error <- function(message, test_number, call = NULL) {
 #'   Example: c(1, 2, 3, 4, 5)
 #' 
 #' **Vectors (>10 elements):**
-#'   Shows: type[1:n] = first, second, third ... type[n] = last
-#'   Example: integer[1:100] = 1, 2, 3 ... integer[100] = 100
+#'   Shows: type\[1:n\] = first, second, third ... type\[n\] = last
+#'   Example: integer\[1:100\] = 1, 2, 3 ... integer\[100\] = 100
 #' 
 #' **Matrices:**
-#'   Shows: matrix[rows x cols]: first_values ...
-#'   Example: matrix[3x4]: 1 2 3 ...
+#'   Shows: matrix\[rows x cols\]: first_values ...
+#'   Example: matrix\[3x4\]: 1 2 3 ...
 #' 
 #' **Data Frames:**
-#'   Shows: data.frame[rows x cols] columns: col1, col2, col3
-#'   Example: data.frame[10 x 3] columns: x, y, z
+#'   Shows: data.frame\[rows x cols\] columns: col1, col2, col3
+#'   Example: data.frame\[10 x 3\] columns: x, y, z
 #' 
-#' @performance
+#' @section Performance:
 #'   Time: O(1) for most types (uses head/tail)
 #'   Space: O(k) where k = min(object_size, max_length)
 #' 
@@ -788,7 +788,7 @@ extract_test_cases <- function(instructor_env, function_name) {
 #'     hint = "Hint: ..."                      # If hint provided
 #'   )
 #' 
-#' @performance
+#' @section Performance:
 #'   Time: O(n) for vectors, O(1) for type/length checks
 #'   Space: O(k) where k = number of feedback messages (typically 1-3)
 #' 

@@ -2,11 +2,25 @@
 % Please edit documentation in R/autograder.R
 \name{print_feedback}
 \alias{print_feedback}
-\title{Print detailed feedback}
+\title{Display feedback messages in formatted style}
 \usage{
 print_feedback(feedback)
 }
+\arguments{
+\item{feedback}{Named list of feedback messages from provide_feedback()}
+}
+\value{
+NULL (invisible), called for side effect of printing
+}
 \description{
-Print detailed feedback
+Prints feedback list in a clean, readable format with bullet points.
+}
+\details{
+Output Format:
+Feedback:
+* Type mismatch: Expected numeric but got character
+* Hint: Check your return type
+
+Handles empty feedback gracefully (prints nothing).
 }
 \keyword{internal}

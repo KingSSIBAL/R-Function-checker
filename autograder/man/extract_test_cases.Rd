@@ -2,11 +2,32 @@
 % Please edit documentation in R/autograder.R
 \name{extract_test_cases}
 \alias{extract_test_cases}
-\title{Extract and validate test cases}
+\title{Extract and validate test cases from environment}
 \usage{
 extract_test_cases(instructor_env, function_name)
 }
+\arguments{
+\item{instructor_env}{Environment loaded from fetch_instructor_code()}
+
+\item{function_name}{Function name (for error messages)}
+}
+\value{
+Validated test_data list with all fields normalized
+}
 \description{
-Extract and validate test cases
+Retrieves test_cases object from instructor environment and validates
+its structure using validate_test_cases().
+
+Expected Structure:
+test_cases <- list(
+inputs = list(...),         # Required
+descriptions = c(...),      # Optional
+hidden = c(...),            # Optional
+points = c(...),            # Optional
+tolerance = 1e-10,          # Optional
+expected_type = "numeric",  # Optional
+hints = c(...),             # Optional
+comparison_fn = function()  # Optional
+)
 }
 \keyword{internal}

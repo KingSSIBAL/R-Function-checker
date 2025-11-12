@@ -2,11 +2,35 @@
 % Please edit documentation in R/autograder.R
 \name{extract_instructor_function}
 \alias{extract_instructor_function}
-\title{Extract instructor function from environment}
+\title{Extract instructor function from loaded environment}
 \usage{
 extract_instructor_function(instructor_env, function_name)
 }
+\arguments{
+\item{instructor_env}{Environment loaded from fetch_instructor_code()}
+
+\item{function_name}{Function name (for error messages)}
+}
+\value{
+The instructor's function object
+}
 \description{
-Extract instructor function from environment
+Searches environment for the first function object. Instructor code
+typically defines one function, which this extracts.
+
+Search Strategy:
+\itemize{
+\item Iterate through all objects in environment
+\item Return first object that is.function() == TRUE
+\item Error if no function found
+}
+}
+\details{
+Why search instead of direct access?
+\itemize{
+\item Function name might differ from file name
+\item Allows flexibility in instructor code structure
+\item Handles helper functions gracefully
+}
 }
 \keyword{internal}

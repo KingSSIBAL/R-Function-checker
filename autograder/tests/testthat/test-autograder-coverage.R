@@ -203,26 +203,21 @@ test_that("autograder uses tolerance for numeric comparisons", {
 # ============================================================================
 
 test_that("autograder shows progress bar for many tests", {
-  skip_on_cran()
-  skip_if_offline()
-  
-  assign("student_fibonacci", function(n) {
+  student_fibonacci <- function(n) {
     if (n <= 0) return(numeric(0))
     if (n == 1) return(1)
     fib <- c(1, 1)
-    for (i in 3:n) {
-      fib[i] <- fib[i-1] + fib[i-2]
-    }
+    if (n > 2) for (i in 3:n) fib[i] <- fib[i-1] + fib[i-2]
     fib
-  }, envir = .GlobalEnv)
-  
-  # Fibonacci only has 6 tests, so won't trigger progress bar
-  # But we can test it doesn't error
-  expect_silent(
+  }
+
+  # Suppress output if needed
+  suppressMessages({
     result <- autograder("fibonacci", show_progress = TRUE, verbose = FALSE)
-  )
-  
-  rm(student_fibonacci, envir = .GlobalEnv)
+  })
+
+  expect_type(result, "list")
+  expect_equal(result$passed, 6)
 })
 
 # ============================================================================
