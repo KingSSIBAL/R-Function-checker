@@ -26,7 +26,9 @@ R-Function-checker/
 ## Quick Start (Students)
 
 ```r
-remotes::install_github("KingSSIBAL/R-Function-checker", subdir = "autograder")
+install.packages("C:/Users/YourUsername/Downloads/autograder_0.3.0.tar.gz", 
+                 repos = NULL, 
+                 type = "source")
 library(autograder)
 list_problems()
 autograder("fibonacci")
