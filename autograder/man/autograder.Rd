@@ -7,8 +7,42 @@
 autograder(function_name)
 }
 \arguments{
-\item{function_name}{Character. Name of the function to test.}
+\item{function_name}{Character. Name of the function to test.
+Examples: "fibonacci", "sort_asc", "merge_sorted"}
+}
+\value{
+Invisibly returns a list with:
+\itemize{
+\item \code{passed}: Number of tests passed
+\item \code{failed}: Number of tests failed
+\item \code{total}: Total number of tests
+}
 }
 \description{
-Run autograder by function name
+Fetches instructor function and test cases from GitHub,
+then compares student implementation against reference outputs.
+}
+\details{
+Your function should be named: student_{function_name}
+
+For example, if testing "fibonacci", define:
+\code{student_fibonacci <- function(n) { ... }}
+}
+\examples{
+\dontrun{
+# Define your implementation
+student_fibonacci <- function(n) {
+  if (n <= 0) return(numeric(0))
+  if (n == 1) return(1)
+  fib <- c(1, 1)
+  for (i in 3:n) {
+    fib[i] <- fib[i-1] + fib[i-2]
+  }
+  fib
+}
+
+# Run autograder
+autograder("fibonacci")
+}
+
 }
