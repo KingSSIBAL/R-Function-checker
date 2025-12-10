@@ -217,6 +217,7 @@ test_that("run_tests_parallel falls back when use_parallel is FALSE", {
 
 test_that("run_tests_parallel works with many tests", {
   skip_on_cran()
+  skip_on_ci()  # Windows CI has process spawn limits
   
   student_fn <- function(x) x * 2
   instructor_fn <- function(x) x * 2
