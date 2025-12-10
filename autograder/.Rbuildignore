@@ -4,8 +4,11 @@
 ^\.git$
 ^\.gitignore$
 ^doc$
+^docs$
 ^Meta$
+^_pkgdown\.yml$
 ^src/.*\.o$
 ^src/.*\.so$
 ^src/.*\.dll$
 ^src/README\.md$
+^\.Rhistory$

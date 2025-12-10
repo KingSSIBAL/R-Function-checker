@@ -19,7 +19,7 @@
 #include <vector>
 #include <cmath>
 #include <functional>
-#include "types.hpp"
+#include "types.h"
 
 namespace autograder {
 namespace compare {

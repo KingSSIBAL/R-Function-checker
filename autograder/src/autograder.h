@@ -18,23 +18,23 @@
 #define AUTOGRADER_HPP
 
 // Core components
-#include "types.hpp"
-#include "exceptions.hpp"
+#include "types.h"
+#include "exceptions.h"
 
 // Cryptography
-#include "encryption.hpp"
+#include "encryption.h"
 
 // Validation
-#include "validator.hpp"
+#include "validator.h"
 
 // Comparison
-#include "comparator.hpp"
+#include "comparator.h"
 
 // Network
-#include "fetcher.hpp"
+#include "fetcher.h"
 
 // Formatting
-#include "formatter.hpp"
+#include "formatter.h"
 
 namespace autograder {
 

@@ -17,8 +17,8 @@
 // ============================================================================
 
 #include <Rcpp.h>
-#include "autograder.hpp"
-#include "encrypted_config.hpp"
+#include "autograder.h"
+#include "encrypted_config.h"
 
 using namespace Rcpp;
 

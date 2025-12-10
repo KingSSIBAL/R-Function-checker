@@ -17,6 +17,9 @@
 
 #' @useDynLib autograder, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
+#' @importFrom graphics boxplot mtext
+#' @importFrom stats median sd
+#' @importFrom utils head tail txtProgressBar setTxtProgressBar
 NULL
 
 #' Package startup message

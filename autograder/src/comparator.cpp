@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-#include "comparator.hpp"
+#include "comparator.h"
 #include <limits>
 
 namespace autograder {

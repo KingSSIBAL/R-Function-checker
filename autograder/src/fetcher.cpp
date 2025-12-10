@@ -11,8 +11,8 @@
 //
 // ============================================================================
 
-#include "fetcher.hpp"
-#include "encrypted_config.hpp"
+#include "fetcher.h"
+#include "encrypted_config.h"
 
 namespace autograder {
 namespace network {

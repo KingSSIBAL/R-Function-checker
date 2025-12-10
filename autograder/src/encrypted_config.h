@@ -10,8 +10,8 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include "encryption.hpp"
-#include "types.hpp"
+#include "encryption.h"
+#include "types.h"
 
 namespace autograder {
 namespace config {

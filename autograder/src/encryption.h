@@ -24,8 +24,8 @@
 #include <vector>
 #include <cstdint>
 #include <array>
-#include "types.hpp"
-#include "exceptions.hpp"
+#include "types.h"
+#include "exceptions.h"
 
 namespace autograder {
 namespace crypto {

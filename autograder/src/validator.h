@@ -17,8 +17,8 @@
 #include <string>
 #include <vector>
 #include <regex>
-#include "types.hpp"
-#include "exceptions.hpp"
+#include "types.h"
+#include "exceptions.h"
 
 namespace autograder {
 namespace validation {

@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-#include "encryption.hpp"
+#include "encryption.h"
 #include <cstring>
 #include <sstream>
 #include <iomanip>

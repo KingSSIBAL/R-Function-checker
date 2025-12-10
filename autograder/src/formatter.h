@@ -17,7 +17,7 @@
 #include <Rcpp.h>
 #include <string>
 #include <vector>
-#include "types.hpp"
+#include "types.h"
 
 namespace autograder {
 namespace format {
