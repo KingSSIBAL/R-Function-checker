@@ -54,8 +54,8 @@ You should see something like:
 ### Step 1: Download the Autograder Package File
 
 Your instructor will provide you with a file named:
-- `autograder_0.3.0.tar.gz` (source package), or
-- `autograder_0.3.0.zip` (binary package)
+- `autograder_0.4.0.tar.gz` (source package), or
+- `autograder_0.4.0.zip` (binary package)
 
 **Save this file somewhere you'll remember**, like your **Downloads** folder or **Desktop**.
 
@@ -74,14 +74,14 @@ In the R Console, run this command:
 
 **If you downloaded the `.tar.gz` file:**
 ```r
-install.packages("C:/Users/YourUsername/Downloads/autograder_0.3.0.tar.gz", 
+install.packages("C:/Users/YourUsername/Downloads/autograder_0.4.0.tar.gz", 
                  repos = NULL, 
                  type = "source")
 ```
 
 **If you downloaded the `.zip` file:**
 ```r
-install.packages("C:/Users/YourUsername/Downloads/autograder_0.3.0.zip", 
+install.packages("C:/Users/YourUsername/Downloads/autograder_0.4.0.zip", 
                  repos = NULL, 
                  type = "binary")
 ```
@@ -111,7 +111,7 @@ library(autograder)
 
 You should see:
 ```
-Autograder v0.3.0 loaded.
+Autograder v0.4.0 loaded.
 
 Use list_problems() to see available assignments.
 Use preview_tests('<function_name>') to preview test cases.
@@ -206,7 +206,7 @@ Tests: 6/6 passed (100.0%)
 **Solution:**
 ```r
 remove.packages("autograder")
-install.packages("C:/Users/YourUsername/Downloads/autograder_0.3.0.tar.gz", 
+install.packages("C:/Users/YourUsername/Downloads/autograder_0.4.0.tar.gz", 
                  repos = NULL, 
                  type = "source")
 library(autograder)
@@ -224,7 +224,7 @@ library(autograder)
 
 Example:
 ```r
-install.packages("C:/Users/Student/Desktop/autograder_0.3.0.tar.gz", 
+install.packages("C:/Users/Student/Desktop/autograder_0.4.0.tar.gz", 
                  repos = NULL, 
                  type = "source")
 ```
@@ -326,6 +326,55 @@ Always save your R script with your solutions:
 
 ---
 
+## 📊 Problems with Data Files
+
+Some problems may require your function to work with data files (CSV, Excel, RDS, etc.). The autograder handles data loading automatically!
+
+### How It Works
+
+When you see a test case like:
+```r
+# Test expects: analyze(data) where data is loaded from "scores.csv"
+```
+
+You don't need to load the file yourself! The autograder:
+1. Fetches the data file from the instructor's repository
+2. Loads it into R (as a data frame, list, or appropriate type)
+3. Passes it to your function as an argument
+
+### Writing Functions That Use Data
+
+Your function receives the **already-loaded data**, not a file path:
+
+```r
+# ✅ Correct - receives a data frame directly
+student_analyze_data <- function(data, analysis_type = "mean") {
+  if (analysis_type == "mean") {
+    return(mean(data$value))
+  } else if (analysis_type == "sum") {
+    return(sum(data$value))
+  }
+}
+
+# ❌ Wrong - don't try to read the file yourself
+student_analyze_data <- function(data, analysis_type = "mean") {
+  df <- read.csv(data)  # DON'T DO THIS!
+  # ...
+}
+```
+
+### Supported Data Formats
+
+| Format | Extensions | Loaded As |
+|--------|-----------|-----------|
+| CSV | `.csv` | Data frame |
+| Excel | `.xlsx`, `.xls` | Data frame |
+| R Data | `.rds` | Original R object |
+| R Data | `.rdata`, `.rda` | Named variables |
+| Text | `.txt` | Data frame |
+
+---
+
 ## 🎓 Example Workflow
 
 Here's a complete example of how to work through a problem:
@@ -398,6 +447,6 @@ If you run into issues or have questions:
 
 ---
 
-**Version:** Autograder v0.3.0  
+**Version:** Autograder v0.4.0  
 **Last Updated:** November 12, 2025  
 **For:** Windows Users

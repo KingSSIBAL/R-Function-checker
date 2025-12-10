@@ -1,0 +1,14 @@
+PKG_CXXFLAGS = -std=c++17 -I.
+PKG_CPPFLAGS = -I.
+CXX_STD = CXX17
+
+# Source files organized by module
+SOURCES = autograder_main.cpp \
+          crypto/encryption.cpp \
+          validation/validator.cpp \
+          compare/comparator.cpp \
+          network/fetcher.cpp \
+          format/formatter.cpp \
+          RcppExports.cpp
+
+OBJECTS = $(SOURCES:.cpp=.o)

@@ -1,0 +1,41 @@
+# ============================================================================
+# AUTOGRADER PROJECT GITIGNORE
+# ============================================================================
+
+# Environment files with secrets
+.env
+tools/.env
+*.env.local
+
+# R package build artifacts
+*.tar.gz
+*.Rcheck/
+*.dll
+*.so
+*.o
+
+# RStudio
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# pkgdown
+docs/
+
+# Test artifacts
+tests/testthat/Rplots.pdf
+Rplots.pdf
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+*~

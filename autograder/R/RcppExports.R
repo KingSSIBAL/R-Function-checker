@@ -5,6 +5,10 @@
     .Call(`_autograder_cpp_compare_fast`, obj1, obj2, tolerance)
 }
 
+.cpp_compare_identical <- function(obj1, obj2) {
+    .Call(`_autograder_cpp_compare_identical`, obj1, obj2)
+}
+
 .cpp_fetch_function_content <- function(function_name) {
     .Call(`_autograder_cpp_fetch_function_content`, function_name)
 }
@@ -13,7 +17,83 @@
     .Call(`_autograder_cpp_fetch_problems_list`)
 }
 
-.cpp_compare_identical <- function(obj1, obj2) {
-    .Call(`_autograder_cpp_compare_identical`, obj1, obj2)
+.cpp_fetch_data_file <- function(filename) {
+    .Call(`_autograder_cpp_fetch_data_file`, filename)
+}
+
+.cpp_validate_function_name <- function(name) {
+    .Call(`_autograder_cpp_validate_function_name`, name)
+}
+
+.cpp_has_internet <- function() {
+    .Call(`_autograder_cpp_has_internet`)
+}
+
+.cpp_format_output <- function(obj, max_length = 200L) {
+    .Call(`_autograder_cpp_format_output`, obj, max_length)
+}
+
+.cpp_compare_detailed <- function(obj1, obj2, tolerance = 1e-10) {
+    .Call(`_autograder_cpp_compare_detailed`, obj1, obj2, tolerance)
+}
+
+.cpp_find_differences <- function(v1, v2, tolerance = 1e-10, max_diffs = 10L) {
+    .Call(`_autograder_cpp_find_differences`, v1, v2, tolerance, max_diffs)
+}
+
+.cpp_encrypt <- function(plaintext, key = "") {
+    .Call(`_autograder_cpp_encrypt`, plaintext, key)
+}
+
+.cpp_decrypt <- function(ciphertext, key = "") {
+    .Call(`_autograder_cpp_decrypt`, ciphertext, key)
+}
+
+.cpp_encrypt_base64 <- function(plaintext, key = "") {
+    .Call(`_autograder_cpp_encrypt_base64`, plaintext, key)
+}
+
+.cpp_decrypt_base64 <- function(ciphertext, key = "") {
+    .Call(`_autograder_cpp_decrypt_base64`, ciphertext, key)
+}
+
+.cpp_derive_key <- function(factors, key_length = 32L) {
+    .Call(`_autograder_cpp_derive_key`, factors, key_length)
+}
+
+.cpp_generate_key <- function(length = 32L) {
+    .Call(`_autograder_cpp_generate_key`, length)
+}
+
+.cpp_encrypt_url <- function(url) {
+    .Call(`_autograder_cpp_encrypt_url`, url)
+}
+
+.cpp_decrypt_url <- function(encrypted_url) {
+    .Call(`_autograder_cpp_decrypt_url`, encrypted_url)
+}
+
+.cpp_get_version <- function() {
+    .Call(`_autograder_cpp_get_version`)
+}
+
+.cpp_get_type <- function(obj) {
+    .Call(`_autograder_cpp_get_type`, obj)
+}
+
+.cpp_is_auth_enabled <- function() {
+    .Call(`_autograder_cpp_is_auth_enabled`)
+}
+
+.cpp_get_auth_mode <- function() {
+    .Call(`_autograder_cpp_get_auth_mode`)
+}
+
+.cpp_has_auth_token <- function() {
+    .Call(`_autograder_cpp_has_auth_token`)
+}
+
+.cpp_get_auth_info <- function() {
+    .Call(`_autograder_cpp_get_auth_info`)
 }
 

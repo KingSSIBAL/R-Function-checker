@@ -202,3 +202,88 @@ test_that("validate_test_cases handles optional fields", {
   )
   expect_null(result$comparison_fn)
 })
+
+# ============================================================================
+# C++ VALIDATION FUNCTION TESTS
+# ============================================================================
+
+test_that(".cpp_validate_function_name validates empty names", {
+  result <- .cpp_validate_function_name("")
+  expect_false(result)
+})
+
+test_that(".cpp_validate_function_name validates valid names", {
+  expect_true(.cpp_validate_function_name("fibonacci"))
+  expect_true(.cpp_validate_function_name("test_function"))
+  expect_true(.cpp_validate_function_name("myFunction123"))
+  expect_true(.cpp_validate_function_name("_private"))
+  expect_true(.cpp_validate_function_name("calc_sum"))
+})
+
+test_that(".cpp_validate_function_name rejects invalid first characters", {
+  # Names starting with numbers
+  expect_false(.cpp_validate_function_name("123func"))
+  expect_false(.cpp_validate_function_name("1test"))
+})
+
+test_that(".cpp_validate_function_name rejects path traversal", {
+  expect_false(.cpp_validate_function_name("../evil"))
+  expect_false(.cpp_validate_function_name("path/../attack"))
+  expect_false(.cpp_validate_function_name("test\\path"))
+  expect_false(.cpp_validate_function_name("./local"))
+})
+
+test_that(".cpp_validate_function_name rejects special characters", {
+  expect_false(.cpp_validate_function_name("func;rm"))
+  expect_false(.cpp_validate_function_name("test|pipe"))
+  expect_false(.cpp_validate_function_name("bad>redirect"))
+  expect_false(.cpp_validate_function_name("func&back"))
+  expect_false(.cpp_validate_function_name("test`cmd`"))
+})
+
+test_that(".cpp_validate_function_name rejects shell expansion", {
+  expect_false(.cpp_validate_function_name("${VAR}"))
+  expect_false(.cpp_validate_function_name("$((1+1))"))
+  expect_false(.cpp_validate_function_name("~user"))
+})
+
+test_that(".cpp_validate_function_name rejects newlines", {
+  expect_false(.cpp_validate_function_name("test\ninjection"))
+  expect_false(.cpp_validate_function_name("test\rinjection"))
+})
+
+test_that(".cpp_validate_function_name handles hyphenated names", {
+  expect_true(.cpp_validate_function_name("my-function"))
+  expect_true(.cpp_validate_function_name("test-case-1"))
+})
+
+test_that(".cpp_validate_function_name handles long names", {
+  # Create a very long name (over 256 chars)
+  long_name <- paste(rep("a", 300), collapse = "")
+  result <- .cpp_validate_function_name(long_name)
+  expect_false(result)
+})
+
+# ============================================================================
+# C++ TYPE CHECKING TESTS
+# ============================================================================
+
+test_that(".cpp_get_type returns correct types", {
+  expect_equal(.cpp_get_type(1L), "integer")
+  expect_equal(.cpp_get_type(1.5), "numeric")
+  expect_equal(.cpp_get_type("text"), "character")
+  expect_equal(.cpp_get_type(TRUE), "logical")
+  expect_equal(.cpp_get_type(NULL), "NULL")
+  expect_equal(.cpp_get_type(list()), "list")
+})
+
+test_that(".cpp_get_type handles vectors", {
+  expect_equal(.cpp_get_type(1:10), "integer")
+  expect_equal(.cpp_get_type(c(1.0, 2.0)), "numeric")
+  expect_equal(.cpp_get_type(c("a", "b")), "character")
+})
+
+test_that(".cpp_get_type handles complex objects", {
+  expect_true(.cpp_get_type(data.frame()) %in% c("list", "data.frame"))
+  expect_equal(.cpp_get_type(matrix(1:4, 2, 2)), "integer")
+})

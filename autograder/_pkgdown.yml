@@ -1,0 +1,204 @@
+url: https://kingsibal.github.io/R-Function-checker/
+
+template:
+  bootstrap: 5
+  bootswatch: minty
+  bslib:
+    # Minimalist color palette - clean blacks, whites, subtle accent
+    bg: "#ffffff"
+    fg: "#212529"
+    primary: "#2c3e50"
+    secondary: "#95a5a6"
+    success: "#18bc9c"
+    info: "#3498db"
+    warning: "#f39c12"
+    danger: "#e74c3c"
+    
+    # Typography - clean, readable
+    base_font: {google: "Inter"}
+    heading_font: {google: "Inter"}
+    code_font: {google: "JetBrains Mono"}
+    font_scale: 1.0
+    
+    # Minimal border radius for clean edges
+    border-radius: 0.25rem
+    btn-border-radius: 0.2rem
+    
+    # Spacing
+    spacer: "1rem"
+    
+  includes:
+    in_header: |
+      <style>
+        /* Minimalist overrides */
+        :root {
+          --bs-body-font-weight: 400;
+        }
+        
+        /* Clean navbar */
+        .navbar {
+          border-bottom: 1px solid #e9ecef;
+          box-shadow: none !important;
+        }
+        
+        /* Subtle cards */
+        .card {
+          border: 1px solid #e9ecef;
+          box-shadow: none;
+        }
+        
+        /* Clean code blocks */
+        pre {
+          border: 1px solid #e9ecef;
+          border-radius: 0.25rem;
+          background-color: #f8f9fa;
+        }
+        
+        /* Minimal headings */
+        h1, h2, h3, h4, h5, h6 {
+          font-weight: 600;
+          letter-spacing: -0.02em;
+        }
+        
+        /* Clean links */
+        a {
+          text-decoration: none;
+        }
+        a:hover {
+          text-decoration: underline;
+        }
+        
+        /* Subtle footer */
+        footer {
+          border-top: 1px solid #e9ecef;
+          background-color: #f8f9fa;
+        }
+        
+        /* Reference table styling */
+        .ref-index td, .ref-index th {
+          border-color: #e9ecef;
+        }
+        
+        /* Article cards */
+        .article-card {
+          transition: transform 0.2s ease;
+        }
+        .article-card:hover {
+          transform: translateY(-2px);
+        }
+        
+        /* TOC styling */
+        .toc-nav {
+          border-left: 2px solid #e9ecef;
+        }
+        .toc-nav .nav-link.active {
+          border-left: 2px solid #2c3e50;
+          margin-left: -2px;
+        }
+      </style>
+
+home:
+  title: Autograder - Automated R Function Testing
+  description: >
+    An automated grading system for R programming assignments with
+    a high-performance C++ backend, parallel test execution, data file support
+    (CSV, Excel, RDS, RData), private repository authentication, and
+    detailed feedback for students.
+  sidebar:
+    structure: [links, license, community, citation, authors, dev]
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, tutorials, news]
+    right: [search, github]
+  components:
+    home:
+      icon: fa-home
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    articles:
+      text: Articles
+      menu:
+        - text: Getting Started
+          href: articles/getting-started.html
+        - text: ---
+        - text: For Students
+          href: articles/student-guide.html
+        - text: For Instructors
+          href: articles/instructor-guide.html
+        - text: ---
+        - text: Advanced Topics
+        - text: Data Files
+          href: articles/data-files.html
+        - text: Authentication
+          href: articles/authentication.html
+        - text: Performance Benchmarking
+          href: articles/performance.html
+    github:
+      icon: fab fa-github
+      href: https://github.com/KingSSIBAL/R-Function-checker
+      aria-label: GitHub
+
+reference:
+  - title: Main Functions
+    desc: Primary functions for students to test their work
+    contents:
+      - autograder
+      - list_problems
+      - preview_tests
+
+  - title: Data Loading
+    desc: Functions for loading external data files in test cases
+    contents:
+      - fetch_data
+      - prefetch_data_files
+      - inject_data_into_inputs
+
+  - title: Performance Analysis
+    desc: Compare your implementation against the reference
+    contents:
+      - compare_performance
+      - starts_with("print.performance")
+      - starts_with("plot.performance")
+
+  - title: Encryption Utilities
+    desc: Functions for encrypting test cases and sensitive data
+    contents:
+      - encrypt_text
+      - decrypt_text
+      - generate_key
+      - derive_key
+
+  - title: Internal Functions
+    desc: >
+      Internal functions used by the package. These are not intended
+      for direct use but are documented for completeness.
+    contents:
+      - starts_with(".")
+      - fetch_instructor_code
+      - extract_instructor_function
+      - extract_test_cases
+      - validate_test_cases
+      - provide_feedback
+      - print_feedback
+      - format_output
+      - run_tests_parallel
+      - run_tests_sequential
+      - network_error
+      - function_not_found_error
+      - test_execution_error
+
+footer:
+  structure:
+    left: developed_by
+    right: built_with
+
+authors:
+  Reijel Agub:
+    href: https://github.com/KingSSIBAL
+
+news:
+  one_page: true
+  cran_dates: false

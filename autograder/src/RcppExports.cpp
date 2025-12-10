@@ -23,6 +23,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_compare_identical
+LogicalVector cpp_compare_identical(SEXP obj1, SEXP obj2);
+RcppExport SEXP _autograder_cpp_compare_identical(SEXP obj1SEXP, SEXP obj2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type obj1(obj1SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type obj2(obj2SEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_compare_identical(obj1, obj2));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_fetch_function_content
 CharacterVector cpp_fetch_function_content(const std::string& function_name);
 RcppExport SEXP _autograder_cpp_fetch_function_content(SEXP function_nameSEXP) {
@@ -44,24 +56,257 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// cpp_compare_identical
-LogicalVector cpp_compare_identical(SEXP obj1, SEXP obj2);
-RcppExport SEXP _autograder_cpp_compare_identical(SEXP obj1SEXP, SEXP obj2SEXP) {
+// cpp_fetch_data_file
+CharacterVector cpp_fetch_data_file(const std::string& filename);
+RcppExport SEXP _autograder_cpp_fetch_data_file(SEXP filenameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type filename(filenameSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_fetch_data_file(filename));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_validate_function_name
+LogicalVector cpp_validate_function_name(const std::string& name);
+RcppExport SEXP _autograder_cpp_validate_function_name(SEXP nameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type name(nameSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_validate_function_name(name));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_has_internet
+LogicalVector cpp_has_internet();
+RcppExport SEXP _autograder_cpp_has_internet() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(cpp_has_internet());
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_format_output
+CharacterVector cpp_format_output(SEXP obj, int max_length);
+RcppExport SEXP _autograder_cpp_format_output(SEXP objSEXP, SEXP max_lengthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type obj(objSEXP);
+    Rcpp::traits::input_parameter< int >::type max_length(max_lengthSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_format_output(obj, max_length));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_compare_detailed
+List cpp_compare_detailed(SEXP obj1, SEXP obj2, double tolerance);
+RcppExport SEXP _autograder_cpp_compare_detailed(SEXP obj1SEXP, SEXP obj2SEXP, SEXP toleranceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type obj1(obj1SEXP);
     Rcpp::traits::input_parameter< SEXP >::type obj2(obj2SEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_compare_identical(obj1, obj2));
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_compare_detailed(obj1, obj2, tolerance));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_find_differences
+IntegerVector cpp_find_differences(NumericVector v1, NumericVector v2, double tolerance, int max_diffs);
+RcppExport SEXP _autograder_cpp_find_differences(SEXP v1SEXP, SEXP v2SEXP, SEXP toleranceSEXP, SEXP max_diffsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type v1(v1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type v2(v2SEXP);
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    Rcpp::traits::input_parameter< int >::type max_diffs(max_diffsSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_find_differences(v1, v2, tolerance, max_diffs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_encrypt
+CharacterVector cpp_encrypt(const std::string& plaintext, const std::string& key);
+RcppExport SEXP _autograder_cpp_encrypt(SEXP plaintextSEXP, SEXP keySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type plaintext(plaintextSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type key(keySEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_encrypt(plaintext, key));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_decrypt
+CharacterVector cpp_decrypt(const std::string& ciphertext, const std::string& key);
+RcppExport SEXP _autograder_cpp_decrypt(SEXP ciphertextSEXP, SEXP keySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type ciphertext(ciphertextSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type key(keySEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_decrypt(ciphertext, key));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_encrypt_base64
+CharacterVector cpp_encrypt_base64(const std::string& plaintext, const std::string& key);
+RcppExport SEXP _autograder_cpp_encrypt_base64(SEXP plaintextSEXP, SEXP keySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type plaintext(plaintextSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type key(keySEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_encrypt_base64(plaintext, key));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_decrypt_base64
+CharacterVector cpp_decrypt_base64(const std::string& ciphertext, const std::string& key);
+RcppExport SEXP _autograder_cpp_decrypt_base64(SEXP ciphertextSEXP, SEXP keySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type ciphertext(ciphertextSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type key(keySEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_decrypt_base64(ciphertext, key));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_derive_key
+CharacterVector cpp_derive_key(CharacterVector factors, int key_length);
+RcppExport SEXP _autograder_cpp_derive_key(SEXP factorsSEXP, SEXP key_lengthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< CharacterVector >::type factors(factorsSEXP);
+    Rcpp::traits::input_parameter< int >::type key_length(key_lengthSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_derive_key(factors, key_length));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_generate_key
+CharacterVector cpp_generate_key(int length);
+RcppExport SEXP _autograder_cpp_generate_key(SEXP lengthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type length(lengthSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_generate_key(length));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_encrypt_url
+CharacterVector cpp_encrypt_url(const std::string& url);
+RcppExport SEXP _autograder_cpp_encrypt_url(SEXP urlSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type url(urlSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_encrypt_url(url));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_decrypt_url
+CharacterVector cpp_decrypt_url(const std::string& encrypted_url);
+RcppExport SEXP _autograder_cpp_decrypt_url(SEXP encrypted_urlSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type encrypted_url(encrypted_urlSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_decrypt_url(encrypted_url));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_get_version
+CharacterVector cpp_get_version();
+RcppExport SEXP _autograder_cpp_get_version() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(cpp_get_version());
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_get_type
+CharacterVector cpp_get_type(SEXP obj);
+RcppExport SEXP _autograder_cpp_get_type(SEXP objSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type obj(objSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_get_type(obj));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_is_auth_enabled
+LogicalVector cpp_is_auth_enabled();
+RcppExport SEXP _autograder_cpp_is_auth_enabled() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(cpp_is_auth_enabled());
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_get_auth_mode
+CharacterVector cpp_get_auth_mode();
+RcppExport SEXP _autograder_cpp_get_auth_mode() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(cpp_get_auth_mode());
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_has_auth_token
+LogicalVector cpp_has_auth_token();
+RcppExport SEXP _autograder_cpp_has_auth_token() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(cpp_has_auth_token());
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_get_auth_info
+List cpp_get_auth_info();
+RcppExport SEXP _autograder_cpp_get_auth_info() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(cpp_get_auth_info());
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_autograder_cpp_compare_fast", (DL_FUNC) &_autograder_cpp_compare_fast, 3},
+    {"_autograder_cpp_compare_identical", (DL_FUNC) &_autograder_cpp_compare_identical, 2},
     {"_autograder_cpp_fetch_function_content", (DL_FUNC) &_autograder_cpp_fetch_function_content, 1},
     {"_autograder_cpp_fetch_problems_list", (DL_FUNC) &_autograder_cpp_fetch_problems_list, 0},
-    {"_autograder_cpp_compare_identical", (DL_FUNC) &_autograder_cpp_compare_identical, 2},
+    {"_autograder_cpp_fetch_data_file", (DL_FUNC) &_autograder_cpp_fetch_data_file, 1},
+    {"_autograder_cpp_validate_function_name", (DL_FUNC) &_autograder_cpp_validate_function_name, 1},
+    {"_autograder_cpp_has_internet", (DL_FUNC) &_autograder_cpp_has_internet, 0},
+    {"_autograder_cpp_format_output", (DL_FUNC) &_autograder_cpp_format_output, 2},
+    {"_autograder_cpp_compare_detailed", (DL_FUNC) &_autograder_cpp_compare_detailed, 3},
+    {"_autograder_cpp_find_differences", (DL_FUNC) &_autograder_cpp_find_differences, 4},
+    {"_autograder_cpp_encrypt", (DL_FUNC) &_autograder_cpp_encrypt, 2},
+    {"_autograder_cpp_decrypt", (DL_FUNC) &_autograder_cpp_decrypt, 2},
+    {"_autograder_cpp_encrypt_base64", (DL_FUNC) &_autograder_cpp_encrypt_base64, 2},
+    {"_autograder_cpp_decrypt_base64", (DL_FUNC) &_autograder_cpp_decrypt_base64, 2},
+    {"_autograder_cpp_derive_key", (DL_FUNC) &_autograder_cpp_derive_key, 2},
+    {"_autograder_cpp_generate_key", (DL_FUNC) &_autograder_cpp_generate_key, 1},
+    {"_autograder_cpp_encrypt_url", (DL_FUNC) &_autograder_cpp_encrypt_url, 1},
+    {"_autograder_cpp_decrypt_url", (DL_FUNC) &_autograder_cpp_decrypt_url, 1},
+    {"_autograder_cpp_get_version", (DL_FUNC) &_autograder_cpp_get_version, 0},
+    {"_autograder_cpp_get_type", (DL_FUNC) &_autograder_cpp_get_type, 1},
+    {"_autograder_cpp_is_auth_enabled", (DL_FUNC) &_autograder_cpp_is_auth_enabled, 0},
+    {"_autograder_cpp_get_auth_mode", (DL_FUNC) &_autograder_cpp_get_auth_mode, 0},
+    {"_autograder_cpp_has_auth_token", (DL_FUNC) &_autograder_cpp_has_auth_token, 0},
+    {"_autograder_cpp_get_auth_info", (DL_FUNC) &_autograder_cpp_get_auth_info, 0},
     {NULL, NULL, 0}
 };
 
