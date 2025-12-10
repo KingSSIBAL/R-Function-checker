@@ -22,19 +22,19 @@
 autograder/
 ├── R/
 │   ├── autograder.R        # Main R interface & data loading
-│   ├── execution.R         # Sequential/parallel test execution
-│   ├── fetch.R             # Secure data fetching
-│   ├── encryption.R        # Encryption API wrappers
 │   └── RcppExports.R       # Auto-generated Rcpp exports
-├── src/                    # Modular C++ backend
-│   ├── core/              # Types, exceptions
-│   ├── crypto/            # AES encryption, auth config
-│   ├── validation/        # Input validation
-│   ├── compare/           # Fast comparison
-│   ├── network/           # Secure fetching with auth
-│   ├── format/            # Output formatting
-│   └── autograder.hpp     # Main public header
+├── src/                    # Modular C++ backend (flat structure)
+│   ├── autograder.cpp      # Main entry points
+│   ├── autograder.h        # Public header
+│   ├── comparator.h        # Fast comparison engine
+│   ├── encryption.h        # AES encryption
+│   ├── validator.h         # Input validation
+│   ├── fetcher.h           # Network fetching with auth
+│   ├── formatter.h         # Output formatting
+│   ├── types.h             # Core types
+│   └── exceptions.h        # Custom exceptions
 ├── man/                    # Documentation
+├── vignettes/              # Articles and guides
 └── tests/testthat/         # 2000+ unit tests
 ```
 
@@ -69,7 +69,7 @@ autograder("fibonacci")
 
 ### For Instructors
 
-See [Instructor Guide](../docs/instructor-guide.md) for:
+See the [Instructor Guide](https://kingssibal.github.io/R-Function-checker/articles/instructor-guide.html) for:
 - Creating test cases
 - Encrypting custom repository URLs
 - Building and distributing the package
@@ -93,16 +93,15 @@ key <- derive_key("username", "password", "salt")
 
 ## 🔧 C++ Modules
 
-| Module | Purpose | Key Components |
-|--------|---------|----------------|
-| `core/` | Foundation | `Config`, `CryptoResult`, `AutograderException` |
-| `crypto/` | Encryption | `Encryptor`, `KeyDeriver`, `Encoder`, Auth Config |
-| `validation/` | Security | `Validator::is_valid_function_name()` |
-| `compare/` | Comparison | `Comparator::compare()`, tolerance handling |
-| `network/` | Fetching | `Fetcher`, token auth, data file download |
-| `format/` | Display | `Formatter::format()`, truncation |
-
-See [src/README.md](src/README.md) for detailed module documentation.
+| Header | Purpose | Key Functions |
+|--------|---------|---------------|
+| `types.h` | Core types | `Config`, `CryptoResult`, `TestResult` |
+| `exceptions.h` | Error handling | `AutograderException`, custom errors |
+| `encryption.h` | AES encryption | `encrypt()`, `decrypt()`, `derive_key()` |
+| `validator.h` | Input validation | `is_valid_function_name()`, security checks |
+| `comparator.h` | Fast comparison | `compare()`, tolerance handling |
+| `fetcher.h` | Network fetching | Token auth, data file download |
+| `formatter.h` | Output display | Smart truncation, formatting |
 
 ## 📊 Available Problems
 
@@ -166,10 +165,11 @@ Then rebuild the package.
 
 | Document | Description |
 |----------|-------------|
-| [Student Guide](../docs/student-guide.md) | Installation and usage for students |
-| [Instructor Guide](../docs/instructor-guide.md) | Creating tests, encryption, distribution |
-| [Tools README](../tools/README.md) | Instructor utilities documentation |
-| [C++ Source Guide](src/README.md) | Module architecture and API |
+| [Getting Started](https://kingssibal.github.io/R-Function-checker/articles/getting-started.html) | Quick introduction to the package |
+| [Student Guide](https://kingssibal.github.io/R-Function-checker/articles/student-guide.html) | Installation and usage for students |
+| [Instructor Guide](https://kingssibal.github.io/R-Function-checker/articles/instructor-guide.html) | Creating tests, encryption, distribution |
+| [Data Files](https://kingssibal.github.io/R-Function-checker/articles/data-files.html) | Working with CSV, Excel, RDS files |
+| [Performance](https://kingssibal.github.io/R-Function-checker/articles/performance.html) | Benchmarking and optimization |
 
 ## 🔗 Exported Functions
 
