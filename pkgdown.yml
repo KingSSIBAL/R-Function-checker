@@ -1,0 +1,14 @@
+pandoc: 3.1.11
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  authentication: authentication.html
+  data-files: data-files.html
+  getting-started: getting-started.html
+  instructor-guide: instructor-guide.html
+  performance: performance.html
+  student-guide: student-guide.html
+last_built: 2025-12-10T09:06Z
+urls:
+  reference: https://kingsibal.github.io/R-Function-checker/reference
+  article: https://kingsibal.github.io/R-Function-checker/articles
