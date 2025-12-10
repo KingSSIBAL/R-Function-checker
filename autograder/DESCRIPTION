@@ -30,7 +30,8 @@ Suggests:
     knitr,
     rmarkdown,
     pkgdown,
-    readxl
+    readxl,
+    openxlsx
 VignetteBuilder: knitr
 URL: https://kingsibal.github.io/R-Function-checker/,
     https://github.com/KingSSIBAL/R-Function-checker

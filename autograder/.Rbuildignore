@@ -5,3 +5,7 @@
 ^\.gitignore$
 ^doc$
 ^Meta$
+^src/.*\.o$
+^src/.*\.so$
+^src/.*\.dll$
+^src/README\.md$

@@ -1,6 +1,5 @@
-PKG_CXXFLAGS = -std=c++17 -I.
-PKG_CPPFLAGS = -I.
 CXX_STD = CXX17
+PKG_CPPFLAGS = -I.
 
 # Source files organized by module
 SOURCES = autograder_main.cpp \
