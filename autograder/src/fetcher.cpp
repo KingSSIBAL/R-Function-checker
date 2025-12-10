@@ -12,7 +12,7 @@
 // ============================================================================
 
 #include "fetcher.hpp"
-#include "../crypto/encrypted_config.hpp"
+#include "encrypted_config.hpp"
 
 namespace autograder {
 namespace network {

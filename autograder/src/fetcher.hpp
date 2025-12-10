@@ -18,10 +18,10 @@
 #include <string>
 #include <vector>
 #include <functional>
-#include "../core/types.hpp"
-#include "../core/exceptions.hpp"
-#include "../validation/validator.hpp"
-#include "../crypto/encryption.hpp"
+#include "types.hpp"
+#include "exceptions.hpp"
+#include "validator.hpp"
+#include "encryption.hpp"
 
 namespace autograder {
 namespace network {

@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 #include "encryption.hpp"
-#include "../core/types.hpp"
+#include "types.hpp"
 
 namespace autograder {
 namespace config {
