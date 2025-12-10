@@ -1,5 +1,7 @@
 # R Function Checker (Autograder)
 
+[![R-CMD-check](https://github.com/KingSSIBAL/R-Function-checker/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/KingSSIBAL/R-Function-checker/actions/workflows/R-CMD-check.yml)
+[![pkgdown](https://github.com/KingSSIBAL/R-Function-checker/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/KingSSIBAL/R-Function-checker/actions/workflows/pkgdown.yml)
 [![R Package](https://img.shields.io/badge/R-Package-blue.svg)](https://www.r-project.org/)
 [![C++17](https://img.shields.io/badge/C++-17-green.svg)](https://isocpp.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
