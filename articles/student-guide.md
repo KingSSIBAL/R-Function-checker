@@ -9,13 +9,13 @@ your code, helping you learn and improve.
 ## Workflow Summary
 
 1.  **Discover** available problems with
-    [`list_problems()`](https://kingsibal.github.io/R-Function-checker/reference/list_problems.md)
+    [`list_problems()`](https://kingssibal.github.io/R-Function-checker/reference/list_problems.md)
 2.  **Preview** test cases with `preview_tests("function_name")`
 3.  **Implement** your solution as `student_function_name`
 4.  **Test** with `autograder("function_name")`
 5.  **Iterate** based on feedback until all tests pass
 6.  **Optimize** (optional) using
-    [`compare_performance()`](https://kingsibal.github.io/R-Function-checker/reference/compare_performance.md)
+    [`compare_performance()`](https://kingssibal.github.io/R-Function-checker/reference/compare_performance.md)
 
 ## Step-by-Step Guide
 
@@ -221,7 +221,7 @@ student_analyze <- function(data, stat = "mean") {
 ```
 
 For more details, see [Working with Data
-Files](https://kingsibal.github.io/R-Function-checker/articles/data-files.md).
+Files](https://kingssibal.github.io/R-Function-checker/articles/data-files.md).
 
 ## Performance Comparison (Optional)
 
@@ -239,6 +239,6 @@ terms of speed.
 ## Getting Help
 
 If you’re stuck: 1. Re-read the test case descriptions with
-[`preview_tests()`](https://kingsibal.github.io/R-Function-checker/reference/preview_tests.md)
+[`preview_tests()`](https://kingssibal.github.io/R-Function-checker/reference/preview_tests.md)
 2. Test your function manually with simple inputs 3. Check the function
 requirements/documentation 4. Ask your instructor for help

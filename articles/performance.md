@@ -9,7 +9,7 @@ This helps you learn to write efficient code.
 ## Using compare_performance()
 
 After your function passes all tests, use
-[`compare_performance()`](https://kingsibal.github.io/R-Function-checker/reference/compare_performance.md)
+[`compare_performance()`](https://kingssibal.github.io/R-Function-checker/reference/compare_performance.md)
 to benchmark:
 
 ``` r

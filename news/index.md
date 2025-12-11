@@ -16,28 +16,28 @@
 ### New Features
 
 - Added
-  [`compare_performance()`](https://kingsibal.github.io/R-Function-checker/reference/compare_performance.md)
+  [`compare_performance()`](https://kingssibal.github.io/R-Function-checker/reference/compare_performance.md)
   for benchmarking student vs instructor implementations
 - Added
-  [`preview_tests()`](https://kingsibal.github.io/R-Function-checker/reference/preview_tests.md)
+  [`preview_tests()`](https://kingssibal.github.io/R-Function-checker/reference/preview_tests.md)
   to let students see test cases before coding
 - Added
-  [`list_problems()`](https://kingsibal.github.io/R-Function-checker/reference/list_problems.md)
+  [`list_problems()`](https://kingssibal.github.io/R-Function-checker/reference/list_problems.md)
   to discover available problems
 - Added encryption utilities:
-  [`encrypt_text()`](https://kingsibal.github.io/R-Function-checker/reference/encrypt_text.md),
-  [`decrypt_text()`](https://kingsibal.github.io/R-Function-checker/reference/decrypt_text.md),
-  [`generate_key()`](https://kingsibal.github.io/R-Function-checker/reference/generate_key.md),
-  [`derive_key()`](https://kingsibal.github.io/R-Function-checker/reference/derive_key.md)
+  [`encrypt_text()`](https://kingssibal.github.io/R-Function-checker/reference/encrypt_text.md),
+  [`decrypt_text()`](https://kingssibal.github.io/R-Function-checker/reference/decrypt_text.md),
+  [`generate_key()`](https://kingssibal.github.io/R-Function-checker/reference/generate_key.md),
+  [`derive_key()`](https://kingssibal.github.io/R-Function-checker/reference/derive_key.md)
 - Added comprehensive pkgdown documentation site
 - Added
-  [`fetch_data()`](https://kingsibal.github.io/R-Function-checker/reference/fetch_data.md)
+  [`fetch_data()`](https://kingssibal.github.io/R-Function-checker/reference/fetch_data.md)
   for loading external data files in test cases
 - Added
-  [`prefetch_data_files()`](https://kingsibal.github.io/R-Function-checker/reference/prefetch_data_files.md)
+  [`prefetch_data_files()`](https://kingssibal.github.io/R-Function-checker/reference/prefetch_data_files.md)
   for efficient data caching
 - Added
-  [`inject_data_into_inputs()`](https://kingsibal.github.io/R-Function-checker/reference/inject_data_into_inputs.md)
+  [`inject_data_into_inputs()`](https://kingssibal.github.io/R-Function-checker/reference/inject_data_into_inputs.md)
   for automatic data injection
 - Added `.cpp_get_auth_info()` and `.cpp_get_auth_mode()` for
   authentication status
@@ -57,7 +57,7 @@
 ### New Features
 
 - Added parallel test execution support via
-  [`run_tests_parallel()`](https://kingsibal.github.io/R-Function-checker/reference/run_tests_parallel.md)
+  [`run_tests_parallel()`](https://kingssibal.github.io/R-Function-checker/reference/run_tests_parallel.md)
 - Implemented C++ backend for performance-critical operations
 - Added RSA encryption for secure code transmission
 

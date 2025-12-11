@@ -39,7 +39,7 @@ problems <- c(
 ```
 
 Students use
-[`list_problems()`](https://kingsibal.github.io/R-Function-checker/reference/list_problems.md)
+[`list_problems()`](https://kingssibal.github.io/R-Function-checker/reference/list_problems.md)
 to see this list.
 
 ## Creating a Problem File
@@ -279,7 +279,7 @@ authentication:
 1.  Create a private GitHub repository
 2.  Generate a fine-grained personal access token
 3.  Configure secure mode (see [Authentication
-    Guide](https://kingsibal.github.io/R-Function-checker/articles/authentication.md))
+    Guide](https://kingssibal.github.io/R-Function-checker/articles/authentication.md))
 
 ### Hidden Tests
 
@@ -310,13 +310,13 @@ inspection.
 3.  **Include unique test values** that are hard to guess
 4.  **Monitor for suspicious patterns** in submissions
 5.  **Use private repositories** for exams (see
-    [Authentication](https://kingsibal.github.io/R-Function-checker/articles/authentication.md))
+    [Authentication](https://kingssibal.github.io/R-Function-checker/articles/authentication.md))
 
 ## Data Files
 
 For problems requiring external data (CSV, Excel, RDS), see the [Data
 Files
-Guide](https://kingsibal.github.io/R-Function-checker/articles/data-files.md).
+Guide](https://kingssibal.github.io/R-Function-checker/articles/data-files.md).
 Quick example:
 
 ``` r

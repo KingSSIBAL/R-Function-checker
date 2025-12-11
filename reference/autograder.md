@@ -74,7 +74,7 @@ Invisibly returns a list with test results:
 ## Usage Workflow
 
 1.  See available problems:
-    [`list_problems()`](https://kingsibal.github.io/R-Function-checker/reference/list_problems.md)
+    [`list_problems()`](https://kingssibal.github.io/R-Function-checker/reference/list_problems.md)
 
 2.  Preview test cases: `preview_tests("function_name")`
 

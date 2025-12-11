@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/KingSSIBAL/R-Function-checker/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/KingSSIBAL/R-Function-checker/blob/improvements/DESCRIPTION)
 
 Reijel A (2025). *autograder: Automated R Function Testing and Grading
 with C++ Backend*. R package version 0.4.0,

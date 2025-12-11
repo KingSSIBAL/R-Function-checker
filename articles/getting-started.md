@@ -129,7 +129,7 @@ Output:
 ## Autograder Options
 
 The
-[`autograder()`](https://kingsibal.github.io/R-Function-checker/reference/autograder.md)
+[`autograder()`](https://kingssibal.github.io/R-Function-checker/reference/autograder.md)
 function has several options:
 
 ``` r
@@ -175,17 +175,17 @@ plot(result)
 ## Next Steps
 
 - Read the [Student
-  Guide](https://kingsibal.github.io/R-Function-checker/articles/student-guide.md)
+  Guide](https://kingssibal.github.io/R-Function-checker/articles/student-guide.md)
   for more detailed usage
 - See [Instructor
-  Guide](https://kingsibal.github.io/R-Function-checker/articles/instructor-guide.md)
+  Guide](https://kingssibal.github.io/R-Function-checker/articles/instructor-guide.md)
   if you’re creating test cases
 - Learn about [Data
-  Files](https://kingsibal.github.io/R-Function-checker/articles/data-files.md)
+  Files](https://kingssibal.github.io/R-Function-checker/articles/data-files.md)
   for data analysis problems
 - Understand
-  [Authentication](https://kingsibal.github.io/R-Function-checker/articles/authentication.md)
+  [Authentication](https://kingssibal.github.io/R-Function-checker/articles/authentication.md)
   for private repositories
 - Check out [Performance
-  Benchmarking](https://kingsibal.github.io/R-Function-checker/articles/performance.md)
+  Benchmarking](https://kingssibal.github.io/R-Function-checker/articles/performance.md)
   for optimization tips
