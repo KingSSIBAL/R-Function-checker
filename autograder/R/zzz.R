@@ -22,6 +22,74 @@
 #' @importFrom utils head tail txtProgressBar setTxtProgressBar
 NULL
 
+# ============================================================================
+# PACKAGE OPTIONS
+# ============================================================================
+
+#' Get default tolerance for numeric comparisons
+#' 
+#' @description
+#' Returns the default tolerance used for comparing numeric values.
+#' Can be configured via `options(autograder.tolerance = value)`.
+#' 
+#' @return Numeric tolerance value (default: 1e-10)
+#' 
+#' @examples
+#' # Get current default tolerance
+#' autograder_tolerance()
+#' 
+#' # Set custom tolerance
+#' options(autograder.tolerance = 1e-8)
+#' autograder_tolerance()  # Returns 1e-8
+#' 
+#' @export
+autograder_tolerance <- function() {
+  getOption("autograder.tolerance", default = 1e-10)
+}
+
+#' Get default max retries for network operations
+#' 
+#' @description
+#' Returns the maximum number of retry attempts for network operations.
+#' Can be configured via `options(autograder.max_retries = value)`.
+#' 
+#' @return Integer number of retries (default: 3)
+#' 
+#' @keywords internal
+autograder_max_retries <- function() {
+  as.integer(getOption("autograder.max_retries", default = 3L))
+}
+
+#' Package load hook
+#' 
+#' @description
+#' Sets default package options when the package is loaded.
+#' Initializes memoise cache and registers built-in comparison functions.
+#' 
+#' @param libname Library name (passed by R)
+#' @param pkgname Package name (passed by R)
+#' 
+#' @keywords internal
+.onLoad <- function(libname, pkgname) {
+  # Set default options if not already set
+  op <- options()
+  op.autograder <- list(
+    autograder.tolerance = 1e-10,
+    autograder.max_retries = 3L,
+    autograder.cache_timeout = 3600  # 1 hour cache timeout
+  )
+  toset <- !(names(op.autograder) %in% names(op))
+  if (any(toset)) options(op.autograder[toset])
+  
+  # Register built-in comparison functions
+  .register_builtin_comparisons()
+  
+  # Initialize memoised functions for network caching
+  .init_memoise_cache()
+  
+  invisible()
+}
+
 #' Package startup message
 #' 
 #' @description

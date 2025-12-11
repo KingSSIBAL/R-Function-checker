@@ -23,7 +23,8 @@ LinkingTo: Rcpp
 Imports: 
     Rcpp (>= 1.0.0),
     curl,
-    parallel
+    parallel,
+    memoise
 Suggests:
     testthat (>= 3.0.0),
     covr,

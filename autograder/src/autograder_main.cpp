@@ -17,6 +17,7 @@
 // ============================================================================
 
 #include <Rcpp.h>
+#include <chrono>
 #include "autograder.h"
 #include "encrypted_config.h"
 
@@ -212,6 +213,169 @@ IntegerVector cpp_find_differences(NumericVector v1, NumericVector v2,
     }
     
     return result;
+}
+
+// ============================================================================
+// ADVANCED COMPARISON FUNCTIONS
+// ============================================================================
+
+/**
+ * @brief Compare data frames with tolerance and optional row reordering
+ * 
+ * @param df1 First data frame
+ * @param df2 Second data frame
+ * @param tolerance Numeric tolerance for floating-point comparisons
+ * @param ignore_row_order If TRUE, sort rows before comparison
+ * @return LogicalVector TRUE if data frames are equivalent
+ */
+// [[Rcpp::export(".cpp_compare_dataframe")]]
+LogicalVector cpp_compare_dataframe(DataFrame df1, DataFrame df2,
+                                     double tolerance = 1e-10,
+                                     bool ignore_row_order = false) {
+    // Check dimensions
+    if (df1.nrows() != df2.nrows() || df1.size() != df2.size()) {
+        return LogicalVector::create(false);
+    }
+    
+    // Check column names
+    CharacterVector names1 = df1.names();
+    CharacterVector names2 = df2.names();
+    for (int i = 0; i < names1.size(); ++i) {
+        if (names1[i] != names2[i]) {
+            return LogicalVector::create(false);
+        }
+    }
+    
+    // If ignoring row order, sort in R and return comparison result
+    if (ignore_row_order) {
+        // Delegate to R for complex sorting with mixed column types
+        // This is more robust than trying to handle all cases in C++
+        Environment base = Environment::base_env();
+        Function do_call = base["do.call"];
+        Function order_fn = base["order"];
+        Function subset = base["["];
+        
+        // Get ordering indices for each data frame
+        IntegerVector order1 = do_call(order_fn, df1);
+        IntegerVector order2 = do_call(order_fn, df2);
+        
+        // Reorder data frames
+        df1 = subset(df1, order1, R_MissingArg);
+        df2 = subset(df2, order2, R_MissingArg);
+    }
+    
+    // Compare each column
+    autograder::compare::Comparator comp(tolerance);
+    
+    for (int col = 0; col < df1.size(); ++col) {
+        SEXP col1 = df1[col];
+        SEXP col2 = df2[col];
+        
+        if (!comp.equal(col1, col2)) {
+            return LogicalVector::create(false);
+        }
+    }
+    
+    return LogicalVector::create(true);
+}
+
+/**
+ * @brief Compare numeric values using relative tolerance
+ * 
+ * Better for values spanning many orders of magnitude.
+ * 
+ * @param actual Numeric vector from student
+ * @param expected Expected numeric vector
+ * @param rel_tolerance Relative tolerance (e.g., 0.01 for 1%)
+ * @return LogicalVector TRUE if within relative tolerance
+ */
+// [[Rcpp::export(".cpp_compare_relative")]]
+LogicalVector cpp_compare_relative(NumericVector actual, NumericVector expected,
+                                    double rel_tolerance = 0.01) {
+    if (actual.size() != expected.size()) {
+        return LogicalVector::create(false);
+    }
+    
+    R_xlen_t n = actual.size();
+    
+    for (R_xlen_t i = 0; i < n; ++i) {
+        double a = actual[i];
+        double e = expected[i];
+        
+        // Handle special cases
+        bool a_na = NumericVector::is_na(a);
+        bool e_na = NumericVector::is_na(e);
+        
+        if (a_na && e_na) continue;  // Both NA - match
+        if (a_na || e_na) return LogicalVector::create(false);  // One NA - mismatch
+        
+        bool a_nan = std::isnan(a);
+        bool e_nan = std::isnan(e);
+        
+        if (a_nan && e_nan) continue;  // Both NaN - match
+        if (a_nan || e_nan) return LogicalVector::create(false);  // One NaN - mismatch
+        
+        bool a_inf = std::isinf(a);
+        bool e_inf = std::isinf(e);
+        
+        if (a_inf && e_inf) {
+            // Both infinite - must have same sign
+            if ((a > 0) != (e > 0)) return LogicalVector::create(false);
+            continue;
+        }
+        if (a_inf || e_inf) return LogicalVector::create(false);  // One infinite - mismatch
+        
+        // Both zero
+        if (a == 0.0 && e == 0.0) continue;
+        
+        // Compute relative difference
+        double denominator = std::max(std::abs(e), std::numeric_limits<double>::epsilon());
+        double rel_diff = std::abs(a - e) / denominator;
+        
+        if (rel_diff > rel_tolerance) {
+            return LogicalVector::create(false);  // Early termination
+        }
+    }
+    
+    return LogicalVector::create(true);
+}
+
+/**
+ * @brief High-precision benchmarking function
+ * 
+ * Uses C++ chrono for nanosecond precision timing.
+ * Minimizes R-level overhead during measurements.
+ * 
+ * @param fn Function to benchmark
+ * @param inputs List of input argument lists
+ * @param n_runs Number of benchmark runs
+ * @return NumericVector of timing results in seconds
+ */
+// [[Rcpp::export(".cpp_benchmark")]]
+NumericVector cpp_benchmark(Function fn, List inputs, int n_runs = 10) {
+    NumericVector times(n_runs);
+    
+    int n_inputs = inputs.size();
+    
+    // Get R's do.call function for proper argument unpacking
+    Environment base = Environment::base_env();
+    Function do_call = base["do.call"];
+    
+    for (int run = 0; run < n_runs; ++run) {
+        auto start = std::chrono::high_resolution_clock::now();
+        
+        for (int i = 0; i < n_inputs; ++i) {
+            List input_args = inputs[i];
+            // Use do.call to properly unpack arguments
+            do_call(fn, input_args);
+        }
+        
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed = end - start;
+        times[run] = elapsed.count();
+    }
+    
+    return times;
 }
 
 // ============================================================================

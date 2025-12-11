@@ -2,7 +2,7 @@
 // AUTOGRADER - COMPARISON MODULE HEADER
 // ============================================================================
 //
-// File: compare/comparator.hpp
+// File: comparator.h
 // Purpose: High-performance comparison functions for R objects
 //
 // Author: Reijel Agub (rcagub@up.edu.ph)
@@ -11,8 +11,8 @@
 //
 // ============================================================================
 
-#ifndef AUTOGRADER_COMPARATOR_HPP
-#define AUTOGRADER_COMPARATOR_HPP
+#ifndef AUTOGRADER_COMPARATOR_H
+#define AUTOGRADER_COMPARATOR_H
 
 #include <Rcpp.h>
 #include <string>
@@ -189,4 +189,4 @@ std::vector<R_xlen_t> find_differences(const Rcpp::NumericVector& v1,
 } // namespace compare
 } // namespace autograder
 
-#endif // AUTOGRADER_COMPARATOR_HPP
+#endif // AUTOGRADER_COMPARATOR_H

@@ -200,10 +200,12 @@ list_problems <- function() {
   cat("Available problems:\n\n")
   
   # ===== TRY TO FETCH PROBLEMS FROM REPOSITORY =====
+  # Use memoised version for better performance
   # If this fails, we have a fallback list
   problems <- tryCatch({
-    # Call C++ function to download _problems.R
-    code <- .cpp_fetch_problems_list()
+    # Get memoised fetcher (falls back to direct call if not available)
+    fetch_fn <- .get_memoised_fetch_problems()
+    code <- fetch_fn()
     
     if (length(code) > 0) {
       # Parse and evaluate _problems.R

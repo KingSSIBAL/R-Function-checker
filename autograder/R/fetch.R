@@ -14,11 +14,29 @@
 #
 # ============================================================================
 
+# Session-level cache for instructor code (avoids redundant network calls)
+.instructor_cache <- new.env(parent = emptyenv())
+
+#' Clear the instructor code cache
+#' 
+#' @description
+#' Clears the in-session cache of fetched instructor code.
+#' Useful when instructor updates test cases and you want to refetch.
+#' 
+#' @return Invisible NULL
+#' 
+#' @keywords internal
+clear_instructor_cache <- function() {
+  rm(list = ls(.instructor_cache), envir = .instructor_cache)
+  invisible(NULL)
+}
+
 #' Securely fetch and load instructor code from repository
 #' 
 #' @description
 #' Downloads instructor's reference implementation and test cases from
-#' GitHub repository with comprehensive error handling.
+#' GitHub repository with comprehensive error handling. Results are
+#' cached in-session to avoid redundant network calls.
 #' 
 #' Security Measures:
 #'   1. Input validation via C++ (prevents path traversal)
@@ -27,6 +45,8 @@
 #'   4. Timeout handling (30 seconds)
 #' 
 #' @param function_name Name of function to fetch (validated in C++)
+#' @param use_cache Logical. Use in-session cache? (default: TRUE)
+#'   Set to FALSE to force re-download (useful if instructor updated tests)
 #' 
 #' @return Environment containing:
 #'   - Instructor's function implementation
@@ -34,10 +54,12 @@
 #' 
 #' @details
 #' Workflow:
-#'   1. Call C++ function to download code
-#'   2. Create new isolated environment
-#'   3. Parse and evaluate code in that environment
-#'   4. Return environment for extraction
+#'   1. Check in-session cache first
+#'   2. If not cached, call C++ function to download code
+#'   3. Create new isolated environment
+#'   4. Parse and evaluate code in that environment
+#'   5. Cache result for future calls
+#'   6. Return environment for extraction
 #' 
 #' Error Handling:
 #'   - Invalid name → InvalidInputError
@@ -48,43 +70,89 @@
 #' @section Side Effects:
 #'   Creates temporary file (automatically cleaned up by R)
 #' 
+#' @seealso \code{\link{clear_instructor_cache}} to clear cached data
+#' 
 #' @keywords internal
-fetch_instructor_code <- function(function_name) {
-  tryCatch({
-    # Call C++ function for secure download
-    # C++ handles: validation, URL building, download, content verification
-    code <- .cpp_fetch_function_content(function_name)
+fetch_instructor_code <- function(function_name, use_cache = TRUE, max_retries = autograder_max_retries()) {
+  # Check cache first (avoids redundant network calls)
+  if (use_cache && exists(function_name, envir = .instructor_cache)) {
+    return(get(function_name, envir = .instructor_cache))
+  }
+  
+  # Retry logic with exponential backoff for network resilience
+  last_error <- NULL
+  last_warnings <- character(0)
+  
+  for (attempt in seq_len(max_retries)) {
+    # Capture warnings along with errors to detect 404s
+    result <- tryCatch(
+      withCallingHandlers({
+        # Call C++ function for secure download
+        # C++ handles: validation, URL building, download, content verification
+        code <- .cpp_fetch_function_content(function_name)
+        
+        # Create isolated environment for instructor code
+        # This prevents pollution of global environment
+        env <- new.env()
+        
+        # Parse and evaluate code in isolated environment
+        # This loads the instructor function and test_cases
+        eval(parse(text = code), envir = env)
+        
+        # Cache the result for future calls
+        assign(function_name, env, envir = .instructor_cache)
+        
+        # Return environment containing loaded code
+        return(env)
+        
+      }, warning = function(w) {
+        # Capture warnings (e.g., "HTTP status was '404 Not Found'")
+        last_warnings <<- c(last_warnings, conditionMessage(w))
+        invokeRestart("muffleWarning")
+      }),
+      error = function(e) {
+        last_error <<- e
+        
+        # Check if this is a 404 from captured warnings or error message
+        all_messages <- c(e$message, last_warnings)
+        is_404 <- any(grepl("404|not found|Function .+ not found", all_messages, ignore.case = TRUE))
+        
+        # Don't retry validation errors (not transient)
+        if (grepl("Invalid function name|Invalid character|unsafe|contains null", e$message, ignore.case = TRUE)) {
+          stop("Invalid function name format. Use only letters, numbers, underscores, and hyphens.",
+               call. = FALSE)
+        }
+        
+        # Don't retry 404 errors (function doesn't exist)
+        if (is_404) {
+          stop(function_not_found_error(function_name))
+        }
+        
+        # Network errors - retry with backoff
+        if (attempt < max_retries) {
+          wait_time <- 2^(attempt - 1)  # 1, 2, 4 seconds
+          message(sprintf("Network error, retrying in %d seconds... (attempt %d/%d)", 
+                          wait_time, attempt, max_retries))
+          Sys.sleep(wait_time)
+        }
+        
+        NULL  # Signal to continue loop
+      }
+    )
     
-    # Create isolated environment for instructor code
-    # This prevents pollution of global environment
-    env <- new.env()
+    # Reset warnings for next attempt
+    last_warnings <- character(0)
     
-    # Parse and evaluate code in isolated environment
-    # This loads the instructor function and test_cases
-    eval(parse(text = code), envir = env)
-    
-    # Return environment containing loaded code
-    env
-    
-  }, error = function(e) {
-    # ===== ERROR CLASSIFICATION AND MESSAGING =====
-    
-    # Path traversal or invalid characters (various validation error messages)
-    if (grepl("Invalid function name|Invalid character|unsafe|contains null", e$message, ignore.case = TRUE)) {
-      stop("Invalid function name format. Use only letters, numbers, underscores, and hyphens.",
-           call. = FALSE)
-    } 
-    # Network/connection issues
-    else if (grepl("Network error", e$message)) {
-      stop(network_error(
-        "Unable to connect to the test server. Please check your internet connection and try again."
-      ))
-    } 
-    # Function doesn't exist (404)
-    else {
-      stop(function_not_found_error(function_name))
+    # If we got a result, return it
+    if (!is.null(result)) {
+      return(result)
     }
-  })
+  }
+  
+  # All retries exhausted
+  stop(network_error(
+    "Unable to connect to the test server after multiple attempts. Please check your internet connection and try again."
+  ))
 }
 
 #' Extract instructor function from loaded environment

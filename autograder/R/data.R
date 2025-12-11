@@ -57,9 +57,18 @@
 #' 
 #' @keywords internal
 fetch_data <- function(filename) {
-  # Call C++ to download the file
+  # Input validation
+
+  if (missing(filename) || !is.character(filename) || length(filename) != 1 || nchar(filename) == 0) {
+    stop("filename must be a non-empty character string", call. = FALSE)
+  }
+  
+  # Use memoised fetcher for better performance
+  fetch_fn <- .get_memoised_fetch_data()
+  
+  # Call C++ to download the file (via memoised wrapper)
   temp_path <- tryCatch(
-    .cpp_fetch_data_file(filename),
+    fetch_fn(filename),
     error = function(e) {
       stop(sprintf("Failed to fetch data file '%s': %s", filename, e$message),
            call. = FALSE)

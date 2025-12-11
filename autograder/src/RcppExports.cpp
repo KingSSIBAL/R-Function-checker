@@ -127,6 +127,46 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_compare_dataframe
+LogicalVector cpp_compare_dataframe(DataFrame df1, DataFrame df2, double tolerance, bool ignore_row_order);
+RcppExport SEXP _autograder_cpp_compare_dataframe(SEXP df1SEXP, SEXP df2SEXP, SEXP toleranceSEXP, SEXP ignore_row_orderSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< DataFrame >::type df1(df1SEXP);
+    Rcpp::traits::input_parameter< DataFrame >::type df2(df2SEXP);
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    Rcpp::traits::input_parameter< bool >::type ignore_row_order(ignore_row_orderSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_compare_dataframe(df1, df2, tolerance, ignore_row_order));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_compare_relative
+LogicalVector cpp_compare_relative(NumericVector actual, NumericVector expected, double rel_tolerance);
+RcppExport SEXP _autograder_cpp_compare_relative(SEXP actualSEXP, SEXP expectedSEXP, SEXP rel_toleranceSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type actual(actualSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type expected(expectedSEXP);
+    Rcpp::traits::input_parameter< double >::type rel_tolerance(rel_toleranceSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_compare_relative(actual, expected, rel_tolerance));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_benchmark
+NumericVector cpp_benchmark(Function fn, List inputs, int n_runs);
+RcppExport SEXP _autograder_cpp_benchmark(SEXP fnSEXP, SEXP inputsSEXP, SEXP n_runsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Function >::type fn(fnSEXP);
+    Rcpp::traits::input_parameter< List >::type inputs(inputsSEXP);
+    Rcpp::traits::input_parameter< int >::type n_runs(n_runsSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_benchmark(fn, inputs, n_runs));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_encrypt
 CharacterVector cpp_encrypt(const std::string& plaintext, const std::string& key);
 RcppExport SEXP _autograder_cpp_encrypt(SEXP plaintextSEXP, SEXP keySEXP) {
@@ -293,6 +333,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_autograder_cpp_format_output", (DL_FUNC) &_autograder_cpp_format_output, 2},
     {"_autograder_cpp_compare_detailed", (DL_FUNC) &_autograder_cpp_compare_detailed, 3},
     {"_autograder_cpp_find_differences", (DL_FUNC) &_autograder_cpp_find_differences, 4},
+    {"_autograder_cpp_compare_dataframe", (DL_FUNC) &_autograder_cpp_compare_dataframe, 4},
+    {"_autograder_cpp_compare_relative", (DL_FUNC) &_autograder_cpp_compare_relative, 3},
+    {"_autograder_cpp_benchmark", (DL_FUNC) &_autograder_cpp_benchmark, 3},
     {"_autograder_cpp_encrypt", (DL_FUNC) &_autograder_cpp_encrypt, 2},
     {"_autograder_cpp_decrypt", (DL_FUNC) &_autograder_cpp_decrypt, 2},
     {"_autograder_cpp_encrypt_base64", (DL_FUNC) &_autograder_cpp_encrypt_base64, 2},

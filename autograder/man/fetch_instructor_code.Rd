@@ -4,10 +4,17 @@
 \alias{fetch_instructor_code}
 \title{Securely fetch and load instructor code from repository}
 \usage{
-fetch_instructor_code(function_name)
+fetch_instructor_code(
+  function_name,
+  use_cache = TRUE,
+  max_retries = autograder_max_retries()
+)
 }
 \arguments{
 \item{function_name}{Name of function to fetch (validated in C++)}
+
+\item{use_cache}{Logical. Use in-session cache? (default: TRUE)
+Set to FALSE to force re-download (useful if instructor updated tests)}
 }
 \value{
 Environment containing:
@@ -18,7 +25,8 @@ Environment containing:
 }
 \description{
 Downloads instructor's reference implementation and test cases from
-GitHub repository with comprehensive error handling.
+GitHub repository with comprehensive error handling. Results are
+cached in-session to avoid redundant network calls.
 
 Security Measures:
 \enumerate{
@@ -31,9 +39,11 @@ Security Measures:
 \details{
 Workflow:
 \enumerate{
-\item Call C++ function to download code
+\item Check in-session cache first
+\item If not cached, call C++ function to download code
 \item Create new isolated environment
 \item Parse and evaluate code in that environment
+\item Cache result for future calls
 \item Return environment for extraction
 }
 
@@ -50,4 +60,7 @@ Error Handling:
 Creates temporary file (automatically cleaned up by R)
 }
 
+\seealso{
+\code{\link{clear_instructor_cache}} to clear cached data
+}
 \keyword{internal}

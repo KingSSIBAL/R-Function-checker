@@ -41,6 +41,18 @@
     .Call(`_autograder_cpp_find_differences`, v1, v2, tolerance, max_diffs)
 }
 
+.cpp_compare_dataframe <- function(df1, df2, tolerance = 1e-10, ignore_row_order = FALSE) {
+    .Call(`_autograder_cpp_compare_dataframe`, df1, df2, tolerance, ignore_row_order)
+}
+
+.cpp_compare_relative <- function(actual, expected, rel_tolerance = 0.01) {
+    .Call(`_autograder_cpp_compare_relative`, actual, expected, rel_tolerance)
+}
+
+.cpp_benchmark <- function(fn, inputs, n_runs = 10L) {
+    .Call(`_autograder_cpp_benchmark`, fn, inputs, n_runs)
+}
+
 .cpp_encrypt <- function(plaintext, key = "") {
     .Call(`_autograder_cpp_encrypt`, plaintext, key)
 }

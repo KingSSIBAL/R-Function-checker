@@ -2,7 +2,7 @@
 // AUTOGRADER - ENCRYPTION MODULE HEADER
 // ============================================================================
 //
-// File: crypto/encryption.hpp
+// File: encryption.h
 // Purpose: Encryption and decryption functionality
 //
 // Provides:
@@ -17,8 +17,8 @@
 //
 // ============================================================================
 
-#ifndef AUTOGRADER_ENCRYPTION_HPP
-#define AUTOGRADER_ENCRYPTION_HPP
+#ifndef AUTOGRADER_ENCRYPTION_H
+#define AUTOGRADER_ENCRYPTION_H
 
 #include <string>
 #include <vector>
@@ -333,4 +333,4 @@ std::string generate_random_key(size_t length = 32);
 } // namespace crypto
 } // namespace autograder
 
-#endif // AUTOGRADER_ENCRYPTION_HPP
+#endif // AUTOGRADER_ENCRYPTION_H

@@ -128,20 +128,19 @@ provide_feedback <- function(student_out, expected_out, input_args, hint = NULL)
   if (is.numeric(student_out) && is.numeric(expected_out) && 
       length(student_out) == length(expected_out)) {
     
-    # Find positions where values differ (beyond tolerance)
-    diff_indices <- which(abs(student_out - expected_out) > 1e-10)
+    # Use C++ function for faster difference finding with early termination
+    diff_indices <- .cpp_find_differences(student_out, expected_out, 
+                                           autograder_tolerance(), 5L)
     
     if (length(diff_indices) > 0) {
-      # Show first 5 positions (avoid overwhelming output)
-      positions_to_show <- head(diff_indices, 5)
-      
       feedback$diff_positions <- sprintf(
         "Differences at positions: %s",
-        paste(positions_to_show, collapse = ", ")
+        paste(diff_indices, collapse = ", ")
       )
       
-      # Indicate if there are more differences
-      if (length(diff_indices) > 5) {
+      # Note: .cpp_find_differences returns max 5 positions
+      # If all 5 are returned, there may be more
+      if (length(diff_indices) >= 5) {
         feedback$diff_positions <- paste(feedback$diff_positions, "...")
       }
     }

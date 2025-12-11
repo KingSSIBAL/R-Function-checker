@@ -200,42 +200,20 @@ compare_performance <- function(function_name,
   }
   
   # ==========================================================================
-  # BENCHMARK PHASE
+  # BENCHMARK PHASE (using C++ high-precision timing)
   # ==========================================================================
   
   if (verbose) {
-    message("Running benchmarks...")
-    pb <- txtProgressBar(min = 0, max = n_runs, style = 3)
+    message("Running benchmarks with high-precision timing...")
   }
   
-  student_times <- numeric(n_runs)
-  instructor_times <- numeric(n_runs)
+  # Wrap functions to suppress warnings during benchmarking
+  student_fn_quiet <- function(...) suppressWarnings(student_fn(...))
+  instructor_fn_quiet <- function(...) suppressWarnings(instructor_fn(...))
   
-  for (run in seq_len(n_runs)) {
-    # Time student
-    start_time <- Sys.time()
-    for (input in test_inputs) {
-      suppressWarnings(do.call(student_fn, input))
-    }
-    end_time <- Sys.time()
-    student_times[run] <- as.numeric(difftime(end_time, start_time, units = "secs"))
-    
-    # Time instructor
-    start_time <- Sys.time()
-    for (input in test_inputs) {
-      suppressWarnings(do.call(instructor_fn, input))
-    }
-    end_time <- Sys.time()
-    instructor_times[run] <- as.numeric(difftime(end_time, start_time, units = "secs"))
-    
-    if (verbose) {
-      setTxtProgressBar(pb, run)
-    }
-  }
-  
-  if (verbose) {
-    close(pb)
-  }
+  # Use C++ benchmark for higher precision timing
+  student_times <- .cpp_benchmark(student_fn_quiet, test_inputs, n_runs)
+  instructor_times <- .cpp_benchmark(instructor_fn_quiet, test_inputs, n_runs)
   
   # ==========================================================================
   # COMPUTE STATISTICS
