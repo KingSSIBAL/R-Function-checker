@@ -1,0 +1,80 @@
+# GitHub Release Workflow for Autograder R Package
+# Creates a release with built package when a version tag is pushed
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          working-directory: autograder
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - name: Build package
+        run: |
+          cd autograder
+          R CMD build .
+        shell: bash
+
+      - name: Get package info
+        id: pkg_info
+        run: |
+          PKG_VERSION=$(grep "^Version:" autograder/DESCRIPTION | sed 's/Version: //')
+          PKG_FILE="autograder_${PKG_VERSION}.tar.gz"
+          echo "version=${PKG_VERSION}" >> $GITHUB_OUTPUT
+          echo "file=${PKG_FILE}" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Autograder v${{ steps.pkg_info.outputs.version }}
+          body: |
+            ## Autograder R Package v${{ steps.pkg_info.outputs.version }}
+            
+            ### Installation
+            
+            Download the `.tar.gz` file and install in R:
+            
+            ```r
+            install.packages("autograder_${{ steps.pkg_info.outputs.version }}.tar.gz", repos = NULL, type = "source")
+            ```
+            
+            Or install directly from GitHub:
+            
+            ```r
+            devtools::install_github("KingSSIBAL/R-Function-checker/autograder")
+            ```
+            
+            ### Documentation
+            
+            - [Package Documentation](https://kingssibal.github.io/R-Function-checker/)
+            - [Getting Started](https://kingssibal.github.io/R-Function-checker/articles/getting-started.html)
+            - [Student Guide](https://kingssibal.github.io/R-Function-checker/articles/student-guide.html)
+            - [Instructor Guide](https://kingssibal.github.io/R-Function-checker/articles/instructor-guide.html)
+          files: |
+            autograder/${{ steps.pkg_info.outputs.file }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
