@@ -20,6 +20,7 @@
 #' @importFrom graphics boxplot mtext
 #' @importFrom stats median sd
 #' @importFrom utils head tail txtProgressBar setTxtProgressBar
+#' @importFrom digest digest
 NULL
 
 # ============================================================================
