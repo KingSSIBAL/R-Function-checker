@@ -18,14 +18,14 @@ generate_config_content <- function(encrypted_url, encrypted_token,
 // DO NOT EDIT MANUALLY
 // ============================================================================
 
-#ifndef AUTOGRADER_ENCRYPTED_CONFIG_HPP
-#define AUTOGRADER_ENCRYPTED_CONFIG_HPP
+#ifndef AUTOGRADER_ENCRYPTED_CONFIG_H
+#define AUTOGRADER_ENCRYPTED_CONFIG_H
 
 #include <cstdint>
 #include <string>
 #include <vector>
-#include "encryption.hpp"
-#include "../core/types.hpp"
+#include "encryption.h"
+#include "types.h"
 
 namespace autograder {
 namespace config {
@@ -74,7 +74,7 @@ inline Config get_config() {
 } // namespace config
 } // namespace autograder
 
-#endif // AUTOGRADER_ENCRYPTED_CONFIG_HPP
+#endif // AUTOGRADER_ENCRYPTED_CONFIG_H
 ')
 }
 

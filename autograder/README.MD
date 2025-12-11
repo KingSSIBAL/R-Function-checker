@@ -156,7 +156,7 @@ To use a custom repository URL:
 ```r
 # From project root
 source("tools/encrypt_url_helper.R")
-# Script auto-updates src/crypto/encrypted_config.hpp
+# Script auto-updates src/encrypted_config.h
 ```
 
 Then rebuild the package.

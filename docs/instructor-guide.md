@@ -12,25 +12,29 @@ As an instructor, your role is to:
 
 ## 📁 Repository Structure
 
+
 ```
 R-Function-checker/
 ├── autograder/              # The R package (distribute to students)
 │   ├── R/                   # R source files
-│   ├── src/                 # C++ source (modular architecture)
-│   │   ├── core/           # Types, exceptions
-│   │   ├── crypto/         # URL encryption, auth config
-│   │   ├── validation/     # Input validation
-│   │   ├── compare/        # Fast comparison
-│   │   ├── network/        # Secure fetching with auth
-│   │   └── format/         # Output formatting
-│   └── tests/              # 2000+ unit tests
+│   ├── src/                 # C++ backend (flat structure)
+│   │   ├── autograder.cpp   # Main entry points
+│   │   ├── autograder.h     # Public header
+│   │   ├── comparator.h     # Fast comparison engine
+│   │   ├── encryption.h     # AES encryption
+│   │   ├── validator.h      # Input validation
+│   │   ├── fetcher.h        # Network fetching with auth
+│   │   ├── formatter.h      # Output formatting
+│   │   ├── types.h          # Core types
+│   │   └── exceptions.h     # Custom exceptions
+│   └── tests/testthat/      # 2000+ unit tests
 ├── repo/                    # Test case repository
-│   ├── functions/          # Your test case files
-│   └── data/               # Data files (CSV, Excel, RDS, etc.)
+│   ├── functions/           # Your test case files
+│   └── data/                # Data files (CSV, Excel, RDS, etc.)
 ├── tools/                   # Instructor utilities
 │   ├── encrypt_url_helper.R # Main setup script
-│   ├── lib/                # Modular helper functions
-│   └── .env                # Credentials (gitignored)
+│   ├── lib/                 # Modular helper functions
+│   └── .env                 # Credentials (gitignored)
 └── docs/                    # Documentation
 ```
 

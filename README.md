@@ -20,22 +20,21 @@
 
 ## 📁 Project Structure
 
+
 ```
 R-Function-checker/
 ├── autograder/              # R Package
-│   ├── R/
-│   │   ├── autograder.R     # Main R interface
-│   │   ├── execution.R      # Test execution (sequential/parallel)
-│   │   ├── fetch.R          # Secure data fetching
-│   │   └── encryption.R     # Encryption API wrappers
-│   ├── src/
-│   │   ├── core/            # Type definitions, exceptions
-│   │   ├── crypto/          # AES S-box encryption, auth config
-│   │   ├── validation/      # Input sanitization
-│   │   ├── compare/         # Fast object comparison
-│   │   ├── network/         # Secure download with auth
-│   │   ├── format/          # Output formatting
-│   │   └── autograder.hpp   # Main public header
+│   ├── R/                   # R source files
+│   ├── src/                 # C++ backend (flat structure)
+│   │   ├── autograder.cpp   # Main entry points
+│   │   ├── autograder.h     # Public header
+│   │   ├── comparator.h     # Fast comparison engine
+│   │   ├── encryption.h     # AES encryption
+│   │   ├── validator.h      # Input validation
+│   │   ├── fetcher.h        # Network fetching with auth
+│   │   ├── formatter.h      # Output formatting
+│   │   ├── types.h          # Core types
+│   │   └── exceptions.h     # Custom exceptions
 │   └── tests/testthat/      # 2000+ unit tests
 ├── repo/                    # Test case repository
 │   ├── functions/           # Function files with test cases
@@ -113,14 +112,16 @@ test_cases <- list(
 
 ## 🔧 C++ Modules
 
-| Module | Purpose |
-|--------|---------|
-| `core/` | Type definitions, exception hierarchy |
-| `crypto/` | AES S-box encryption, key derivation, auth config |
-| `validation/` | Input validation, path traversal prevention |
-| `compare/` | High-performance R object comparison |
-| `network/` | Secure file download with token authentication |
-| `format/` | Intelligent output formatting |
+
+| Header         | Purpose                        | Key Functions |
+|--------------- |--------------------------------|---------------|
+| `types.h`      | Core types                     | `Config`, `CryptoResult`, `TestResult` |
+| `exceptions.h` | Error handling                 | `AutograderException`, custom errors |
+| `encryption.h` | AES encryption                 | `encrypt()`, `decrypt()`, `derive_key()` |
+| `validator.h`  | Input validation               | `is_valid_function_name()`, security checks |
+| `comparator.h` | Fast comparison                | `compare()`, tolerance handling |
+| `fetcher.h`    | Network fetching               | Token auth, data file download |
+| `formatter.h`  | Output display                 | Smart truncation, formatting |
 
 ## 📊 Performance
 

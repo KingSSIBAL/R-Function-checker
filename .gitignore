@@ -10,6 +10,8 @@ tools/.env
 # R package build artifacts
 *.tar.gz
 *.Rcheck/
+
+# Compiled code (but allow in autograder/src for distribution)
 *.dll
 *.so
 *.o
@@ -20,11 +22,16 @@ tools/.env
 .RData
 .Ruserdata
 
-# pkgdown
+# pkgdown (built site)
 docs/
+
+# Vignette build artifacts
+autograder/doc/
+autograder/Meta/
 
 # Test artifacts
 tests/testthat/Rplots.pdf
+autograder/tests/testthat/Rplots.pdf
 Rplots.pdf
 
 # OS files

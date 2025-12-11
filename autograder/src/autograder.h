@@ -2,7 +2,7 @@
 // AUTOGRADER - MAIN HEADER (PUBLIC API)
 // ============================================================================
 //
-// File: autograder.hpp
+// File: autograder.h
 // Purpose: Main public header file for autograder library
 //
 // This is the main include file that brings together all components
