@@ -3,13 +3,13 @@
 # ============================================================================
 #
 # Tests specifically targeting C++ modules for maximum coverage:
-#   - network/fetcher.cpp
-#   - validation/validator.cpp  
-#   - format/formatter.cpp
-#   - compare/comparator.cpp
-#   - crypto/encryption.cpp
-#   - core/types.hpp
-#   - core/exceptions.hpp
+#   - fetcher.cpp       (network fetching)
+#   - validator.cpp     (input validation)
+#   - formatter.cpp     (output formatting)
+#   - comparator.cpp    (fast comparison)
+#   - encryption.cpp    (AES encryption)
+#   - types.h           (core types)
+#   - exceptions.h      (error handling)
 #
 # ============================================================================
 

@@ -4,7 +4,7 @@
 #
 # This file contains comprehensive tests to maximize code coverage.
 # It targets:
-#   - All C++ functions (exceptions.hpp, validator.cpp, encryption.cpp)
+#   - All C++ functions (exceptions.h, validator.cpp, encryption.cpp)
 #   - All R helper functions (format_output edge cases, validation branches)
 #   - Error paths and edge cases
 #   - Unused branches and fallback logic
