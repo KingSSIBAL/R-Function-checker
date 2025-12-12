@@ -16,6 +16,9 @@ jobs:
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
+    # Allow devel to fail without failing the whole workflow
+    continue-on-error: ${{ matrix.config.r == 'devel' }}
+
     strategy:
       fail-fast: false
       matrix:
