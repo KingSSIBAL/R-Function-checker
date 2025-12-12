@@ -98,7 +98,7 @@
 #' autograder("fibonacci")
 #' }
 #' 
-#' @export
+#' @keywords internal
 clear_all_caches <- function() {
   # Clear instructor code cache
   clear_instructor_cache()
@@ -141,7 +141,7 @@ clear_all_caches <- function() {
 #' cache_info()
 #' }
 #' 
-#' @export
+#' @keywords internal
 cache_info <- function() {
   cache_dir <- file.path(tempdir(), "autograder_cache")
   
@@ -179,7 +179,7 @@ cache_info <- function() {
 #' set_cache_timeout(Inf)
 #' }
 #' 
-#' @export
+#' @keywords internal
 set_cache_timeout <- function(seconds) {
   if (!is.numeric(seconds) || length(seconds) != 1 || seconds < 0) {
     stop("'seconds' must be a non-negative number", call. = FALSE)

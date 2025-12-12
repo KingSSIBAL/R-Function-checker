@@ -12,10 +12,56 @@
 #   - Makes security updates easier
 #   - Simplifies testing
 #
+# Security:
+#   - Rate limiting to prevent API abuse
+#   - Code validation before execution
+#   - Audit logging of fetch operations
+#
 # ============================================================================
 
 # Session-level cache for instructor code (avoids redundant network calls)
 .instructor_cache <- new.env(parent = emptyenv())
+
+# Curl handle pool for connection reuse
+.curl_pool <- new.env(parent = emptyenv())
+
+#' Get a reusable curl handle from the pool
+#' 
+#' @description
+#' Returns a persistent curl handle for connection reuse.
+#' This improves performance by avoiding connection setup overhead.
+#' 
+#' @return A curl handle configured with optimal settings
+#' 
+#' @keywords internal
+get_curl_handle <- function() {
+  if (is.null(.curl_pool$handle)) {
+    .curl_pool$handle <- curl::new_handle()
+    curl::handle_setopt(.curl_pool$handle,
+      connecttimeout = 10,
+      timeout = 30,
+      followlocation = TRUE,
+      ssl_verifypeer = TRUE,
+      tcp_keepalive = TRUE,
+      tcp_keepidle = 60,
+      tcp_keepintvl = 30
+    )
+  }
+  .curl_pool$handle
+}
+
+#' Reset the curl handle pool
+#' 
+#' @description
+#' Resets the curl handle, useful if connection state becomes invalid.
+#' 
+#' @return Invisible NULL
+#' 
+#' @keywords internal
+reset_curl_pool <- function() {
+  .curl_pool$handle <- NULL
+  invisible(NULL)
+}
 
 #' Clear the instructor code cache
 #' 
@@ -74,8 +120,16 @@ clear_instructor_cache <- function() {
 #' 
 #' @keywords internal
 fetch_instructor_code <- function(function_name, use_cache = TRUE, max_retries = autograder_max_retries()) {
+  # Check rate limit before making API call
+  check_rate_limit("fetch_instructor_code")
+  
+  # Log fetch attempt
+
+  log_security_event("fetch_attempt", list(function_name = function_name))
+  
   # Check cache first (avoids redundant network calls)
   if (use_cache && exists(function_name, envir = .instructor_cache)) {
+    log_security_event("fetch_cache_hit", list(function_name = function_name))
     return(get(function_name, envir = .instructor_cache))
   }
   
@@ -91,6 +145,21 @@ fetch_instructor_code <- function(function_name, use_cache = TRUE, max_retries =
         # C++ handles: validation, URL building, download, content verification
         code <- .cpp_fetch_function_content(function_name)
         
+        # Collapse character vector to single string if needed
+        # (C++ returns lines as vector, validation expects single string)
+        if (length(code) > 1) {
+          code <- paste(code, collapse = "\n")
+        }
+        
+        # SECURITY: Validate code before execution
+        validate_code_safety(code, strict = getOption("autograder.strict_validation", TRUE))
+        
+        # Log successful validation
+        log_security_event("code_validated", list(
+          function_name = function_name,
+          code_length = nchar(code)
+        ))
+        
         # Create isolated environment for instructor code
         # This prevents pollution of global environment
         env <- new.env()
@@ -101,6 +170,9 @@ fetch_instructor_code <- function(function_name, use_cache = TRUE, max_retries =
         
         # Cache the result for future calls
         assign(function_name, env, envir = .instructor_cache)
+        
+        # Log successful fetch
+        log_security_event("fetch_success", list(function_name = function_name))
         
         # Return environment containing loaded code
         return(env)

@@ -21,18 +21,70 @@ The autograder includes performance benchmarking features to compare your
 implementation's speed against the instructor's reference solution. This helps 
 you learn to write efficient code.
 
-## Using compare_performance()
+## Integrated Benchmarking
 
-After your function passes all tests, use `compare_performance()` to benchmark:
+The easiest way to benchmark your code is using the `benchmark` parameter 
+in the main `autograder()` function:
 
 ```{r}
 library(autograder)
 
-# First, ensure your function passes all tests
-result <- autograder("fibonacci")
+# Run autograder with benchmarking enabled
+result <- autograder("fibonacci", benchmark = TRUE)
+```
 
-# Then benchmark performance
-perf <- compare_performance("fibonacci", n_runs = 100)
+This will:
+1. Run all tests first
+2. If all tests pass, run performance benchmarks
+3. Display timing comparison with the reference solution
+
+### Benchmark Output
+
+```
+=== Performance Benchmark ===
+Running 50 benchmark iterations...
+
+Your time:       0.000123 seconds (median)
+Reference time:  0.000145 seconds (median)
+Performance:     0.85x (FASTER)
+```
+
+### Benchmark Parameters
+
+```{r}
+autograder("fibonacci", 
+           benchmark = TRUE,        # Enable benchmarking
+           benchmark_runs = 100,    # More runs = more accurate
+           benchmark_bonus = 10)    # Up to 10% bonus for fast code
+```
+
+### Performance Bonus
+
+If your instructor enables performance bonuses, you can earn extra points 
+for implementations faster than the reference:
+
+```{r}
+result <- autograder("fibonacci", 
+                     benchmark = TRUE, 
+                     benchmark_bonus = 10)
+
+# If faster, you'll see:
+# ☆ PERFORMANCE BONUS: +1.5 points (15% of max 10%)
+```
+
+The bonus formula:
+- **2x faster** (ratio = 0.5) → 100% of max bonus
+- **10% faster** (ratio = 0.9) → ~10% of max bonus
+- **Not faster** (ratio ≥ 1.0) → No bonus
+
+## Standalone Performance Comparison
+
+For detailed performance analysis, you can also use the internal 
+`compare_performance()` function:
+
+```{r}
+# Access internal function
+perf <- autograder:::compare_performance("fibonacci", n_runs = 100)
 ```
 
 ## Understanding Results

@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Instructor Guide</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Instructor Guide</h1>
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>This guide explains how instructors can create and manage programming
+assignments using the autograder package. The system allows you to:</p>
+<ul>
+<li>Create reference functions with test cases</li>
+<li>Host problems on GitHub for easy distribution</li>
+<li>Track student performance with point-weighted tests</li>
+<li>Include hidden tests for comprehensive evaluation</li>
+<li><strong>Configure and build custom packages with one
+command</strong></li>
+</ul>
+</div>
+<div id="quick-start-package-setup" class="section level2">
+<h2>Quick Start: Package Setup</h2>
+<p>The autograder provides multiple ways to configure and build a
+customized package for your course:</p>
+<div id="option-1-one-command-setup" class="section level3">
+<h3>Option 1: One-Command Setup</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(autograder)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co"># Configure, build, and install in one step</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">autograder_configure</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="at">url =</span> <span class="st">&quot;https://api.github.com/repos/YourOrg/YourCourse/contents&quot;</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  <span class="at">token =</span> <span class="st">&quot;github_pat_xxxxxxxxxxxx&quot;</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  <span class="at">install =</span> <span class="cn">TRUE</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="option-2-interactive-wizard" class="section level3">
+<h3>Option 2: Interactive Wizard</h3>
+<p>For a guided step-by-step experience:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">autograder_setup_wizard</span>()</span></code></pre></div>
+<p>The wizard will: 1. Check your build tools (Rtools/Xcode) 2. Prompt
+for your repository URL 3. Securely collect your GitHub token 4.
+Validate the token works 5. Build and optionally install the package</p>
+</div>
+<div id="option-3-rstudio-addin" class="section level3">
+<h3>Option 3: RStudio Addin</h3>
+<p>For a graphical interface: 1. Open RStudio 2. Go to
+<strong>Addins</strong> menu → <strong>Configure Autograder</strong> 3.
+Fill in the dialog and click “Configure &amp; Build”</p>
+</div>
+<div id="option-4-github-actions-no-local-build" class="section level3">
+<h3>Option 4: GitHub Actions (No Local Build)</h3>
+<p>Use our GitHub Actions workflow for automated builds: 1. Fork the
+repository 2. Go to Actions → “Build Release Package” 3. Click “Run
+workflow” 4. Enter your URL and token 5. Download built packages for
+Windows, Mac, and Linux</p>
+</div>
+<div id="pre-requisites" class="section level3">
+<h3>Pre-requisites</h3>
+<p>Before building, check that you have the necessary tools:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">autograder_check_build_tools</span>()</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; ✓ Build tools available: Rtools 4.5.1</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co"># Test your token before building</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="fu">autograder_test_token</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">url =</span> <span class="st">&quot;https://api.github.com/repos/YourOrg/YourCourse/contents&quot;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">token =</span> <span class="st">&quot;github_pat_xxxx&quot;</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>)</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; ✓ Token is valid</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; ✓ Repository accessible</span></span></code></pre></div>
+</div>
+</div>
+<div id="repository-structure" class="section level2">
+<h2>Repository Structure</h2>
+<p>Set up a GitHub repository with this structure:</p>
+<pre><code>your-course-repo/
+├── README.md
+└── functions/
+    ├── _problems.R          # Registry of available problems
+    ├── fibonacci.R          # Problem: fibonacci sequence
+    ├── factorial.R          # Problem: factorial function
+    └── sum_vector.R         # Problem: vector summation</code></pre>
+</div>
+<div id="creating-the-problem-registry" class="section level2">
+<h2>Creating the Problem Registry</h2>
+<p>Create <code>functions/_problems.R</code> to list all available
+problems:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># functions/_problems.R</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co"># List of all available problems in this repository</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>problems <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="st">&quot;fibonacci&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="st">&quot;factorial&quot;</span>, </span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="st">&quot;sum_vector&quot;</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="st">&quot;binary_search&quot;</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="st">&quot;matrix_multiply&quot;</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>)</span></code></pre></div>
+<p>Students use <code>list_problems()</code> to see this list.</p>
+</div>
+<div id="creating-a-problem-file" class="section level2">
+<h2>Creating a Problem File</h2>
+<p>Each problem file contains: 1. <strong>Reference function</strong>
+(instructor’s solution) 2. <strong>Test cases</strong> with points and
+descriptions 3. <strong>Optional hidden tests</strong></p>
+<div id="basic-structure" class="section level3">
+<h3>Basic Structure</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># functions/fibonacci.R</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co"># Reference function (instructor&#39;s solution)</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>instructor_fibonacci <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="cf">if</span> (n <span class="sc">&lt;=</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="fu">integer</span>(<span class="dv">0</span>))</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="cf">if</span> (n <span class="sc">==</span> <span class="dv">1</span>) <span class="fu">return</span>(<span class="dv">1</span><span class="dt">L</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="cf">if</span> (n <span class="sc">==</span> <span class="dv">2</span>) <span class="fu">return</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="dt">L</span>, <span class="dv">1</span><span class="dt">L</span>))</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  </span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>  fib <span class="ot">&lt;-</span> <span class="fu">integer</span>(n)</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>  fib[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="dv">1</span><span class="dt">L</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">3</span><span class="sc">:</span>n) {</span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>    fib[i] <span class="ot">&lt;-</span> fib[i<span class="dv">-1</span>] <span class="sc">+</span> fib[i<span class="dv">-2</span>]</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>  }</span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>  fib</span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>}</span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co"># Test cases</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a>test_cases <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>  <span class="co"># Visible tests (students see inputs and expected outputs)</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Edge case: n = 0 returns empty vector&quot;</span>,</span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">0</span>),</span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">1</span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a>  ),</span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Base case: n = 1&quot;</span>,</span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">1</span>),</span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">1</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a>  ),</span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Base case: n = 2&quot;</span>, </span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">2</span>),</span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">1</span></span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a>  ),</span>
+<span id="cb6-35"><a href="#cb6-35" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb6-36"><a href="#cb6-36" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Small sequence: n = 5&quot;</span>,</span>
+<span id="cb6-37"><a href="#cb6-37" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">5</span>),</span>
+<span id="cb6-38"><a href="#cb6-38" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">2</span></span>
+<span id="cb6-39"><a href="#cb6-39" tabindex="-1"></a>  ),</span>
+<span id="cb6-40"><a href="#cb6-40" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb6-41"><a href="#cb6-41" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Medium sequence: n = 10&quot;</span>,</span>
+<span id="cb6-42"><a href="#cb6-42" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">10</span>),</span>
+<span id="cb6-43"><a href="#cb6-43" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">2</span></span>
+<span id="cb6-44"><a href="#cb6-44" tabindex="-1"></a>  ),</span>
+<span id="cb6-45"><a href="#cb6-45" tabindex="-1"></a>  </span>
+<span id="cb6-46"><a href="#cb6-46" tabindex="-1"></a>  <span class="co"># Hidden tests (students don&#39;t see these)</span></span>
+<span id="cb6-47"><a href="#cb6-47" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb6-48"><a href="#cb6-48" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Hidden: Large sequence&quot;</span>,</span>
+<span id="cb6-49"><a href="#cb6-49" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">20</span>),</span>
+<span id="cb6-50"><a href="#cb6-50" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">3</span>,</span>
+<span id="cb6-51"><a href="#cb6-51" tabindex="-1"></a>    <span class="at">hidden =</span> <span class="cn">TRUE</span></span>
+<span id="cb6-52"><a href="#cb6-52" tabindex="-1"></a>  ),</span>
+<span id="cb6-53"><a href="#cb6-53" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb6-54"><a href="#cb6-54" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Hidden: Edge case handling&quot;</span>,</span>
+<span id="cb6-55"><a href="#cb6-55" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="sc">-</span><span class="dv">1</span>),</span>
+<span id="cb6-56"><a href="#cb6-56" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">2</span>,</span>
+<span id="cb6-57"><a href="#cb6-57" tabindex="-1"></a>    <span class="at">hidden =</span> <span class="cn">TRUE</span></span>
+<span id="cb6-58"><a href="#cb6-58" tabindex="-1"></a>  )</span>
+<span id="cb6-59"><a href="#cb6-59" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+</div>
+<div id="test-case-components" class="section level2">
+<h2>Test Case Components</h2>
+<div id="required-fields" class="section level3">
+<h3>Required Fields</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>description</code></td>
+<td>string</td>
+<td>What this test checks</td>
+</tr>
+<tr class="even">
+<td><code>input</code></td>
+<td>list</td>
+<td>Arguments to pass to the function</td>
+</tr>
+<tr class="odd">
+<td><code>points</code></td>
+<td>integer</td>
+<td>Point value (weight)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="optional-fields" class="section level3">
+<h3>Optional Fields</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>hidden</code></td>
+<td>logical</td>
+<td>If TRUE, test details hidden from students</td>
+</tr>
+<tr class="even">
+<td><code>expected</code></td>
+<td>any</td>
+<td>Override expected output (advanced use)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="writing-effective-test-cases" class="section level2">
+<h2>Writing Effective Test Cases</h2>
+<div id="start-with-edge-cases" class="section level3">
+<h3>1. Start with Edge Cases</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Empty input</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Empty vector&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">c</span>()), <span class="at">points =</span> <span class="dv">1</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co"># Single element</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Single element&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">5</span>)), <span class="at">points =</span> <span class="dv">1</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co"># Zero/null values</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Zero input&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">0</span>), <span class="at">points =</span> <span class="dv">1</span>)</span></code></pre></div>
+</div>
+<div id="cover-normal-cases" class="section level3">
+<h3>2. Cover Normal Cases</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Typical inputs</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Small input&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)), <span class="at">points =</span> <span class="dv">2</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Medium input&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>), <span class="at">points =</span> <span class="dv">2</span>)</span></code></pre></div>
+</div>
+<div id="include-stress-tests" class="section level3">
+<h3>3. Include Stress Tests</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Large inputs (often hidden)</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">list</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="at">description =</span> <span class="st">&quot;Large input performance&quot;</span>, </span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), </span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="at">points =</span> <span class="dv">3</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  <span class="at">hidden =</span> <span class="cn">TRUE</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="test-type-handling" class="section level3">
+<h3>4. Test Type Handling</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Different input types</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Integer input&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">5</span><span class="dt">L</span>), <span class="at">points =</span> <span class="dv">1</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Double input&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="fl">5.0</span>), <span class="at">points =</span> <span class="dv">1</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Negative input&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="sc">-</span><span class="dv">5</span>), <span class="at">points =</span> <span class="dv">1</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="multiple-arguments" class="section level2">
+<h2>Multiple Arguments</h2>
+<p>For functions with multiple arguments:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Reference function</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>instructor_power <span class="ot">&lt;-</span> <span class="cf">function</span>(base, exponent) {</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  base <span class="sc">^</span> exponent</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>}</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co"># Test cases</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>test_cases <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Simple power: 2^3&quot;</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">2</span>, <span class="dv">3</span>),  <span class="co"># base = 2, exponent = 3</span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">1</span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a>  ),</span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Negative exponent: 2^-1&quot;</span>,</span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>),  <span class="co"># base = 2, exponent = -1</span></span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">2</span></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a>  ),</span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Zero exponent: 5^0&quot;</span>,</span>
+<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">5</span>, <span class="dv">0</span>),</span>
+<span id="cb11-21"><a href="#cb11-21" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">1</span></span>
+<span id="cb11-22"><a href="#cb11-22" tabindex="-1"></a>  )</span>
+<span id="cb11-23"><a href="#cb11-23" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="point-weighting-strategy" class="section level2">
+<h2>Point Weighting Strategy</h2>
+<p>Recommended point distribution:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Test Type</th>
+<th>Points</th>
+<th>Percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Edge cases</td>
+<td>1-2</td>
+<td>~20%</td>
+</tr>
+<tr class="even">
+<td>Basic functionality</td>
+<td>2-3</td>
+<td>~40%</td>
+</tr>
+<tr class="odd">
+<td>Advanced cases</td>
+<td>3-4</td>
+<td>~25%</td>
+</tr>
+<tr class="even">
+<td>Hidden stress tests</td>
+<td>3-5</td>
+<td>~15%</td>
+</tr>
+</tbody>
+</table>
+<p>Example for a 20-point problem:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>test_cases <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="co"># Edge cases (4 points)</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Empty input&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">c</span>()), <span class="at">points =</span> <span class="dv">2</span>),</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Single element&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">1</span>)), <span class="at">points =</span> <span class="dv">2</span>),</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  </span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="co"># Basic functionality (8 points)</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Small array&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>), <span class="at">points =</span> <span class="dv">2</span>),</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Medium array&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>), <span class="at">points =</span> <span class="dv">3</span>),</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Negative numbers&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="sc">-</span><span class="dv">5</span><span class="sc">:-</span><span class="dv">1</span>), <span class="at">points =</span> <span class="dv">3</span>),</span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>  </span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>  <span class="co"># Advanced (5 points)</span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Mixed values&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">2</span>)), <span class="at">points =</span> <span class="dv">2</span>),</span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Duplicates&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>)), <span class="at">points =</span> <span class="dv">3</span>),</span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a>  </span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a>  <span class="co"># Hidden (3 points)</span></span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">description =</span> <span class="st">&quot;Large input&quot;</span>, <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="at">points =</span> <span class="dv">3</span>, <span class="at">hidden =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="hosting-on-github" class="section level2">
+<h2>Hosting on GitHub</h2>
+<div id="create-repository" class="section level3">
+<h3>1. Create Repository</h3>
+<p>Create a public GitHub repository (e.g.,
+<code>stat101-assignments</code>).</p>
+</div>
+<div id="upload-problem-files" class="section level3">
+<h3>2. Upload Problem Files</h3>
+<p>Push your problem files to the repository.</p>
+</div>
+<div id="configure-autograder" class="section level3">
+<h3>3. Configure Autograder</h3>
+<p>Students point the autograder to your repository:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">library</span>(autograder)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co"># Set your course repository</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="fu">options</span>(<span class="at">autograder_repo =</span> <span class="st">&quot;username/stat101-assignments&quot;</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co"># Now students can list and test problems</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="fu">list_problems</span>()</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="fu">autograder</span>(<span class="st">&quot;fibonacci&quot;</span>)</span></code></pre></div>
+</div>
+<div id="repository-settings" class="section level3">
+<h3>4. Repository Settings</h3>
+<p>The default base URL is:</p>
+<pre><code>https://raw.githubusercontent.com/{repo}/main/functions/</code></pre>
+<p>You can customize this in the package configuration.</p>
+</div>
+</div>
+<div id="security-considerations" class="section level2">
+<h2>Security Considerations</h2>
+<div id="private-repositories" class="section level3">
+<h3>Private Repositories</h3>
+<p>For maximum security, use a private repository with token
+authentication:</p>
+<ol style="list-style-type: decimal">
+<li>Create a private GitHub repository</li>
+<li>Generate a fine-grained personal access token</li>
+<li>Configure secure mode (see <a href="authentication.html">Authentication Guide</a>)</li>
+</ol>
+</div>
+<div id="hidden-tests" class="section level3">
+<h3>Hidden Tests</h3>
+<p>Hidden tests protect your grading criteria:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">list</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="at">description =</span> <span class="st">&quot;Hidden: Stress test&quot;</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10000</span>),</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  <span class="at">points =</span> <span class="dv">5</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>  <span class="at">hidden =</span> <span class="cn">TRUE</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>)</span></code></pre></div>
+<p>Students see: <code>[Test 6] Hidden test (5 pts): PASS/FAIL</code>
+But NOT the actual input or expected output.</p>
+</div>
+<div id="code-encryption" class="section level3">
+<h3>Code Encryption</h3>
+<p>The autograder encrypts function code during transit using RSA
+encryption. Reference implementations are protected from direct
+inspection.</p>
+</div>
+<div id="best-practices" class="section level3">
+<h3>Best Practices</h3>
+<ol style="list-style-type: decimal">
+<li><strong>Use hidden tests</strong> for edge cases you don’t want
+revealed</li>
+<li><strong>Rotate problems</strong> each semester to prevent
+sharing</li>
+<li><strong>Include unique test values</strong> that are hard to
+guess</li>
+<li><strong>Monitor for suspicious patterns</strong> in submissions</li>
+<li><strong>Use private repositories</strong> for exams (see <a href="authentication.html">Authentication</a>)</li>
+</ol>
+</div>
+</div>
+<div id="data-files" class="section level2">
+<h2>Data Files</h2>
+<p>For problems requiring external data (CSV, Excel, RDS), see the <a href="data-files.html">Data Files Guide</a>. Quick example:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>test_cases <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="co"># Declare data files</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="at">data_files =</span> <span class="fu">c</span>(<span class="st">&quot;scores.csv&quot;</span>, <span class="st">&quot;inventory.xlsx&quot;</span>),</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>  </span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>  <span class="at">inputs =</span> <span class="fu">list</span>(</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>    <span class="co"># Filename is replaced with loaded data</span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">data =</span> <span class="st">&quot;scores.csv&quot;</span>, <span class="at">type =</span> <span class="st">&quot;mean&quot;</span>),</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">data =</span> <span class="st">&quot;inventory.xlsx&quot;</span>, <span class="at">type =</span> <span class="st">&quot;sum&quot;</span>)</span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>  ),</span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>  </span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>  <span class="at">descriptions =</span> <span class="fu">c</span>(<span class="st">&quot;CSV analysis&quot;</span>, <span class="st">&quot;Excel analysis&quot;</span>),</span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>  <span class="at">points =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="troubleshooting" class="section level2">
+<h2>Troubleshooting</h2>
+<div id="problem-not-found" class="section level3">
+<h3>“Problem not found”</h3>
+<p>Check that: 1. The problem is listed in <code>_problems.R</code> 2.
+The filename matches (e.g., <code>fibonacci.R</code> for “fibonacci”) 3.
+The repository is accessible</p>
+</div>
+<div id="invalid-test-cases" class="section level3">
+<h3>“Invalid test cases”</h3>
+<p>Ensure each test case has: - <code>description</code> (string) -
+<code>input</code> (list) - <code>points</code> (positive integer)</p>
+</div>
+<div id="network-error" class="section level3">
+<h3>“Network error”</h3>
+<p>Check: - Repository is public - GitHub is accessible - Base URL is
+correct</p>
+</div>
+</div>
+<div id="example-complete-problem" class="section level2">
+<h2>Example Complete Problem</h2>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># functions/mean_absolute_deviation.R</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="co"># Reference function</span></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>instructor_mean_absolute_deviation <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(x) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="cn">NA_real_</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>  <span class="fu">mean</span>(<span class="fu">abs</span>(x <span class="sc">-</span> <span class="fu">mean</span>(x)))</span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>}</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a><span class="co"># Test cases</span></span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>test_cases <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>  <span class="co"># Edge cases</span></span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Empty vector returns NA&quot;</span>,</span>
+<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">c</span>()),</span>
+<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">2</span></span>
+<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a>  ),</span>
+<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Single element returns 0&quot;</span>,</span>
+<span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">5</span>)),</span>
+<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">2</span></span>
+<span id="cb17-21"><a href="#cb17-21" tabindex="-1"></a>  ),</span>
+<span id="cb17-22"><a href="#cb17-22" tabindex="-1"></a>  </span>
+<span id="cb17-23"><a href="#cb17-23" tabindex="-1"></a>  <span class="co"># Basic functionality</span></span>
+<span id="cb17-24"><a href="#cb17-24" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb17-25"><a href="#cb17-25" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Simple case: c(1, 2, 3)&quot;</span>,</span>
+<span id="cb17-26"><a href="#cb17-26" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)),</span>
+<span id="cb17-27"><a href="#cb17-27" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">3</span></span>
+<span id="cb17-28"><a href="#cb17-28" tabindex="-1"></a>  ),</span>
+<span id="cb17-29"><a href="#cb17-29" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb17-30"><a href="#cb17-30" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Larger range: 1:10&quot;</span>,</span>
+<span id="cb17-31"><a href="#cb17-31" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>),</span>
+<span id="cb17-32"><a href="#cb17-32" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">3</span></span>
+<span id="cb17-33"><a href="#cb17-33" tabindex="-1"></a>  ),</span>
+<span id="cb17-34"><a href="#cb17-34" tabindex="-1"></a>  </span>
+<span id="cb17-35"><a href="#cb17-35" tabindex="-1"></a>  <span class="co"># Advanced cases</span></span>
+<span id="cb17-36"><a href="#cb17-36" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb17-37"><a href="#cb17-37" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Negative values&quot;</span>,</span>
+<span id="cb17-38"><a href="#cb17-38" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">3</span>)),</span>
+<span id="cb17-39"><a href="#cb17-39" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">3</span></span>
+<span id="cb17-40"><a href="#cb17-40" tabindex="-1"></a>  ),</span>
+<span id="cb17-41"><a href="#cb17-41" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb17-42"><a href="#cb17-42" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Floating point values&quot;</span>,</span>
+<span id="cb17-43"><a href="#cb17-43" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="fl">1.5</span>, <span class="fl">2.5</span>, <span class="fl">3.5</span>)),</span>
+<span id="cb17-44"><a href="#cb17-44" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">2</span></span>
+<span id="cb17-45"><a href="#cb17-45" tabindex="-1"></a>  ),</span>
+<span id="cb17-46"><a href="#cb17-46" tabindex="-1"></a>  </span>
+<span id="cb17-47"><a href="#cb17-47" tabindex="-1"></a>  <span class="co"># Hidden tests</span></span>
+<span id="cb17-48"><a href="#cb17-48" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb17-49"><a href="#cb17-49" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Hidden: Large vector&quot;</span>,</span>
+<span id="cb17-50"><a href="#cb17-50" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">rnorm</span>(<span class="dv">1000</span>)),</span>
+<span id="cb17-51"><a href="#cb17-51" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">3</span>,</span>
+<span id="cb17-52"><a href="#cb17-52" tabindex="-1"></a>    <span class="at">hidden =</span> <span class="cn">TRUE</span></span>
+<span id="cb17-53"><a href="#cb17-53" tabindex="-1"></a>  ),</span>
+<span id="cb17-54"><a href="#cb17-54" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb17-55"><a href="#cb17-55" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">&quot;Hidden: All same values&quot;</span>,</span>
+<span id="cb17-56"><a href="#cb17-56" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">list</span>(<span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">100</span>)),</span>
+<span id="cb17-57"><a href="#cb17-57" tabindex="-1"></a>    <span class="at">points =</span> <span class="dv">2</span>,</span>
+<span id="cb17-58"><a href="#cb17-58" tabindex="-1"></a>    <span class="at">hidden =</span> <span class="cn">TRUE</span></span>
+<span id="cb17-59"><a href="#cb17-59" tabindex="-1"></a>  )</span>
+<span id="cb17-60"><a href="#cb17-60" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

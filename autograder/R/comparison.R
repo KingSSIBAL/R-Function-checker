@@ -50,7 +50,7 @@
 #' )
 #' }
 #' 
-#' @export
+#' @keywords internal
 register_comparison <- function(name, fn, description = NULL) {
   # Validate inputs
 
@@ -94,7 +94,7 @@ register_comparison <- function(name, fn, description = NULL) {
 #' compare_fn(1.0000001, 1.0)  # TRUE (within default tolerance)
 #' }
 #' 
-#' @export
+#' @keywords internal
 get_comparison <- function(name) {
   if (!exists(name, envir = .comparison_registry)) {
     return(NULL)
@@ -115,7 +115,7 @@ get_comparison <- function(name) {
 #' list_comparisons()
 #' }
 #' 
-#' @export
+#' @keywords internal
 list_comparisons <- function() {
   names <- ls(envir = .comparison_registry)
   
@@ -177,7 +177,7 @@ clear_comparisons <- function(keep_builtin = TRUE) {
 #' compare_numeric(c(1, NA), c(1, NA))  # TRUE (NAs match)
 #' }
 #' 
-#' @export
+#' @keywords internal
 compare_numeric <- function(actual, expected, tolerance = autograder_tolerance()) {
   .cpp_compare_fast(actual, expected, tolerance)
 }
@@ -198,7 +198,7 @@ compare_numeric <- function(actual, expected, tolerance = autograder_tolerance()
 #' compare_exact(1L, 1.0)  # FALSE (different types)
 #' }
 #' 
-#' @export
+#' @keywords internal
 compare_exact <- function(actual, expected) {
   identical(actual, expected)
 }
@@ -207,6 +207,7 @@ compare_exact <- function(actual, expected) {
 #' 
 #' @description
 #' Compares character values ignoring case differences.
+#' Uses C++ implementation for better performance on large vectors.
 #' 
 #' @param actual Character value from student
 #' @param expected Expected character value
@@ -219,18 +220,19 @@ compare_exact <- function(actual, expected) {
 #' compare_case_insensitive("abc", "ABC")  # TRUE
 #' }
 #' 
-#' @export
+#' @keywords internal
 compare_case_insensitive <- function(actual, expected) {
   if (!is.character(actual) || !is.character(expected)) {
     return(FALSE)
   }
-  all(tolower(actual) == tolower(expected))
+  .cpp_compare_case_insensitive(actual, expected)
 }
 
 #' Unordered set comparison
 #' 
 #' @description
 #' Compares two vectors as unordered sets (ignoring element order).
+#' Uses C++ implementation for better performance with sorting and comparison.
 #' Useful when the order of results doesn't matter.
 #' 
 #' @param actual Vector from student
@@ -245,18 +247,14 @@ compare_case_insensitive <- function(actual, expected) {
 #' compare_set(c("b", "a"), c("a", "b"))  # TRUE
 #' }
 #' 
-#' @export
+#' @keywords internal
 compare_set <- function(actual, expected, tolerance = autograder_tolerance()) {
   if (length(actual) != length(expected)) {
     return(FALSE)
   }
   
-  # Sort and compare
-  if (is.numeric(actual) && is.numeric(expected)) {
-    .cpp_compare_fast(sort(actual), sort(expected), tolerance)
-  } else {
-    identical(sort(actual), sort(expected))
-  }
+  # Use C++ implementation for sorting and comparison
+  .cpp_compare_set(actual, expected, tolerance)
 }
 
 #' Data frame comparison (ignoring row order)
@@ -279,7 +277,7 @@ compare_set <- function(actual, expected, tolerance = autograder_tolerance()) {
 #' compare_dataframe(df1, df2)  # TRUE
 #' }
 #' 
-#' @export
+#' @keywords internal
 compare_dataframe <- function(actual, expected, tolerance = autograder_tolerance(),
                                ignore_row_order = FALSE) {
   # Check types
@@ -313,7 +311,7 @@ compare_dataframe <- function(actual, expected, tolerance = autograder_tolerance
 #' compare_length(list(1, 2), c(1, 2))  # TRUE (both length 2)
 #' }
 #' 
-#' @export
+#' @keywords internal
 compare_length <- function(actual, expected) {
   length(actual) == length(expected)
 }
@@ -335,7 +333,7 @@ compare_length <- function(actual, expected) {
 #' compare_class(matrix(1), 1)  # FALSE
 #' }
 #' 
-#' @export
+#' @keywords internal
 compare_class <- function(actual, expected) {
   identical(class(actual), class(expected))
 }
@@ -358,7 +356,7 @@ compare_class <- function(actual, expected) {
 #' compare_relative(1000, 1100, rel_tolerance = 0.01)  # FALSE (10% difference)
 #' }
 #' 
-#' @export
+#' @keywords internal
 compare_relative <- function(actual, expected, rel_tolerance = 0.01) {
   if (!is.numeric(actual) || !is.numeric(expected)) {
     return(FALSE)

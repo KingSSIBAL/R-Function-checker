@@ -16,8 +16,8 @@ Validated and normalized test_data with all fields present
 }
 \description{
 Performs comprehensive validation of test case data structure with
-strict error checking. Ensures all test components are properly formatted
-and consistent.
+strict error checking. Ensures all test components are properly
+formatted and consistent.
 
 Required Fields:
 \itemize{

@@ -23,18 +23,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// cpp_compare_identical
-LogicalVector cpp_compare_identical(SEXP obj1, SEXP obj2);
-RcppExport SEXP _autograder_cpp_compare_identical(SEXP obj1SEXP, SEXP obj2SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type obj1(obj1SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type obj2(obj2SEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_compare_identical(obj1, obj2));
-    return rcpp_result_gen;
-END_RCPP
-}
 // cpp_fetch_function_content
 CharacterVector cpp_fetch_function_content(const std::string& function_name);
 RcppExport SEXP _autograder_cpp_fetch_function_content(SEXP function_nameSEXP) {
@@ -321,10 +309,207 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_openmp_info
+List cpp_openmp_info();
+RcppExport SEXP _autograder_cpp_openmp_info() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(cpp_openmp_info());
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_compare_parallel
+LogicalVector cpp_compare_parallel(NumericVector v1, NumericVector v2, double tolerance);
+RcppExport SEXP _autograder_cpp_compare_parallel(SEXP v1SEXP, SEXP v2SEXP, SEXP toleranceSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type v1(v1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type v2(v2SEXP);
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_compare_parallel(v1, v2, tolerance));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_sum_abs_diff
+NumericVector cpp_sum_abs_diff(NumericVector v1, NumericVector v2);
+RcppExport SEXP _autograder_cpp_sum_abs_diff(SEXP v1SEXP, SEXP v2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type v1(v1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type v2(v2SEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_sum_abs_diff(v1, v2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_compare_case_insensitive
+LogicalVector cpp_compare_case_insensitive(CharacterVector actual, CharacterVector expected);
+RcppExport SEXP _autograder_cpp_compare_case_insensitive(SEXP actualSEXP, SEXP expectedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< CharacterVector >::type actual(actualSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type expected(expectedSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_compare_case_insensitive(actual, expected));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_compare_set
+LogicalVector cpp_compare_set(SEXP actual, SEXP expected, double tolerance);
+RcppExport SEXP _autograder_cpp_compare_set(SEXP actualSEXP, SEXP expectedSEXP, SEXP toleranceSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type actual(actualSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type expected(expectedSEXP);
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_compare_set(actual, expected, tolerance));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_validate_code_safety
+List cpp_validate_code_safety(const std::string& code, bool strict);
+RcppExport SEXP _autograder_cpp_validate_code_safety(SEXP codeSEXP, SEXP strictSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type code(codeSEXP);
+    Rcpp::traits::input_parameter< bool >::type strict(strictSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_validate_code_safety(code, strict));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_contains_dangerous_patterns
+LogicalVector cpp_contains_dangerous_patterns(const std::string& code);
+RcppExport SEXP _autograder_cpp_contains_dangerous_patterns(SEXP codeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type code(codeSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_contains_dangerous_patterns(code));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_configure_rate_limit
+void cpp_configure_rate_limit(int max_calls, int window_seconds);
+RcppExport SEXP _autograder_cpp_configure_rate_limit(SEXP max_callsSEXP, SEXP window_secondsSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type max_calls(max_callsSEXP);
+    Rcpp::traits::input_parameter< int >::type window_seconds(window_secondsSEXP);
+    cpp_configure_rate_limit(max_calls, window_seconds);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_check_rate_limit
+List cpp_check_rate_limit(const std::string& action);
+RcppExport SEXP _autograder_cpp_check_rate_limit(SEXP actionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type action(actionSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_check_rate_limit(action));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_reset_rate_limit
+void cpp_reset_rate_limit();
+RcppExport SEXP _autograder_cpp_reset_rate_limit() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    cpp_reset_rate_limit();
+    return R_NilValue;
+END_RCPP
+}
+// cpp_rate_limit_status
+List cpp_rate_limit_status();
+RcppExport SEXP _autograder_cpp_rate_limit_status() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(cpp_rate_limit_status());
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_secure_random_bytes
+RawVector cpp_secure_random_bytes(int n);
+RcppExport SEXP _autograder_cpp_secure_random_bytes(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_secure_random_bytes(n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_secure_random_hex
+CharacterVector cpp_secure_random_hex(int n);
+RcppExport SEXP _autograder_cpp_secure_random_hex(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_secure_random_hex(n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_configure_audit_logging
+void cpp_configure_audit_logging(bool enabled, int max_entries);
+RcppExport SEXP _autograder_cpp_configure_audit_logging(SEXP enabledSEXP, SEXP max_entriesSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< bool >::type enabled(enabledSEXP);
+    Rcpp::traits::input_parameter< int >::type max_entries(max_entriesSEXP);
+    cpp_configure_audit_logging(enabled, max_entries);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_log_security_event
+void cpp_log_security_event(const std::string& event, const std::string& details);
+RcppExport SEXP _autograder_cpp_log_security_event(SEXP eventSEXP, SEXP detailsSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type event(eventSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type details(detailsSEXP);
+    cpp_log_security_event(event, details);
+    return R_NilValue;
+END_RCPP
+}
+// cpp_get_audit_log
+DataFrame cpp_get_audit_log(int n);
+RcppExport SEXP _autograder_cpp_get_audit_log(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_get_audit_log(n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_clear_audit_log
+void cpp_clear_audit_log();
+RcppExport SEXP _autograder_cpp_clear_audit_log() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    cpp_clear_audit_log();
+    return R_NilValue;
+END_RCPP
+}
+// cpp_audit_logging_enabled
+LogicalVector cpp_audit_logging_enabled();
+RcppExport SEXP _autograder_cpp_audit_logging_enabled() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(cpp_audit_logging_enabled());
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_autograder_cpp_compare_fast", (DL_FUNC) &_autograder_cpp_compare_fast, 3},
-    {"_autograder_cpp_compare_identical", (DL_FUNC) &_autograder_cpp_compare_identical, 2},
     {"_autograder_cpp_fetch_function_content", (DL_FUNC) &_autograder_cpp_fetch_function_content, 1},
     {"_autograder_cpp_fetch_problems_list", (DL_FUNC) &_autograder_cpp_fetch_problems_list, 0},
     {"_autograder_cpp_fetch_data_file", (DL_FUNC) &_autograder_cpp_fetch_data_file, 1},
@@ -350,6 +535,24 @@ static const R_CallMethodDef CallEntries[] = {
     {"_autograder_cpp_get_auth_mode", (DL_FUNC) &_autograder_cpp_get_auth_mode, 0},
     {"_autograder_cpp_has_auth_token", (DL_FUNC) &_autograder_cpp_has_auth_token, 0},
     {"_autograder_cpp_get_auth_info", (DL_FUNC) &_autograder_cpp_get_auth_info, 0},
+    {"_autograder_cpp_openmp_info", (DL_FUNC) &_autograder_cpp_openmp_info, 0},
+    {"_autograder_cpp_compare_parallel", (DL_FUNC) &_autograder_cpp_compare_parallel, 3},
+    {"_autograder_cpp_sum_abs_diff", (DL_FUNC) &_autograder_cpp_sum_abs_diff, 2},
+    {"_autograder_cpp_compare_case_insensitive", (DL_FUNC) &_autograder_cpp_compare_case_insensitive, 2},
+    {"_autograder_cpp_compare_set", (DL_FUNC) &_autograder_cpp_compare_set, 3},
+    {"_autograder_cpp_validate_code_safety", (DL_FUNC) &_autograder_cpp_validate_code_safety, 2},
+    {"_autograder_cpp_contains_dangerous_patterns", (DL_FUNC) &_autograder_cpp_contains_dangerous_patterns, 1},
+    {"_autograder_cpp_configure_rate_limit", (DL_FUNC) &_autograder_cpp_configure_rate_limit, 2},
+    {"_autograder_cpp_check_rate_limit", (DL_FUNC) &_autograder_cpp_check_rate_limit, 1},
+    {"_autograder_cpp_reset_rate_limit", (DL_FUNC) &_autograder_cpp_reset_rate_limit, 0},
+    {"_autograder_cpp_rate_limit_status", (DL_FUNC) &_autograder_cpp_rate_limit_status, 0},
+    {"_autograder_cpp_secure_random_bytes", (DL_FUNC) &_autograder_cpp_secure_random_bytes, 1},
+    {"_autograder_cpp_secure_random_hex", (DL_FUNC) &_autograder_cpp_secure_random_hex, 1},
+    {"_autograder_cpp_configure_audit_logging", (DL_FUNC) &_autograder_cpp_configure_audit_logging, 2},
+    {"_autograder_cpp_log_security_event", (DL_FUNC) &_autograder_cpp_log_security_event, 2},
+    {"_autograder_cpp_get_audit_log", (DL_FUNC) &_autograder_cpp_get_audit_log, 1},
+    {"_autograder_cpp_clear_audit_log", (DL_FUNC) &_autograder_cpp_clear_audit_log, 0},
+    {"_autograder_cpp_audit_logging_enabled", (DL_FUNC) &_autograder_cpp_audit_logging_enabled, 0},
     {NULL, NULL, 0}
 };
 

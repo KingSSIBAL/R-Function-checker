@@ -1,0 +1,217 @@
+---
+title: "Security Model"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Security Model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Security Model
+
+This document describes the security architecture of the autograder package,
+designed to protect instructor test cases while providing useful feedback
+to students.
+
+## Threat Model
+
+### Adversary Profile
+
+The primary adversary is a **motivated student** attempting to:
+
+1. View hidden test cases before solving problems
+2. Extract expected outputs to reverse-engineer solutions
+3. Access instructor's reference implementations
+4. Bypass the grading system
+
+### Assets Protected
+
+| Asset | Protection Level | Method |
+|-------|------------------|--------|
+| Test inputs | Moderate | Encryption in transit |
+| Expected outputs | High | Never sent to client |
+| Instructor code | High | Server-side execution |
+| Repository URL | High | AES encryption |
+
+## Security Layers
+
+### Layer 1: Input Validation
+
+All user inputs are validated before processing:
+
+```r
+# Using checkmate for robust validation
+checkmate::assert_string(function_name, min.chars = 1)
+checkmate::assert_flag(verbose)
+```
+
+**C++ Validation** catches:
+- Path traversal attempts (`../`)
+- Null byte injection
+- Invalid characters
+- Oversized inputs
+
+### Layer 2: Rate Limiting
+
+Prevents brute-force and denial-of-service attacks:
+
+```r
+# Default: 30 calls per minute
+configure_rate_limit(max_calls = 30L, window_seconds = 60L)
+```
+
+Rate limit state is tracked per session:
+- Window resets after 60 seconds
+- Exceeding limit returns clear error with wait time
+
+### Layer 3: Code Validation
+
+Decrypted instructor code is scanned before execution:
+
+```r
+# Dangerous patterns blocked:
+.dangerous_patterns <- list(
+  system_exec = "\\b(system|system2|shell)\\s*\\(",
+  file_delete = "\\b(unlink|file\\.remove)\\s*\\(",
+  env_modify = "\\b(Sys\\.setenv|Sys\\.unsetenv)\\s*\\(",
+  # ... more patterns
+)
+```
+
+Severity levels:
+- **Critical**: Always blocked (system commands, quit)
+- **High**: Blocked in strict mode (file operations)
+- **Medium**: Warning only (downloads)
+
+### Layer 4: Transport Security
+
+All network communications use HTTPS:
+
+```r
+# In get_curl_handle()
+curl::handle_setopt(handle,
+  ssl_verifypeer = TRUE,  # Verify certificates
+  followlocation = TRUE   # Follow redirects safely
+)
+```
+
+### Layer 5: Secure Memory
+
+Sensitive data is cleared after use:
+
+```cpp
+// C++ secure clearing
+inline void secure_clear_string(std::string& s) {
+    if (!s.empty()) {
+        volatile char* p = &s[0];
+        for (size_t i = 0; i < s.size(); ++i) p[i] = 0;
+        s.clear();
+    }
+}
+```
+
+The `SecureString` RAII class automatically clears on destruction.
+
+## Encryption Scheme
+
+### Algorithm
+
+The package uses AES S-box based encryption:
+
+1. **Key Derivation**: Multiple factors combined
+2. **XOR with Key**: Initial transformation
+3. **S-box Substitution**: Non-linear confusion
+
+```cpp
+// S-box encryption step
+for (size_t i = 0; i < data.length(); ++i) {
+    uint8_t byte = data[i] ^ key[i % key_len];
+    result[i] = AES_SBOX[byte];
+}
+```
+
+### Key Management
+
+Keys are derived from multiple factors:
+
+- Package version
+- Semester/term identifier
+- Static salt values
+
+**Best Practice**: Rotate key factors each semester.
+
+## Audit Logging
+
+Optional security event logging:
+
+```r
+# Enable logging
+autograder_log_config(enabled = TRUE, log_file = "security.log")
+
+# View recent events
+autograder_log_history(n = 10)
+
+# Events logged:
+# - fetch_attempt: Code download initiated
+# - code_validated: Code passed safety checks
+# - rate_limit_exceeded: Rate limit hit
+# - security_violation: Dangerous pattern detected
+```
+
+## Best Practices for Instructors
+
+### 1. Rotate Keys Periodically
+
+Update `encrypted_config.h` each semester:
+
+```cpp
+static const char* KEY_FACTORS[] = {
+    "AUTOGRADER_SECURE_KEY",
+    "v0.4.0",
+    "TERM-2025-SPRING",  // Update this
+    "R-FUNC-CHK"
+};
+```
+
+### 2. Use Private Repositories
+
+Store test cases in a private GitHub repository with token authentication.
+
+### 3. Enable Audit Logging
+
+For exams and assessments, enable security logging:
+
+```r
+autograder_log_config(enabled = TRUE, log_file = "exam_audit.log")
+```
+
+### 4. Review Code Regularly
+
+Periodically review test cases for accidental exposure of solutions.
+
+## Known Limitations
+
+1. **Determined Attackers**: A sufficiently motivated attacker with 
+   debugging tools could potentially extract decryption keys from memory.
+   
+2. **Network Interception**: While HTTPS protects transit, a compromised
+   client machine could log network traffic.
+   
+3. **Code Injection**: If instructor code is compromised, validation
+   patterns could be bypassed.
+
+## Reporting Security Issues
+
+If you discover a security vulnerability:
+
+1. **Do NOT** create a public GitHub issue
+2. Email the maintainer directly: rcagub@up.edu.ph
+3. Include steps to reproduce
+4. Allow 90 days for fix before public disclosure

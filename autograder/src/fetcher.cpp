@@ -68,7 +68,7 @@ Rcpp::CharacterVector Fetcher::download_to_temp(const std::string& url) {
         // Use curl for authenticated download
         download_authenticated(url, temp_path);
     } else {
-        // Legacy: use R's download.file for public repos
+        // Fallback: use R's download.file
         Rcpp::Function download_file("download.file");
         download_file(url, temp_path,
                       Rcpp::Named("mode", "w"),

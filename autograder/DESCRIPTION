@@ -1,19 +1,21 @@
 Package: autograder
 Title: Automated R Function Testing and Grading with C++ Backend
-Version: 0.4.0
+Version: 0.5.0
 Authors@R: 
-    person("Agub", "Reijel", 
+    person("Reijel", "Agub", 
            email = "rcagub@up.edu.ph", 
            role = c("aut", "cre"))
+Author: Reijel Agub [aut, cre]
+Maintainer: Reijel Agub <rcagub@up.edu.ph>
 Description: 
     An automated grading system for R programming assignments with a modern
-    modular C++ backend. Features include parallel test execution, advanced
-    error handling, custom feedback, AES-based encryption for test case 
-    protection, high-performance object comparison, comprehensive input
-    validation, data file support (CSV, Excel, RDS, RData, TXT), and private
-    repository authentication with GitHub tokens. Securely fetches test cases
-    and data files from remote repositories and provides detailed feedback 
-    to help students learn.
+    modular C++ backend. Features include parallel test execution, integrated
+    performance benchmarking with optional bonus points, advanced error handling,
+    custom feedback, AES-based encryption for test case protection, high-performance
+    object comparison, comprehensive input validation, data file support (CSV, Excel,
+    RDS, RData, TXT), and private repository authentication with GitHub tokens.
+    Securely fetches test cases and data files from remote repositories and provides
+    detailed feedback to help students learn.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -22,10 +24,14 @@ SystemRequirements: C++17
 LinkingTo: Rcpp
 Imports: 
     Rcpp (>= 1.0.0),
+    cli,
     curl,
     parallel,
     memoise,
-    digest
+    digest,
+    checkmate,
+    glue,
+    rlang (>= 1.0.0)
 Suggests:
     testthat (>= 3.0.0),
     covr,
@@ -33,7 +39,20 @@ Suggests:
     rmarkdown,
     pkgdown,
     readxl,
-    openxlsx
+    openxlsx,
+    openssl,
+    hedgehog,
+    microbenchmark,
+    waldo,
+    diffobj,
+    shiny,
+    miniUI,
+    rstudioapi,
+    devtools,
+    pkgbuild,
+    getPass,
+    tibble,
+    withr
 VignetteBuilder: knitr
 URL: https://kingssibal.github.io/R-Function-checker/,
     https://github.com/KingSSIBAL/R-Function-checker

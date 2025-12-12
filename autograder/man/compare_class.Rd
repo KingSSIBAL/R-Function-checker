@@ -25,3 +25,4 @@ compare_class(matrix(1), 1)  # FALSE
 }
 
 }
+\keyword{internal}

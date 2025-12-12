@@ -2,9 +2,32 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# Compiled object files
 *.o
 *.so
 *.dll
+src/*.o
+src/*.so
+src/*.dll
+src/autograder.dll
+src/symbols.rds
+
+# macOS
 .DS_Store
+
+# Build artifacts
 /doc/
 /Meta/
+..Rcheck/
+autograder.Rcheck/
+*.tar.gz
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*~
+*.swp
+*.bak

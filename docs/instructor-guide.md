@@ -40,16 +40,52 @@ R-Function-checker/
 
 ## 🚀 Quick Start
 
-### Option 1: Public Repository (Legacy Mode)
+### Option 1: One-Command Setup (Recommended)
 
-For open courses where test cases can be publicly accessible:
+The easiest way to configure and build the package:
 
 ```r
-source("tools/encrypt_url_helper.R")
-setup_legacy_mode()
+library(autograder)
+
+# One-command setup with automatic build
+autograder_configure(
+  url = \"https://api.github.com/repos/YourOrg/YourCourse/contents\",
+  token = \"github_pat_xxxxxxxxxxxx\",
+  install = TRUE
+)
 ```
 
-### Option 2: Private Repository (Secure Mode)
+### Option 2: Interactive Wizard
+
+For a guided experience:
+
+```r
+library(autograder)
+autograder_setup_wizard()
+```
+
+### Option 3: RStudio Addin
+
+1. Open RStudio
+2. Go to **Addins** menu → **Configure Autograder**
+3. Fill in the dialog and click \"Configure & Build\"
+
+### Option 4: GitHub Actions (No Local Build)
+
+For automated multi-platform builds without local compilation:
+
+1. Fork or clone the repository
+2. Go to **Actions** → **Build Release Package**
+3. Click **Run workflow**
+4. Enter your repository URL and token
+5. Download the built packages for Windows, Mac, and Linux
+
+### Option 5: Manual Setup
+
+For more control over the build process:
+
+
+#### Private Repository (Secure Mode)
 
 For exams or when test cases must be protected:
 
@@ -79,12 +115,14 @@ R CMD build .
 R CMD INSTALL autograder_*.tar.gz
 ```
 
-## 🔐 Authentication Modes
+## 🔐 Authentication
 
-| Mode | Use Case | Security Level |
-|------|----------|----------------|
-| **Legacy** | Open courses, shared test cases | Low (public) |
-| **Secure** | Exams, private courses | High (token auth) |
+The autograder uses secure authentication with GitHub tokens for private repository access:
+
+- Token is **embedded** in the built package (encrypted)
+- Each package build generates **unique encryption**
+- Token is **never exposed** in plain text
+- Students **cannot extract** the original token
 
 ### Security Notes
 

@@ -5,14 +5,17 @@
 # File: validation.R
 # Purpose: Validate and normalize test case structures
 #
+# Note: Pure R implementation for maintainability. List operations are 
+# R's native strength, so there's no performance benefit from C++ here.
+#
 # ============================================================================
 
 #' Validate and normalize test case structure
 #' 
 #' @description
 #' Performs comprehensive validation of test case data structure with
-#' strict error checking. Ensures all test components are properly formatted
-#' and consistent.
+#' strict error checking. Ensures all test components are properly 
+#' formatted and consistent.
 #' 
 #' Required Fields:
 #'   - **inputs**: list of input argument lists (REQUIRED)
@@ -71,54 +74,51 @@
 validate_test_cases <- function(test_data, function_name) {
   
   # ===== REQUIRED FIELD: inputs =====
-  # Without inputs, we can't run any tests - CRITICAL ERROR
-  if (!("inputs" %in% names(test_data))) {
-    stop(sprintf(
-      "CRITICAL: Test cases for '%s' are missing required 'inputs' field.\nContact instructor to fix test configuration.",
-      function_name
-    ), call. = FALSE)
+  # NULL is treated as missing, but empty list is a separate error
+  if (is.null(test_data$inputs) && !"inputs" %in% names(test_data)) {
+    stop(
+      sprintf("CRITICAL: Test cases for '%s' are missing required 'inputs' field.\nContact instructor to fix test configuration.", function_name),
+      call. = FALSE
+    )
   }
   
-  # Validate inputs is a non-empty list
-  if (!is.list(test_data$inputs) || length(test_data$inputs) == 0) {
-    stop(sprintf(
-      "CRITICAL: Test cases for '%s' must have at least one test.\nContact instructor to fix test configuration.",
-      function_name
-    ), call. = FALSE)
+  if (is.null(test_data$inputs) || !is.list(test_data$inputs) || length(test_data$inputs) == 0L) {
+    stop(
+      sprintf("CRITICAL: Test cases for '%s' must have at least one test.\nContact instructor to fix test configuration.", function_name),
+      call. = FALSE
+    )
   }
   
-  # Number of tests determines expected length of all other fields
   n_tests <- length(test_data$inputs)
   
   # ===== OPTIONAL FIELD: descriptions =====
-  # Descriptions help students understand what each test checks
   if (!is.null(test_data$descriptions)) {
-    # If provided, length must match inputs
-    if (length(test_data$descriptions) != n_tests) {
-      stop(sprintf(
-        "CRITICAL: Test case descriptions length (%d) doesn't match inputs length (%d).\nContact instructor to fix test configuration.",
-        length(test_data$descriptions), n_tests
-      ), call. = FALSE)
+    if (is.character(test_data$descriptions)) {
+      if (length(test_data$descriptions) != n_tests) {
+        stop(
+          sprintf("CRITICAL: Test case descriptions length (%d) doesn't match inputs length (%d).\nContact instructor to fix test configuration.",
+                  length(test_data$descriptions), n_tests),
+          call. = FALSE
+        )
+      }
     }
   } else {
-    # Default: "Test 1", "Test 2", etc.
-    test_data$descriptions <- paste0("Test ", seq_len(n_tests))
+    # Generate default descriptions
+    test_data$descriptions <- paste("Test", seq_len(n_tests))
   }
   
   # ===== OPTIONAL FIELD: hidden =====
-  # Hidden tests prevent students from reverse-engineering all cases
   if (!is.null(test_data$hidden)) {
-    # Validate length
-    if (length(test_data$hidden) != n_tests) {
-      stop(sprintf(
-        "CRITICAL: 'hidden' field length (%d) doesn't match inputs length (%d).\nContact instructor.",
-        length(test_data$hidden), n_tests
-      ), call. = FALSE)
-    }
-    # Validate type
-    if (!is.logical(test_data$hidden)) {
-      stop("CRITICAL: 'hidden' field must be logical (TRUE/FALSE). Contact instructor.", 
-           call. = FALSE)
+    if (is.logical(test_data$hidden)) {
+      if (length(test_data$hidden) != n_tests) {
+        stop(
+          sprintf("CRITICAL: 'hidden' field length (%d) doesn't match inputs length (%d).\nContact instructor.",
+                  length(test_data$hidden), n_tests),
+          call. = FALSE
+        )
+      }
+    } else {
+      stop("CRITICAL: 'hidden' field must be logical (TRUE/FALSE). Contact instructor.", call. = FALSE)
     }
   } else {
     # Default: all tests visible
@@ -126,19 +126,19 @@ validate_test_cases <- function(test_data, function_name) {
   }
   
   # ===== OPTIONAL FIELD: points =====
-  # Points allow weighted grading (some tests worth more than others)
   if (!is.null(test_data$points)) {
-    # Validate length
-    if (length(test_data$points) != n_tests) {
-      stop(sprintf(
-        "CRITICAL: 'points' field length (%d) doesn't match inputs length (%d).\nContact instructor.",
-        length(test_data$points), n_tests
-      ), call. = FALSE)
+    if (!is.numeric(test_data$points)) {
+      stop("CRITICAL: 'points' must be non-negative numeric values. Contact instructor.", call. = FALSE)
     }
-    # Validate type and values
-    if (!is.numeric(test_data$points) || any(test_data$points < 0)) {
-      stop("CRITICAL: 'points' must be non-negative numeric values. Contact instructor.", 
-           call. = FALSE)
+    if (length(test_data$points) != n_tests) {
+      stop(
+        sprintf("CRITICAL: 'points' field length (%d) doesn't match inputs length (%d).\nContact instructor.",
+                length(test_data$points), n_tests),
+        call. = FALSE
+      )
+    }
+    if (any(test_data$points < 0)) {
+      stop("CRITICAL: 'points' must be non-negative numeric values. Contact instructor.", call. = FALSE)
     }
   } else {
     # Default: all tests worth 1 point
@@ -146,35 +146,31 @@ validate_test_cases <- function(test_data, function_name) {
   }
   
   # ===== OPTIONAL FIELD: tolerance =====
-  # Tolerance for floating-point comparison (handles precision issues)
   if (!is.null(test_data$tolerance)) {
-    # Must be single non-negative number
-    if (!is.numeric(test_data$tolerance) || length(test_data$tolerance) != 1 || 
-        test_data$tolerance < 0) {
-      stop("CRITICAL: 'tolerance' must be a single non-negative numeric value. Contact instructor.", 
-           call. = FALSE)
+    if (!is.numeric(test_data$tolerance) || length(test_data$tolerance) != 1L || test_data$tolerance < 0) {
+      stop("CRITICAL: 'tolerance' must be a single non-negative numeric value. Contact instructor.", call. = FALSE)
     }
   } else {
-    # Default: 1e-10 (suitable for most numerical work)
+    # Default tolerance
     test_data$tolerance <- 1e-10
   }
   
-  # ===== OPTIONAL FIELD: expected_type =====
-  # Type checking helps catch common student errors early
-  if (!is.null(test_data$expected_type)) {
-    # Must be single character string
-    if (!is.character(test_data$expected_type) || length(test_data$expected_type) != 1) {
-      warning("Test case 'expected_type' must be a single character value. Ignoring.")
-      test_data$expected_type <- NULL
+  # ===== OPTIONAL FIELD: hints =====
+  if (!is.null(test_data$hints)) {
+    if (is.character(test_data$hints) && length(test_data$hints) != n_tests) {
+      # Length mismatch - remove hints with warning
+      warning(sprintf("'hints' length (%d) doesn't match number of tests (%d). Ignoring hints.",
+                      length(test_data$hints), n_tests))
+      test_data$hints <- NULL
     }
   }
   
-  # ===== OPTIONAL FIELD: hints =====
-  # Hints provide guidance without giving away the answer
-  if (!is.null(test_data$hints)) {
-    if (length(test_data$hints) != n_tests) {
-      warning("Test case 'hints' length doesn't match. Ignoring hints.")
-      test_data$hints <- NULL
+  # ===== OPTIONAL FIELD: expected_type =====
+  if (!is.null(test_data$expected_type)) {
+    # Must be single character string
+    if (!is.character(test_data$expected_type) || length(test_data$expected_type) != 1L) {
+      warning("Test case 'expected_type' must be a single character value. Ignoring.")
+      test_data$expected_type <- NULL
     }
   }
   
@@ -189,4 +185,42 @@ validate_test_cases <- function(test_data, function_name) {
   
   # Return validated and normalized test data
   test_data
+}
+
+#' Quick validation check for test case inputs (pure R)
+#' 
+#' @param test_data List containing test case configuration
+#' @return TRUE if basic structure is valid
+#' @keywords internal
+quick_validate_inputs <- function(test_data) {
+  !is.null(test_data$inputs) && 
+    is.list(test_data$inputs) && 
+    length(test_data$inputs) > 0L
+}
+
+#' Get test count from test data (pure R)
+#' 
+#' @param test_data List containing test case configuration
+#' @return Number of tests, or -1L if invalid
+#' @keywords internal
+get_test_count <- function(test_data) {
+  if (is.null(test_data$inputs) || !is.list(test_data$inputs)) {
+    return(-1L)
+  }
+  length(test_data$inputs)
+}
+
+#' Validate field lengths match test count (pure R)
+#' 
+#' @param test_data List containing test case configuration
+#' @param n_tests Expected number of tests
+#' @return Named logical vector with validation results for each field
+#' @keywords internal
+validate_field_lengths <- function(test_data, n_tests) {
+  c(
+    descriptions = is.null(test_data$descriptions) || length(test_data$descriptions) == n_tests,
+    hidden = is.null(test_data$hidden) || length(test_data$hidden) == n_tests,
+    points = is.null(test_data$points) || length(test_data$points) == n_tests,
+    hints = is.null(test_data$hints) || length(test_data$hints) == n_tests
+  )
 }

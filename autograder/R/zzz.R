@@ -21,6 +21,8 @@
 #' @importFrom stats median sd
 #' @importFrom utils head tail txtProgressBar setTxtProgressBar
 #' @importFrom digest digest
+#' @importFrom cli col_cyan col_green col_grey col_yellow col_red style_bold symbol
+#' @importFrom checkmate assert_string assert_flag assert_number
 NULL
 
 # ============================================================================
@@ -35,15 +37,7 @@ NULL
 #' 
 #' @return Numeric tolerance value (default: 1e-10)
 #' 
-#' @examples
-#' # Get current default tolerance
-#' autograder_tolerance()
-#' 
-#' # Set custom tolerance
-#' options(autograder.tolerance = 1e-8)
-#' autograder_tolerance()  # Returns 1e-8
-#' 
-#' @export
+#' @keywords internal
 autograder_tolerance <- function() {
   getOption("autograder.tolerance", default = 1e-10)
 }

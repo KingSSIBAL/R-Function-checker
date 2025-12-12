@@ -33,3 +33,4 @@ encrypted <- encrypt_text("my secret", encoding = "base64")
 }
 
 }
+\keyword{internal}

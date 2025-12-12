@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Student Guide</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Student Guide</h1>
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>This guide explains how to use the autograder package to test your R
+programming assignments. The autograder provides immediate feedback on
+your code, helping you learn and improve.</p>
+</div>
+<div id="workflow-summary" class="section level2">
+<h2>Workflow Summary</h2>
+<ol style="list-style-type: decimal">
+<li><strong>Discover</strong> available problems with
+<code>list_problems()</code></li>
+<li><strong>Preview</strong> test cases with
+<code>preview_tests(&quot;function_name&quot;)</code></li>
+<li><strong>Implement</strong> your solution as
+<code>student_function_name</code></li>
+<li><strong>Test</strong> with
+<code>autograder(&quot;function_name&quot;)</code></li>
+<li><strong>Iterate</strong> based on feedback until all tests pass</li>
+<li><strong>Optimize</strong> (optional) using
+<code>compare_performance()</code></li>
+</ol>
+</div>
+<div id="step-by-step-guide" class="section level2">
+<h2>Step-by-Step Guide</h2>
+<div id="step-1-list-available-problems" class="section level3">
+<h3>Step 1: List Available Problems</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(autograder)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">list_problems</span>()</span></code></pre></div>
+<p>This shows all functions available for testing in your course.</p>
+</div>
+<div id="step-2-preview-test-cases" class="section level3">
+<h3>Step 2: Preview Test Cases</h3>
+<p>Before writing code, understand what’s expected:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">preview_tests</span>(<span class="st">&quot;fibonacci&quot;</span>)</span></code></pre></div>
+<p>This shows: - <strong>Test descriptions</strong> - What each test
+checks - <strong>Input values</strong> - What arguments are passed -
+<strong>Point values</strong> - How much each test is worth -
+<strong>Hidden tests</strong> - Existence noted, but details hidden</p>
+</div>
+<div id="step-3-create-your-function" class="section level3">
+<h3>Step 3: Create Your Function</h3>
+<p>Name your function with the <code>student_</code> prefix:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># For the &quot;fibonacci&quot; problem, create student_fibonacci</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>student_fibonacci <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="co"># Your implementation here</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="step-4-run-the-autograder" class="section level3">
+<h3>Step 4: Run the Autograder</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">autograder</span>(<span class="st">&quot;fibonacci&quot;</span>)</span></code></pre></div>
+<p>The autograder returns a results object:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>result<span class="sc">$</span>passed     <span class="co"># Number of tests passed</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>result<span class="sc">$</span>failed     <span class="co"># Number of tests failed</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>result<span class="sc">$</span>total      <span class="co"># Total tests</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>result<span class="sc">$</span>score      <span class="co"># Points earned</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>result<span class="sc">$</span>max_score  <span class="co"># Maximum points</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>result<span class="sc">$</span>pass_rate  <span class="co"># Percentage passed</span></span></code></pre></div>
+</div>
+<div id="step-5-interpret-feedback" class="section level3">
+<h3>Step 5: Interpret Feedback</h3>
+<div id="passing-test" class="section level4">
+<h4>Passing Test</h4>
+<pre><code>[Test 1] Base case: n = 1 (1 pt): PASS</code></pre>
+</div>
+<div id="failing-test" class="section level4">
+<h4>Failing Test</h4>
+<pre><code>[Test 2] Small input: n = 5 (2 pt): FAIL
+  Input:    list(5)
+  Expected: c(1, 1, 2, 3, 5)
+  Got:      c(1, 1, 2, 3, 4)
+
+  Feedback:
+    * Differences at positions: 5</code></pre>
+</div>
+<div id="type-error" class="section level4">
+<h4>Type Error</h4>
+<pre><code>[Test 1] Base case (1 pt): FAIL (Type Error)
+  Expected type: numeric
+  Got type: character</code></pre>
+</div>
+<div id="runtime-error" class="section level4">
+<h4>Runtime Error</h4>
+<pre><code>[Test 1] Base case (1 pt): FAIL (Error)
+  Input: list(5)
+  Error: object &#39;x&#39; not found</code></pre>
+</div>
+</div>
+<div id="step-6-debug-and-retry" class="section level3">
+<h3>Step 6: Debug and Retry</h3>
+<p>Use the feedback to fix your code:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Test your function manually with the failing input</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">student_fibonacci</span>(<span class="dv">5</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co"># Compare with expected output</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co"># Fix the bug</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co"># Run autograder again</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="fu">autograder</span>(<span class="st">&quot;fibonacci&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="tips-for-success" class="section level2">
+<h2>Tips for Success</h2>
+<div id="start-simple" class="section level3">
+<h3>1. Start Simple</h3>
+<p>Test your function manually before running the autograder:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Test edge cases first</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">student_fibonacci</span>(<span class="dv">0</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="fu">student_fibonacci</span>(<span class="dv">1</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="fu">student_fibonacci</span>(<span class="dv">2</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co"># Then larger inputs</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="fu">student_fibonacci</span>(<span class="dv">10</span>)</span></code></pre></div>
+</div>
+<div id="read-error-messages-carefully" class="section level3">
+<h3>2. Read Error Messages Carefully</h3>
+<p>The autograder provides specific feedback: - <strong>Position
+differences</strong> tell you exactly where output differs -
+<strong>Type errors</strong> indicate wrong return type -
+<strong>Runtime errors</strong> show R error messages from your
+function</p>
+</div>
+<div id="handle-edge-cases" class="section level3">
+<h3>3. Handle Edge Cases</h3>
+<p>Many problems have edge cases: - Empty input (<code>n = 0</code>) -
+Single element (<code>n = 1</code>) - Negative numbers - Very large
+inputs</p>
+</div>
+<div id="use-verbose-mode" class="section level3">
+<h3>4. Use Verbose Mode</h3>
+<p>Get detailed output for debugging:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">autograder</span>(<span class="st">&quot;fibonacci&quot;</span>, <span class="at">verbose =</span> <span class="cn">TRUE</span>, <span class="at">show_hints =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+</div>
+<div id="check-your-return-type" class="section level3">
+<h3>5. Check Your Return Type</h3>
+<p>Common type issues:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Wrong: returning string instead of number</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="fu">return</span>(<span class="st">&quot;5&quot;</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co"># Right: returning number</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="fu">return</span>(<span class="dv">5</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co"># Wrong: returning list instead of vector</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="fu">return</span>(<span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))</span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="co"># Right: returning vector</span></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="fu">return</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))</span></code></pre></div>
+</div>
+</div>
+<div id="common-errors-and-solutions" class="section level2">
+<h2>Common Errors and Solutions</h2>
+<div id="function-not-found" class="section level3">
+<h3>“Function not found”</h3>
+<pre><code>Error: Function &#39;student_fibonacci&#39; not found in your environment.</code></pre>
+<p><strong>Solution:</strong> Make sure your function is named correctly
+with <code>student_</code> prefix.</p>
+</div>
+<div id="type-mismatch" class="section level3">
+<h3>“Type mismatch”</h3>
+<pre><code>Type mismatch: Expected numeric but got character</code></pre>
+<p><strong>Solution:</strong> Check that you’re returning numbers, not
+strings.</p>
+</div>
+<div id="length-mismatch" class="section level3">
+<h3>“Length mismatch”</h3>
+<pre><code>Length mismatch: Expected length 10 but got 9</code></pre>
+<p><strong>Solution:</strong> Check your loop bounds for off-by-one
+errors.</p>
+</div>
+<div id="network-error" class="section level3">
+<h3>“Network error”</h3>
+<pre><code>No internet connection detected.</code></pre>
+<p><strong>Solution:</strong> The autograder needs internet to fetch
+test cases. Check your connection.</p>
+</div>
+</div>
+<div id="working-with-data-files" class="section level2">
+<h2>Working with Data Files</h2>
+<p>Some problems require your function to analyze data from files (CSV,
+Excel, RDS). The autograder handles data loading automatically!</p>
+<div id="how-it-works" class="section level3">
+<h3>How It Works</h3>
+<p>When a test uses data files: 1. The autograder downloads the data
+file 2. Loads it into R (as data frame, list, etc.) 3. Passes the loaded
+data to your function</p>
+<p><strong>Your function receives the data directly, not a file
+path!</strong></p>
+</div>
+<div id="example" class="section level3">
+<h3>Example</h3>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># ✅ CORRECT - data is already a data frame</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>student_analyze <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">stat =</span> <span class="st">&quot;mean&quot;</span>) {</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>  <span class="fu">sapply</span>(data[<span class="fu">sapply</span>(data, is.numeric)], </span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>         <span class="cf">switch</span>(stat, <span class="at">mean =</span> mean, <span class="at">sum =</span> sum))</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>}</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co"># ❌ WRONG - don&#39;t try to read the file</span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>student_analyze <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">stat =</span> <span class="st">&quot;mean&quot;</span>) {</span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(data)  <span class="co"># data is NOT a filename!</span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>  <span class="co"># ...</span></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>}</span></code></pre></div>
+<p>For more details, see <a href="data-files.html">Working with Data
+Files</a>.</p>
+</div>
+</div>
+<div id="performance-comparison-optional" class="section level2">
+<h2>Performance Comparison (Optional)</h2>
+<p>After passing all tests, optimize your code:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">compare_performance</span>(<span class="st">&quot;fibonacci&quot;</span>, <span class="at">n_runs =</span> <span class="dv">100</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="fu">print</span>(result)</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="fu">plot</span>(result)</span></code></pre></div>
+<p>This shows how your implementation compares to the reference solution
+in terms of speed.</p>
+</div>
+<div id="getting-help" class="section level2">
+<h2>Getting Help</h2>
+<p>If you’re stuck: 1. Re-read the test case descriptions with
+<code>preview_tests()</code> 2. Test your function manually with simple
+inputs 3. Check the function requirements/documentation 4. Ask your
+instructor for help</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

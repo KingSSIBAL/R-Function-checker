@@ -19,3 +19,4 @@ list_comparisons()
 }
 
 }
+\keyword{internal}

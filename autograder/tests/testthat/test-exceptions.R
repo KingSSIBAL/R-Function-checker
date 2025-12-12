@@ -39,36 +39,43 @@ test_that("C++ fetch handles network errors gracefully", {
 
 test_that("network_error propagates correctly", {
   # Create and throw
-  err <- tryCatch({
-    stop(network_error("Connection failed"))
-  }, error = function(e) e)
+  err <- tryCatch(
+    network_error("Connection failed"),
+    error = function(e) e
+  )
   
   expect_s3_class(err, "network_error")
-  expect_equal(err$message, "Connection failed")
+  expect_true(grepl("Connection failed", conditionMessage(err)))
   
   # Should be catchable as error too
-  result <- tryCatch({
-    stop(network_error("Test"))
-  }, 
-  network_error = function(e) "network",
-  error = function(e) "generic")
+  result <- tryCatch(
+    network_error("Test"),
+    network_error = function(e) "network",
+    error = function(e) "generic"
+  )
   
   expect_equal(result, "network")
 })
 
 test_that("function_not_found_error includes function name", {
-  err <- function_not_found_error("nonexistent_function")
+  err <- tryCatch(
+    function_not_found_error("nonexistent_function"),
+    error = function(e) e
+  )
   
-  expect_true(grepl("nonexistent_function", err$message))
+  expect_true(grepl("nonexistent_function", conditionMessage(err)))
   expect_equal(err$function_name, "nonexistent_function")
-  expect_true(grepl("list_problems", err$message))
+  expect_true(grepl("list_problems", conditionMessage(err)))
 })
 
 test_that("test_execution_error includes test number", {
-  err <- test_execution_error("Test failed", 42)
+  err <- tryCatch(
+    test_execution_error("Test failed", 42),
+    error = function(e) e
+  )
   
   expect_equal(err$test_number, 42)
-  expect_true(grepl("Test failed", err$message))
+  expect_true(grepl("Test failed", conditionMessage(err)))
 })
 
 # ============================================================================
@@ -427,6 +434,8 @@ test_that("comparison handles type coercion edges", {
 test_that("parallel cluster is properly cleaned up", {
   skip_on_cran()  # CRAN has process spawn limits
   skip_on_ci()  # Windows CI has process spawn limits
+  skip_if(identical(Sys.getenv("_R_CHECK_PACKAGE_NAME_"), "autograder"),
+         "Parallel tests skipped during R CMD check")
   # This test ensures no orphan processes
   student_fn <- function(x) x
   instructor_fn <- function(x) x

@@ -27,3 +27,4 @@ compare_numeric(c(1, NA), c(1, NA))  # TRUE (NAs match)
 }
 
 }
+\keyword{internal}

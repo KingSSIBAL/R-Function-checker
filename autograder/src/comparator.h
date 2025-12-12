@@ -20,6 +20,7 @@
 #include <cmath>
 #include <functional>
 #include "types.h"
+#include "omp_config.h"
 
 namespace autograder {
 namespace compare {

@@ -70,3 +70,4 @@ result <- compare_performance("fibonacci",
 }
 
 }
+\keyword{internal}

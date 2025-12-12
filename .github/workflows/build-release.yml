@@ -1,0 +1,271 @@
+# ============================================================================
+# AUTOGRADER - GITHUB ACTIONS BUILD WORKFLOW
+# ============================================================================
+#
+# This workflow allows instructors to build the package without local Rtools.
+# 
+# HOW TO USE:
+# 1. Fork this repository
+# 2. Go to Settings → Secrets → Actions
+# 3. Add these secrets:
+#    - REPO_URL: Your repository URL (raw.githubusercontent.com format)
+#    - GITHUB_TOKEN_PRIVATE: Your GitHub PAT (for private repos)
+# 4. Go to Actions → "Build Autograder Package" → "Run workflow"
+# 5. Download the built package from the Artifacts section
+#
+# ============================================================================
+
+name: Build Autograder Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_url:
+        description: 'Repository URL (raw.githubusercontent.com format)'
+        required: true
+        type: string
+      use_auth:
+        description: 'Use private repository authentication'
+        required: true
+        type: boolean
+        default: false
+      version_suffix:
+        description: 'Version suffix (e.g., "myschool" → autograder_0.4.0-myschool)'
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            r-version: '4.4'
+            platform: linux
+          - os: windows-latest
+            r-version: '4.4'
+            platform: windows
+          - os: macos-latest
+            r-version: '4.4'
+            platform: macos
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.r-version }}
+
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev
+
+      - name: Install R dependencies
+        run: |
+          install.packages(c("Rcpp", "cli", "checkmate", "digest", "curl", "glue", "rlang"))
+        shell: Rscript {0}
+
+      - name: Generate encrypted config
+        env:
+          REPO_URL: ${{ inputs.repo_url }}
+          AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN_PRIVATE }}
+          USE_AUTH: ${{ inputs.use_auth }}
+        run: |
+          # AES S-Box for encryption
+          aes_sbox <- as.integer(c(
+            0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
+            0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
+            0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15,
+            0x04, 0xc7, 0x23, 0xc3, 0x18, 0x96, 0x05, 0x9a, 0x07, 0x12, 0x80, 0xe2, 0xeb, 0x27, 0xb2, 0x75,
+            0x09, 0x83, 0x2c, 0x1a, 0x1b, 0x6e, 0x5a, 0xa0, 0x52, 0x3b, 0xd6, 0xb3, 0x29, 0xe3, 0x2f, 0x84,
+            0x53, 0xd1, 0x00, 0xed, 0x20, 0xfc, 0xb1, 0x5b, 0x6a, 0xcb, 0xbe, 0x39, 0x4a, 0x4c, 0x58, 0xcf,
+            0xd0, 0xef, 0xaa, 0xfb, 0x43, 0x4d, 0x33, 0x85, 0x45, 0xf9, 0x02, 0x7f, 0x50, 0x3c, 0x9f, 0xa8,
+            0x51, 0xa3, 0x40, 0x8f, 0x92, 0x9d, 0x38, 0xf5, 0xbc, 0xb6, 0xda, 0x21, 0x10, 0xff, 0xf3, 0xd2,
+            0xcd, 0x0c, 0x13, 0xec, 0x5f, 0x97, 0x44, 0x17, 0xc4, 0xa7, 0x7e, 0x3d, 0x64, 0x5d, 0x19, 0x73,
+            0x60, 0x81, 0x4f, 0xdc, 0x22, 0x2a, 0x90, 0x88, 0x46, 0xee, 0xb8, 0x14, 0xde, 0x5e, 0x0b, 0xdb,
+            0xe0, 0x32, 0x3a, 0x0a, 0x49, 0x06, 0x24, 0x5c, 0xc2, 0xd3, 0xac, 0x62, 0x91, 0x95, 0xe4, 0x79,
+            0xe7, 0xc8, 0x37, 0x6d, 0x8d, 0xd5, 0x4e, 0xa9, 0x6c, 0x56, 0xf4, 0xea, 0x65, 0x7a, 0xae, 0x08,
+            0xba, 0x78, 0x25, 0x2e, 0x1c, 0xa6, 0xb4, 0xc6, 0xe8, 0xdd, 0x74, 0x1f, 0x4b, 0xbd, 0x8b, 0x8a,
+            0x70, 0x3e, 0xb5, 0x66, 0x48, 0x03, 0xf6, 0x0e, 0x61, 0x35, 0x57, 0xb9, 0x86, 0xc1, 0x1d, 0x9e,
+            0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf,
+            0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16
+          ))
+          
+          key_factors <- c("AUTOGRADER_SECURE_KEY_2025", "v0.4.0", "R-FUNC-CHK", "MODULAR-CPP")
+          
+          sbox_transform <- function(input) {
+            bytes <- as.integer(charToRaw(input))
+            as.raw(sapply(bytes, function(b) aes_sbox[b + 1]))
+          }
+          
+          derive_key <- function(factors, len = 32) {
+            combined <- paste(factors, collapse = "")
+            transformed <- sbox_transform(combined)
+            while (length(transformed) < len) {
+              transformed <- c(transformed, sbox_transform(rawToChar(transformed)))
+            }
+            transformed[1:len]
+          }
+          
+          encrypt_string <- function(plaintext, key) {
+            plain <- as.integer(charToRaw(plaintext))
+            key_int <- as.integer(key)
+            as.raw(sapply(seq_along(plain), function(i) {
+              aes_sbox[bitwXor(plain[i], key_int[((i-1) %% length(key_int)) + 1]) + 1]
+            }))
+          }
+          
+          bytes_to_cpp <- function(bytes, name) {
+            hex <- sprintf("0x%02x", as.integer(bytes))
+            rows <- split(hex, ceiling(seq_along(hex) / 16))
+            paste0(
+              "static const uint8_t ", name, "[] = {\n",
+              paste(sapply(rows, function(r) paste0("    ", paste(r, collapse = ", "))), collapse = ",\n"),
+              "\n};\nstatic const size_t ", name, "_LEN = ", length(bytes), ";\n"
+            )
+          }
+          
+          # Get inputs
+          url <- Sys.getenv("REPO_URL")
+          token <- Sys.getenv("AUTH_TOKEN")
+          use_auth <- Sys.getenv("USE_AUTH") == "true"
+          
+          cat("URL:", substr(url, 1, 50), "...\n")
+          cat("Use Auth:", use_auth, "\n")
+          
+          # Encrypt
+          key <- derive_key(key_factors)
+          enc_url <- encrypt_string(url, key)
+          enc_token <- if (use_auth && nchar(token) > 0) encrypt_string(token, key) else NULL
+          
+          # Generate config
+          token_cpp <- if (!is.null(enc_token)) {
+            bytes_to_cpp(enc_token, "ENCRYPTED_TOKEN")
+          } else {
+            "static const uint8_t ENCRYPTED_TOKEN[] = { 0x00 };\nstatic const size_t ENCRYPTED_TOKEN_LEN = 0;\n"
+          }
+          
+          config <- paste0(
+            '// AUTO-GENERATED BY GITHUB ACTIONS - ', Sys.time(), '\n',
+            '#ifndef AUTOGRADER_ENCRYPTED_CONFIG_HPP\n',
+            '#define AUTOGRADER_ENCRYPTED_CONFIG_HPP\n\n',
+            '#include <cstdint>\n#include <string>\n#include <vector>\n',
+            '#include "encryption.h"\n#include "types.h"\n\n',
+            'namespace autograder {\nnamespace config {\n\n',
+            'static const bool USE_AUTHENTICATION = ', tolower(as.character(use_auth)), ';\n\n',
+            bytes_to_cpp(enc_url, "ENCRYPTED_URL"), '\n',
+            token_cpp, '\n',
+            'static const char* KEY_FACTORS[] = {\n',
+            paste0('    "', key_factors, '"', collapse = ",\n"), '\n};\n',
+            'static const size_t KEY_FACTORS_COUNT = ', length(key_factors), ';\n\n',
+            'inline std::string get_repository_url() {\n',
+            '    std::vector<std::string> factors;\n',
+            '    for (size_t i = 0; i < KEY_FACTORS_COUNT; ++i) factors.push_back(KEY_FACTORS[i]);\n',
+            '    std::string key = crypto::KeyDeriver::derive(factors, 32);\n',
+            '    std::string encrypted(reinterpret_cast<const char*>(ENCRYPTED_URL), ENCRYPTED_URL_LEN);\n',
+            '    crypto::Encryptor enc(key);\n',
+            '    auto result = enc.decrypt(encrypted);\n',
+            '    return result.success ? result.data : "";\n}\n\n',
+            'inline std::string get_auth_token() {\n',
+            '    if (!USE_AUTHENTICATION || ENCRYPTED_TOKEN_LEN == 0) return "";\n',
+            '    std::vector<std::string> factors;\n',
+            '    for (size_t i = 0; i < KEY_FACTORS_COUNT; ++i) factors.push_back(KEY_FACTORS[i]);\n',
+            '    std::string key = crypto::KeyDeriver::derive(factors, 32);\n',
+            '    std::string encrypted(reinterpret_cast<const char*>(ENCRYPTED_TOKEN), ENCRYPTED_TOKEN_LEN);\n',
+            '    crypto::Encryptor enc(key);\n',
+            '    auto result = enc.decrypt(encrypted);\n',
+            '    return result.success ? result.data : "";\n}\n\n',
+            'inline bool is_authentication_enabled() { return USE_AUTHENTICATION; }\n',
+            'inline AuthMode get_auth_mode() { return USE_AUTHENTICATION ? AuthMode::GITHUB_TOKEN : AuthMode::NONE; }\n\n',
+            'inline Config get_config() {\n',
+            '    Config cfg;\n',
+            '    cfg.base_url = get_repository_url();\n',
+            '    cfg.auth_mode = get_auth_mode();\n',
+            '    cfg.auth_token = get_auth_token();\n',
+            '    return cfg;\n}\n\n',
+            '} // namespace config\n} // namespace autograder\n\n',
+            '#endif\n'
+          )
+          
+          writeLines(config, "autograder/src/encrypted_config.h")
+          cat("Config generated successfully!\n")
+        shell: Rscript {0}
+
+      - name: Build package
+        run: |
+          suffix <- "${{ inputs.version_suffix }}"
+          if (nchar(suffix) > 0) {
+            desc <- readLines("autograder/DESCRIPTION")
+            ver_line <- grep("^Version:", desc)
+            old_ver <- sub("^Version: ", "", desc[ver_line])
+            new_ver <- paste0(old_ver, "-", suffix)
+            desc[ver_line] <- paste0("Version: ", new_ver)
+            writeLines(desc, "autograder/DESCRIPTION")
+            cat("Version updated to:", new_ver, "\n")
+          }
+          
+          # Build source package
+          system("R CMD build autograder")
+          
+          # Build binary package
+          pkg_file <- list.files(pattern = "autograder.*\\.tar\\.gz")[1]
+          system(paste("R CMD INSTALL --build", pkg_file))
+        shell: Rscript {0}
+
+      - name: Upload source package
+        uses: actions/upload-artifact@v4
+        with:
+          name: autograder-source-${{ matrix.platform }}
+          path: autograder_*.tar.gz
+
+      - name: Upload binary package (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: autograder-binary-windows
+          path: autograder_*.zip
+
+      - name: Upload binary package (macOS)
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: autograder-binary-macos
+          path: autograder_*.tgz
+
+  create-release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: packages
+
+      - name: List packages
+        run: |
+          echo "Built packages:"
+          find packages -type f -name "autograder*" | head -20
+
+      - name: Create summary
+        run: |
+          echo "## Build Complete! :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Download Links" >> $GITHUB_STEP_SUMMARY
+          echo "Go to **Artifacts** section above to download:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Windows:** \`autograder-binary-windows\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **macOS:** \`autograder-binary-macos\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Linux/Source:** \`autograder-source-*\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Installation" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`r" >> $GITHUB_STEP_SUMMARY
+          echo "install.packages('path/to/autograder_xxx.zip', repos = NULL)" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

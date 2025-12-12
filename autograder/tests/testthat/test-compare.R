@@ -70,24 +70,24 @@ test_that(".cpp_compare_fast handles NULL", {
 })
 
 # ============================================================================
-# IDENTICAL COMPARISON TESTS
+# EXACT COMPARISON TESTS (using .cpp_compare_fast with strict tolerance)
 # ============================================================================
 
-test_that(".cpp_compare_identical handles exact matches", {
-  expect_true(.cpp_compare_identical(c(1, 2, 3), c(1, 2, 3)))
-  expect_true(.cpp_compare_identical("hello", "hello"))
-  expect_true(.cpp_compare_identical(TRUE, TRUE))
+test_that(".cpp_compare_fast handles exact matches", {
+  expect_true(.cpp_compare_fast(c(1, 2, 3), c(1, 2, 3), 1e-10))
+  expect_true(.cpp_compare_fast("hello", "hello", 1e-10))
+  expect_true(.cpp_compare_fast(TRUE, TRUE, 1e-10))
 })
 
-test_that(".cpp_compare_identical rejects clearly different values", {
-  # Identical is strict
-  expect_false(.cpp_compare_identical(1.0, 2.0))
-  expect_false(.cpp_compare_identical("a", "b"))
+test_that(".cpp_compare_fast rejects clearly different values", {
+  # Fast comparison with tight tolerance is strict
+  expect_false(.cpp_compare_fast(1.0, 2.0, 1e-10))
+  expect_false(.cpp_compare_fast("a", "b", 1e-10))
 })
 
-test_that(".cpp_compare_identical handles NULL", {
-  expect_true(.cpp_compare_identical(NULL, NULL))
-  expect_false(.cpp_compare_identical(NULL, 1))
+test_that(".cpp_compare_fast handles NULL", {
+  expect_true(.cpp_compare_fast(NULL, NULL, 1e-10))
+  expect_false(.cpp_compare_fast(NULL, 1, 1e-10))
 })
 
 # ============================================================================
@@ -349,7 +349,7 @@ test_that(".cpp_compare_fast handles raw vectors", {
   expect_false(.cpp_compare_fast(r1, r3, 1e-8))
 })
 
-test_that(".cpp_compare_identical handles attributes", {
+test_that(".cpp_compare_fast handles attributes", {
   v1 <- 1:3
   attr(v1, "custom") <- "test"
   v2 <- 1:3
@@ -357,9 +357,9 @@ test_that(".cpp_compare_identical handles attributes", {
   v3 <- 1:3
   # No custom attribute
   
-  expect_true(.cpp_compare_identical(v1, v2))
+  expect_true(.cpp_compare_fast(v1, v2, 1e-10))
   # v1 has attribute, v3 doesn't - behavior may vary
-  expect_type(.cpp_compare_identical(v1, v3), "logical")
+  expect_type(.cpp_compare_fast(v1, v3, 1e-10), "logical")
 })
 
 test_that(".cpp_compare_fast handles deeply nested lists", {

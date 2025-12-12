@@ -21,10 +21,10 @@ test_that("autograder rejects missing function_name", {
 })
 
 test_that("autograder rejects non-character function_name", {
-  expect_error(autograder(123), "must be a single character string")
-  expect_error(autograder(TRUE), "must be a single character string")
-  expect_error(autograder(c("a", "b")), "must be a single character string")
-  expect_error(autograder(NULL), "must be a single character string")
+  expect_error(autograder(123), "string|character")
+  expect_error(autograder(TRUE), "string|character")
+  expect_error(autograder(c("a", "b")), "length 1")
+  expect_error(autograder(NULL), "string|character")
 })
 
 test_that("autograder rejects invalid logical parameters", {
@@ -218,6 +218,8 @@ test_that("run_tests_parallel falls back when use_parallel is FALSE", {
 test_that("run_tests_parallel works with many tests", {
   skip_on_cran()
   skip_on_ci()  # Windows CI has process spawn limits
+  skip_if(identical(Sys.getenv("_R_CHECK_PACKAGE_NAME_"), "autograder"),
+         "Parallel tests skipped during R CMD check")
   
   student_fn <- function(x) x * 2
   instructor_fn <- function(x) x * 2
@@ -488,4 +490,128 @@ test_that(".onAttach creates startup message", {
   
   # The function exists
   expect_true(exists(".onAttach", envir = asNamespace("autograder")))
+})
+
+# ============================================================================
+# AUTOGRADER_TOLERANCE TESTS
+# ============================================================================
+
+test_that("autograder_tolerance gets current tolerance", {
+  tol <- autograder_tolerance()
+  
+  expect_type(tol, "double")
+  expect_true(tol >= 0)
+})
+
+test_that("autograder_tolerance respects options", {
+  old_opt <- getOption("autograder.tolerance")
+  on.exit(options(autograder.tolerance = old_opt))
+  
+  options(autograder.tolerance = 1e-5)
+  expect_equal(autograder_tolerance(), 1e-5)
+  
+  options(autograder.tolerance = 0.001)
+  expect_equal(autograder_tolerance(), 0.001)
+})
+
+# ============================================================================
+# AUTOGRADER_MAX_RETRIES TESTS
+# ============================================================================
+
+test_that("autograder_max_retries gets current value", {
+  retries <- autograder_max_retries()
+  
+  expect_type(retries, "integer")
+  expect_true(retries >= 0)
+})
+
+test_that("autograder_max_retries respects options", {
+  old_opt <- getOption("autograder.max_retries")
+  on.exit(options(autograder.max_retries = old_opt))
+  
+  options(autograder.max_retries = 5)
+  expect_equal(autograder_max_retries(), 5L)
+  
+  options(autograder.max_retries = 1)
+  expect_equal(autograder_max_retries(), 1L)
+})
+
+# ============================================================================
+# AUTOGRADER_QUICK_REF TESTS
+# ============================================================================
+
+test_that("autograder_quick_ref shows help text", {
+  output <- capture.output(autograder_quick_ref())
+  output_text <- paste(output, collapse = "\n")
+  
+  expect_match(output_text, "autograder", ignore.case = TRUE)
+})
+
+test_that("autograder_quick_ref shows function list", {
+  output <- capture.output(autograder_quick_ref())
+  output_text <- paste(output, collapse = "\n")
+  
+  expect_true(
+    grepl("autograder|check_student|batch_grade", output_text, ignore.case = TRUE)
+  )
+})
+
+# ============================================================================
+# AUTOGRADER_HELP TESTS
+# ============================================================================
+
+test_that("autograder_help shows help text", {
+  output <- capture.output(autograder_help())
+  output_text <- paste(output, collapse = "\n")
+  
+  expect_match(output_text, "autograder|help|usage", ignore.case = TRUE)
+})
+
+test_that("autograder_help handles unknown topic", {
+  expect_error(
+    autograder_help(topic = "nonexistent_topic_xyz"),
+    "Unknown|topic"
+  )
+})
+
+# ============================================================================
+# AUTOGRADER_DIAGNOSE TESTS
+# ============================================================================
+
+test_that("autograder_diagnose returns diagnostic info", {
+  output <- capture.output(diag <- autograder_diagnose())
+  
+  expect_type(diag, "list")
+  expect_true("r_version" %in% names(diag))
+  expect_true("autograder_version" %in% names(diag))
+})
+
+test_that("autograder_diagnose prints diagnostic report", {
+  output <- capture.output(autograder_diagnose())
+  output_text <- paste(output, collapse = "\n")
+  
+  expect_match(output_text, "DIAGNOSTIC", ignore.case = TRUE)
+})
+
+test_that("autograder_diagnose checks dependencies", {
+  output <- capture.output(diag <- autograder_diagnose())
+  
+  expect_true("dependencies" %in% names(diag))
+})
+
+# ============================================================================
+# AUTOGRADER_CHECK_DEPENDENCIES TESTS
+# ============================================================================
+
+test_that("autograder_check_dependencies returns list", {
+  output <- capture.output(deps <- autograder_check_dependencies())
+  
+  expect_type(deps, "list")
+})
+
+test_that("autograder_check_dependencies has ok field", {
+  output <- capture.output(deps <- autograder_check_dependencies())
+  
+  expect_true("ok" %in% names(deps))
+  expect_type(deps$ok, "logical")
 })

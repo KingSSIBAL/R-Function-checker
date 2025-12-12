@@ -142,39 +142,63 @@ navbar:
       aria-label: GitHub
 
 reference:
-  - title: Main Functions
-    desc: Primary functions for students to test their work
+  - title: Core Functions
+    desc: >
+      The main functions students use to test their R implementations.
+      These are the only exported functions in the package.
     contents:
       - autograder
       - list_problems
       - preview_tests
 
-  - title: Data Loading
-    desc: Functions for loading external data files in test cases
+  - title: S3 Methods
+    desc: Print and summary methods for autograder results
     contents:
-      - fetch_data
-      - prefetch_data_files
-      - inject_data_into_inputs
+      - print.autograder_result
+      - summary.autograder_result
 
-  - title: Performance Analysis
-    desc: Compare your implementation against the reference
+  - title: Internal - Help & Diagnostics
+    desc: >
+      Help and diagnostic utilities. Access with `autograder:::function_name()`.
+    contents:
+      - autograder_help
+      - autograder_diagnose
+      - autograder_quick_ref
+      - autograder_check_dependencies
+      - check_student_function
+
+  - title: Internal - Instructor Tools
+    desc: >
+      Functions for instructors to configure the package. 
+      Access with `autograder:::function_name()`.
+    contents:
+      - autograder_configure
+      - autograder_setup_wizard
+      - autograder_test_token
+      - autograder_check_build_tools
+
+  - title: Internal - Performance
+    desc: >
+      Performance comparison utilities.
+      Access with `autograder:::function_name()`.
     contents:
       - compare_performance
-      - starts_with("print.performance")
-      - starts_with("plot.performance")
+      - openmp_status
 
-  - title: Encryption Utilities
-    desc: Functions for encrypting test cases and sensitive data
+  - title: Internal - Cache
+    desc: Cache management functions
     contents:
-      - encrypt_text
-      - decrypt_text
-      - generate_key
-      - derive_key
+      - clear_all_caches
+      - cache_info
 
-  - title: Internal Functions
+  - title: Internal - Batch Grading
+    desc: Functions for grading multiple problems
+    contents:
+      - batch_grade
+
+  - title: Internal - Other
     desc: >
-      Internal functions used by the package. These are not intended
-      for direct use but are documented for completeness.
+      Other internal functions used by the package.
     contents:
       - starts_with(".")
       - fetch_instructor_code
@@ -189,6 +213,14 @@ reference:
       - network_error
       - function_not_found_error
       - test_execution_error
+      - fetch_data
+      - prefetch_data_files
+      - inject_data_into_inputs
+      - encrypt_text
+      - decrypt_text
+      - generate_key
+      - derive_key
+      - show_diff
 
 footer:
   structure:

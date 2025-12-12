@@ -122,7 +122,7 @@ struct HttpResponse {
  * @brief Authentication mode for repository access
  */
 enum class AuthMode {
-    NONE,           // No authentication (public repo, legacy mode)
+    NONE,           // No authentication configured yet
     GITHUB_TOKEN,   // GitHub Personal Access Token
     OAUTH           // OAuth2 flow (future)
 };

@@ -124,13 +124,13 @@ test_that("autograder shows progress bar when requested", {
 })
 
 test_that("autograder validates function_name parameter", {
-  expect_error(autograder(123), "character")
+  expect_error(autograder(123), "string|character")
 })
 
 test_that("autograder validates logical parameters", {
   # Test with non-logical value - should get informative error
-  expect_error(autograder("test", verbose = "yes"), "must be TRUE or FALSE")
-  expect_error(autograder("test", show_progress = "yes"), "must be TRUE or FALSE")
+  expect_error(autograder("test", verbose = "yes"), "logical flag|logical")
+  expect_error(autograder("test", show_progress = "yes"), "logical flag|logical")
 })
 
 # ============================================================================

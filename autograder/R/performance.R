@@ -68,7 +68,7 @@
 #'   test_inputs = list(list(20), list(30), list(50)))
 #' }
 #' 
-#' @export
+#' @keywords internal
 compare_performance <- function(function_name, 
                                  n_runs = 100L,
                                  warmup = 5L,
@@ -288,7 +288,7 @@ compare_performance <- function(function_name,
 #' 
 #' @return Invisibly returns the input object
 #' 
-#' @export
+#' @keywords internal
 print.performance_comparison <- function(x, ...) {
   cat("\n")
   cat("=== Performance Comparison ===\n")
@@ -332,7 +332,7 @@ print.performance_comparison <- function(x, ...) {
 #' 
 #' @return Invisibly returns the input object
 #' 
-#' @export
+#' @keywords internal
 plot.performance_comparison <- function(x, ...) {
   # Convert times to milliseconds for readability
   student_ms <- x$student_times * 1000
@@ -350,5 +350,65 @@ plot.performance_comparison <- function(x, ...) {
   # Add ratio annotation
   mtext(sprintf("Ratio: %.2fx", x$ratio), side = 3, line = 0.5, cex = 0.8)
   
+  invisible(x)
+}
+
+# ============================================================================
+# OPENMP PARALLEL PROCESSING
+# ============================================================================
+
+#' Check OpenMP Parallel Processing Status
+#' 
+#' @description
+#' Reports the status of OpenMP parallel processing support in the
+#' autograder package's C++ backend.
+#' 
+#' OpenMP is used to accelerate comparisons for large vectors (>10,000 elements).
+#' This function shows whether OpenMP is available and configured.
+#' 
+#' @return A list with class "openmp_status" containing:
+#'   \item{available}{Logical. Whether OpenMP is compiled in}
+#'   \item{version}{Character. OpenMP version (e.g., "2015.11" for OpenMP 4.5)}
+#'   \item{max_threads}{Integer. Maximum number of parallel threads available}
+#'   \item{parallel_threshold}{Integer. Minimum vector size for parallelization}
+#' 
+#' @keywords internal
+openmp_status <- function() {
+  info <- .cpp_openmp_info()
+  class(info) <- "openmp_status"
+  info
+}
+
+#' Print OpenMP Status
+#' 
+#' @param x An openmp_status object
+#' @param ... Additional arguments (ignored)
+#' 
+#' @keywords internal
+print.openmp_status <- function(x, ...) {
+  cat("\n")
+  cat(cli::col_cyan(cli::style_bold("OpenMP Parallel Processing Status")), "\n")
+  cat(cli::col_grey(strrep("-", 40)), "\n\n")
+  
+  if (x$available) {
+    cat(cli::col_green("\u2713"), " OpenMP:    ", 
+        cli::col_green("Enabled"), "\n", sep = "")
+    cat("  Version:   ", x$version, "\n", sep = "")
+    cat("  Threads:   ", x$max_threads, " available\n", sep = "")
+    cat("  Threshold: ", format(x$parallel_threshold, big.mark = ","), 
+        " elements\n", sep = "")
+    cat("\n")
+    cat(cli::col_grey("Vectors with >"), 
+        cli::col_cyan(format(x$parallel_threshold, big.mark = ",")),
+        cli::col_grey(" elements use parallel processing.\n"))
+  } else {
+    cat(cli::col_yellow("\u26A0"), " OpenMP:    ", 
+        cli::col_yellow("Not Available"), "\n", sep = "")
+    cat("\n")
+    cat(cli::col_grey("Package will use sequential processing.\n"))
+    cat(cli::col_grey("This is still fast for most use cases.\n"))
+  }
+  
+  cat("\n")
   invisible(x)
 }

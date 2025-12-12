@@ -1,0 +1,4 @@
+Binding: autograder_addin_configure
+Title: Configure Autograder
+Description: Opens a dialog to configure autograder with repository URL and token. Encrypts configuration and rebuilds the package.
+Interactive: true

@@ -5,10 +5,6 @@
     .Call(`_autograder_cpp_compare_fast`, obj1, obj2, tolerance)
 }
 
-.cpp_compare_identical <- function(obj1, obj2) {
-    .Call(`_autograder_cpp_compare_identical`, obj1, obj2)
-}
-
 .cpp_fetch_function_content <- function(function_name) {
     .Call(`_autograder_cpp_fetch_function_content`, function_name)
 }
@@ -108,4 +104,190 @@
 .cpp_get_auth_info <- function() {
     .Call(`_autograder_cpp_get_auth_info`)
 }
+
+.cpp_openmp_info <- function() {
+    .Call(`_autograder_cpp_openmp_info`)
+}
+
+.cpp_compare_parallel <- function(v1, v2, tolerance = 1e-10) {
+    .Call(`_autograder_cpp_compare_parallel`, v1, v2, tolerance)
+}
+
+.cpp_sum_abs_diff <- function(v1, v2) {
+    .Call(`_autograder_cpp_sum_abs_diff`, v1, v2)
+}
+
+#' Case-insensitive string comparison (C++)
+#' 
+#' @param actual Character vector from student
+#' @param expected Expected character vector
+#' @return TRUE if all strings match (case-insensitive)
+#' @keywords internal
+.cpp_compare_case_insensitive <- function(actual, expected) {
+    .Call(`_autograder_cpp_compare_case_insensitive`, actual, expected)
+}
+
+#' Unordered set comparison with sorting (C++)
+#' 
+#' @param actual Vector from student
+#' @param expected Expected vector
+#' @param tolerance Numeric tolerance for numeric vectors
+#' @return TRUE if sets contain same elements
+#' @keywords internal
+.cpp_compare_set <- function(actual, expected, tolerance = 1e-10) {
+    .Call(`_autograder_cpp_compare_set`, actual, expected, tolerance)
+}
+
+#' Validate R code for dangerous patterns (C++)
+#' 
+#' @param code R code as string
+#' @param strict If TRUE, check all severity levels
+#' @return List with validation results
+#' @keywords internal
+.cpp_validate_code_safety <- function(code, strict = TRUE) {
+    .Call(`_autograder_cpp_validate_code_safety`, code, strict)
+}
+
+#' Check if code contains dangerous patterns
+#' 
+#' @param code R code as string
+#' @return TRUE if dangerous patterns found
+#' @keywords internal
+.cpp_contains_dangerous_patterns <- function(code) {
+    .Call(`_autograder_cpp_contains_dangerous_patterns`, code)
+}
+
+#' Configure rate limiter (C++)
+#' 
+#' @param max_calls Maximum calls per window
+#' @param window_seconds Window duration
+#' @keywords internal
+.cpp_configure_rate_limit <- function(max_calls, window_seconds) {
+    invisible(.Call(`_autograder_cpp_configure_rate_limit`, max_calls, window_seconds))
+}
+
+#' Check rate limit (C++)
+#' 
+#' @param action Action name for logging
+#' @return TRUE if within limits
+#' @keywords internal
+.cpp_check_rate_limit <- function(action = "api_call") {
+    .Call(`_autograder_cpp_check_rate_limit`, action)
+}
+
+#' Reset rate limiter (C++)
+#' 
+#' @keywords internal
+.cpp_reset_rate_limit <- function() {
+    invisible(.Call(`_autograder_cpp_reset_rate_limit`))
+}
+
+#' Get rate limit status (C++)
+#' 
+#' @return List with rate limit status
+#' @keywords internal
+.cpp_rate_limit_status <- function() {
+    .Call(`_autograder_cpp_rate_limit_status`)
+}
+
+#' Generate secure random bytes (C++)
+#' 
+#' @param n Number of bytes to generate
+#' @return Raw vector of random bytes
+#' @keywords internal
+.cpp_secure_random_bytes <- function(n) {
+    .Call(`_autograder_cpp_secure_random_bytes`, n)
+}
+
+#' Generate secure random hex string (C++)
+#' 
+#' @param n Number of bytes (result will be 2*n characters)
+#' @return Hex-encoded string
+#' @keywords internal
+.cpp_secure_random_hex <- function(n) {
+    .Call(`_autograder_cpp_secure_random_hex`, n)
+}
+
+#' Configure audit logging (C++)
+#' 
+#' @param enabled Enable or disable logging
+#' @param max_entries Maximum entries to keep
+#' @keywords internal
+.cpp_configure_audit_logging <- function(enabled, max_entries = 1000L) {
+    invisible(.Call(`_autograder_cpp_configure_audit_logging`, enabled, max_entries))
+}
+
+#' Log security event (C++)
+#' 
+#' @param event Event type
+#' @param details Event details
+#' @keywords internal
+.cpp_log_security_event <- function(event, details = "") {
+    invisible(.Call(`_autograder_cpp_log_security_event`, event, details))
+}
+
+#' Get audit log entries (C++)
+#' 
+#' @param n Number of entries (0 = all)
+#' @return Data frame of log entries
+#' @keywords internal
+.cpp_get_audit_log <- function(n = 0L) {
+    .Call(`_autograder_cpp_get_audit_log`, n)
+}
+
+#' Clear audit log (C++)
+#' 
+#' @keywords internal
+.cpp_clear_audit_log <- function() {
+    invisible(.Call(`_autograder_cpp_clear_audit_log`))
+}
+
+#' Check if audit logging is enabled (C++)
+#' 
+#' @return TRUE if enabled
+#' @keywords internal
+.cpp_audit_logging_enabled <- function() {
+    .Call(`_autograder_cpp_audit_logging_enabled`)
+}
+
+#' Validate test case structure (C++)
+#' 
+#' Validate test cases (C++ implementation)
+#' 
+#' @description
+#' Performs fast validation of test case structure with comprehensive
+#' error checking. Returns validated and normalized test data.
+#' 
+#' @param test_data List containing test case configuration
+#' @param function_name Name of function (for error messages)
+#' 
+#' @return List with validated test_data and any error messages
+#' @name validate_test_cases_cpp
+#' @keywords internal
+NULL
+
+#' Quick validation check for test case inputs
+#' 
+#' @param test_data List containing test case configuration
+#' @return TRUE if basic structure is valid
+#' @name quick_validate_tests
+#' @keywords internal
+NULL
+
+#' Get test count from test data
+#' 
+#' @param test_data List containing test case configuration
+#' @return Number of tests, or -1 if invalid
+#' @name get_test_count
+#' @keywords internal
+NULL
+
+#' Validate field lengths match test count
+#' 
+#' @param test_data List containing test case configuration
+#' @param n_tests Expected number of tests
+#' @return LogicalVector with validation results for each field
+#' @name validate_field_lengths
+#' @keywords internal
+NULL
 

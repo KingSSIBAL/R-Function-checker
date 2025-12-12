@@ -24,3 +24,4 @@ compare_exact(1L, 1.0)  # FALSE (different types)
 }
 
 }
+\keyword{internal}

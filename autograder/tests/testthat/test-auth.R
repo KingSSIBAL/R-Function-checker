@@ -7,8 +7,7 @@
 #   - .cpp_get_auth_mode()
 #   - .cpp_has_auth_token()
 #   - .cpp_get_auth_info()
-#   - Legacy mode access tests
-#   - Secure mode access tests (when configured)
+#   - Secure mode access tests
 #
 # ============================================================================
 
@@ -22,10 +21,10 @@ test_that(".cpp_is_auth_enabled returns logical", {
     expect_length(result, 1)
 })
 
-test_that(".cpp_get_auth_mode returns valid mode", {
+test_that(".cpp_get_auth_mode returns secure mode", {
     mode <- autograder:::.cpp_get_auth_mode()
     expect_type(mode, "character")
-    expect_true(mode %in% c("secure", "legacy"))
+    expect_equal(mode, "secure")
 })
 
 test_that(".cpp_has_auth_token returns logical", {
@@ -48,11 +47,8 @@ test_that("auth mode and is_auth_enabled are consistent", {
     is_enabled <- autograder:::.cpp_is_auth_enabled()
     mode <- autograder:::.cpp_get_auth_mode()
     
-    if (is_enabled) {
-        expect_equal(mode, "secure")
-    } else {
-        expect_equal(mode, "legacy")
-    }
+    # Mode is always "secure" now
+    expect_equal(mode, "secure")
 })
 
 test_that("auth info mode matches get_auth_mode", {
@@ -74,103 +70,9 @@ test_that("encrypted URL has positive length", {
 test_that("token length is consistent with auth mode", {
     info <- autograder:::.cpp_get_auth_info()
     
-    if (info$mode == "legacy") {
-        # In legacy mode, token may be 0 or minimal
-        expect_true(info$token_length >= 0)
-    }
-    # In secure mode, token should be present
-    if (info$mode == "secure" && info$has_token) {
+    # Token should be present when has_token is true
+    if (info$has_token) {
         expect_true(info$token_length > 0)
-    }
-})
-
-# ============================================================================
-# LEGACY MODE ACCESS TESTS
-# ============================================================================
-
-test_that("legacy mode can fetch problems list", {
-    skip_on_cran()
-    skip_if_offline()
-    
-    info <- autograder:::.cpp_get_auth_info()
-    
-    if (info$mode == "legacy") {
-        # In legacy mode, should be able to fetch from public repo
-        problems <- autograder:::.cpp_fetch_problems_list()
-        
-        expect_type(problems, "character")
-        expect_true(length(problems) > 0)
-    } else {
-        skip("Not in legacy mode")
-    }
-})
-
-test_that("legacy mode can fetch function content", {
-    skip_on_cran()
-    skip_if_offline()
-    
-    info <- autograder:::.cpp_get_auth_info()
-    
-    if (info$mode == "legacy") {
-        # Fetch fibonacci function code
-        code <- autograder:::.cpp_fetch_function_content("fibonacci")
-        
-        expect_type(code, "character")
-        expect_true(length(code) > 0)
-        
-        # Code should contain function definition
-        code_text <- paste(code, collapse = "\n")
-        expect_true(grepl("function", code_text, ignore.case = TRUE))
-    } else {
-        skip("Not in legacy mode")
-    }
-})
-
-test_that("legacy mode list_problems works", {
-    skip_on_cran()
-    skip_if_offline()
-    
-    info <- autograder:::.cpp_get_auth_info()
-    
-    if (info$mode == "legacy") {
-        problems <- list_problems()
-        
-        expect_type(problems, "character")
-        expect_true(length(problems) > 0)
-        expect_true("fibonacci" %in% problems)
-    } else {
-        skip("Not in legacy mode")
-    }
-})
-
-test_that("legacy mode preview_tests works", {
-    skip_on_cran()
-    skip_if_offline()
-    
-    info <- autograder:::.cpp_get_auth_info()
-    
-    if (info$mode == "legacy") {
-        # This should not error
-        expect_no_error(preview_tests("fibonacci"))
-    } else {
-        skip("Not in legacy mode")
-    }
-})
-
-test_that("legacy mode fetch_instructor_code works", {
-    skip_on_cran()
-    skip_if_offline()
-    
-    info <- autograder:::.cpp_get_auth_info()
-    
-    if (info$mode == "legacy") {
-        env <- fetch_instructor_code("fibonacci")
-        
-        expect_type(env, "environment")
-        expect_true(exists("fibonacci", envir = env))
-        expect_true(is.function(get("fibonacci", envir = env)))
-    } else {
-        skip("Not in legacy mode")
     }
 })
 
@@ -285,44 +187,40 @@ test_that("secure mode fetch_instructor_code works", {
 })
 
 # ============================================================================
-# CURRENT MODE INTEGRATION TESTS (runs regardless of mode)
+# CURRENT MODE INTEGRATION TESTS
 # ============================================================================
 
-test_that("fetch works in current auth mode", {
+test_that("fetch works when configured", {
     skip_on_cran()
     skip_if_offline()
     
     info <- autograder:::.cpp_get_auth_info()
     
-    # This should work regardless of auth mode if configured correctly
-    # In legacy mode: uses public repo
-    # In secure mode: uses private repo with token
+    # Mode is always secure now
+    expect_equal(info$mode, "secure")
     
-    if (info$mode == "legacy") {
-        # Legacy mode should always work with public repo
-        problems <- tryCatch(
-            autograder:::.cpp_fetch_problems_list(),
-            error = function(e) NULL
-        )
+    # If token is configured, attempt to fetch
+    if (info$has_token) {
+        result <- tryCatch({
+            problems <- autograder:::.cpp_fetch_problems_list()
+            list(success = TRUE, problems = problems)
+        }, error = function(e) {
+            list(success = FALSE, error = conditionMessage(e))
+        })
         
-        # If we got problems, the fetch worked
-        if (!is.null(problems)) {
-            expect_type(problems, "character")
+        if (result$success) {
+            expect_type(result$problems, "character")
         }
     }
-    
-    # Note: Secure mode tests require actual token configuration
-    # and are skipped in automated testing
 })
 
-test_that("list_problems works in current auth mode", {
+test_that("list_problems works when configured", {
     skip_on_cran()
     skip_if_offline()
     
     info <- autograder:::.cpp_get_auth_info()
     
-    if (info$mode == "legacy") {
-        # Should work with public repo
+    if (info$has_token) {
         problems <- tryCatch(
             list_problems(),
             error = function(e) NULL
@@ -335,19 +233,18 @@ test_that("list_problems works in current auth mode", {
 })
 
 # ============================================================================
-# SECURE MODE SPECIFIC TESTS (conditional)
+# SECURE MODE SPECIFIC TESTS
 # ============================================================================
 
-test_that("secure mode has token when enabled", {
+test_that("secure mode has token when configured", {
     info <- autograder:::.cpp_get_auth_info()
     
-    if (info$mode == "secure") {
-        # If secure mode is enabled, we expect a token
-        expect_true(info$has_token)
+    # Mode is always secure
+    expect_equal(info$mode, "secure")
+    
+    # If has_token is true, token_length should be positive
+    if (info$has_token) {
         expect_true(info$token_length > 0)
-    } else {
-        # In legacy mode, just verify the check works
-        expect_equal(info$mode, "legacy")
     }
 })
 
@@ -357,7 +254,7 @@ test_that("secure mode can fetch if token configured", {
     
     info <- autograder:::.cpp_get_auth_info()
     
-    if (info$mode == "secure" && info$has_token) {
+    if (info$has_token) {
         # Attempt to fetch - should work if token is valid
         result <- tryCatch({
             code <- autograder:::.cpp_fetch_function_content("fibonacci")
@@ -372,9 +269,6 @@ test_that("secure mode can fetch if token configured", {
         if (result$success) {
             expect_type(result$code, "character")
         }
-    } else {
-        # Legacy mode - verify we can still make assertions
-        expect_true(info$mode %in% c("legacy", "secure"))
     }
 })
 

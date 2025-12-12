@@ -26,6 +26,7 @@
 #include <array>
 #include "types.h"
 #include "exceptions.h"
+#include "omp_config.h"  // For secure memory utilities
 
 namespace autograder {
 namespace crypto {
@@ -329,6 +330,80 @@ std::string quick_decrypt(const std::string& ciphertext,
  * @return Random key string
  */
 std::string generate_random_key(size_t length = 32);
+
+// ============================================================================
+// SECURE MEMORY UTILITIES
+// ============================================================================
+
+/**
+ * @brief Securely clear sensitive data from memory
+ * 
+ * Uses volatile pointer to prevent compiler optimization from
+ * eliminating the memory clear operation.
+ * 
+ * @param s String to clear
+ */
+inline void secure_clear(std::string& s) {
+    if (s.empty()) return;
+    volatile char* p = const_cast<volatile char*>(s.data());
+    for (size_t i = 0; i < s.size(); ++i) {
+        p[i] = 0;
+    }
+    s.clear();
+}
+
+/**
+ * @brief Securely clear a vector of bytes
+ * 
+ * @param v Vector to clear
+ */
+inline void secure_clear(std::vector<uint8_t>& v) {
+    if (v.empty()) return;
+    volatile uint8_t* p = v.data();
+    for (size_t i = 0; i < v.size(); ++i) {
+        p[i] = 0;
+    }
+    v.clear();
+}
+
+/**
+ * @brief RAII wrapper for automatic secure clearing
+ * 
+ * Automatically clears the wrapped string when destroyed.
+ */
+class SecureString {
+private:
+    std::string data_;
+    
+public:
+    SecureString() = default;
+    explicit SecureString(const std::string& s) : data_(s) {}
+    explicit SecureString(std::string&& s) : data_(std::move(s)) {}
+    
+    ~SecureString() {
+        secure_clear(data_);
+    }
+    
+    // Delete copy to prevent accidental copies of sensitive data
+    SecureString(const SecureString&) = delete;
+    SecureString& operator=(const SecureString&) = delete;
+    
+    // Allow move
+    SecureString(SecureString&& other) noexcept : data_(std::move(other.data_)) {}
+    SecureString& operator=(SecureString&& other) noexcept {
+        if (this != &other) {
+            secure_clear(data_);
+            data_ = std::move(other.data_);
+        }
+        return *this;
+    }
+    
+    const std::string& get() const { return data_; }
+    std::string& get() { return data_; }
+    const char* c_str() const { return data_.c_str(); }
+    size_t size() const { return data_.size(); }
+    bool empty() const { return data_.empty(); }
+};
 
 } // namespace crypto
 } // namespace autograder

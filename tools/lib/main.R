@@ -5,8 +5,8 @@
 # Load configuration from .env
 .env_config <- load_env_file()
 
-USE_AUTHENTICATION <- tolower(.env_config$AUTH_MODE %||% "legacy") == "secure"
-REPOSITORY_URL <- .env_config$REPO_URL %||% "https://raw.githubusercontent.com/KingSSIBAL/R-Function-checker/main/repo"
+USE_AUTHENTICATION <- TRUE  # Always use secure mode
+REPOSITORY_URL <- .env_config$REPO_URL %||% "https://api.github.com/repos/KingSSIBAL/R-Function-checker/contents"
 GITHUB_TOKEN <- .env_config$GITHUB_TOKEN %||% ""
 KEY_FACTORS <- if (!is.null(.env_config$KEY_FACTORS)) {
     strsplit(.env_config$KEY_FACTORS, ",")[[1]]
@@ -35,7 +35,7 @@ encrypt_and_update <- function(url = REPOSITORY_URL, token = GITHUB_TOKEN,
         cat("\n╔════════════════════════════════════════════════════════════════════╗\n")
         cat("║          AUTOGRADER URL ENCRYPTION HELPER v0.4.0                   ║\n")
         cat("╚════════════════════════════════════════════════════════════════════╝\n\n")
-        cat(ifelse(use_auth, "🔐 MODE: SECURE (Private Repo)\n\n", "🔓 MODE: LEGACY (Public Repo)\n\n"))
+        cat("🔐 MODE: SECURE (Private Repo)\n\n")
     }
     
     if (use_auth && nchar(token) == 0) {
@@ -71,12 +71,6 @@ setup_secure_mode <- function(url, token) {
     encrypt_and_update(url = url, token = token, use_auth = TRUE)
 }
 
-#' Quick setup for legacy mode
-#' @export
-setup_legacy_mode <- function(url) {
-    encrypt_and_update(url = url, token = "", use_auth = FALSE)
-}
-
 #' Show help
 #' @export
 show_help <- function() {
@@ -85,6 +79,6 @@ show_help <- function() {
     cat("╚════════════════════════════════════════════════════════════════════╝\n\n")
     cat("  test_token()         - Test GitHub token\n")
     cat("  encrypt_and_update() - Encrypt and update package\n\n")
-    cat("  Mode: ", ifelse(USE_AUTHENTICATION, "SECURE", "LEGACY"), " | ")
+    cat("  Mode: SECURE | ")
     cat("Token: ", ifelse(nchar(GITHUB_TOKEN) > 0, "✓ Loaded", "✗ Not set"), "\n\n")
 }

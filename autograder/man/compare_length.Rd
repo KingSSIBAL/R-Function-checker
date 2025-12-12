@@ -25,3 +25,4 @@ compare_length(list(1, 2), c(1, 2))  # TRUE (both length 2)
 }
 
 }
+\keyword{internal}

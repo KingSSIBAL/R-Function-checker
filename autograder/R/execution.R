@@ -98,12 +98,16 @@ run_tests_parallel <- function(student_fun, instructor_fun, test_data, tolerance
   # Ensure cluster is stopped even if error occurs
   on.exit(parallel::stopCluster(cl), add = TRUE)
   
+  # Get timeout from options
+  timeout <- getOption("autograder.test_timeout", 30)
+  
   # Export necessary objects to worker processes
   # Workers are independent R processes with empty environments
   # Must explicitly export anything they need
   parallel::clusterExport(
     cl, 
-    c("student_fun", "instructor_fun", "tolerance", "data_cache", "inject_data_into_inputs"),
+    c("student_fun", "instructor_fun", "tolerance", "data_cache", 
+      "inject_data_into_inputs", "timeout"),
     envir = environment()
   )
   
@@ -118,12 +122,19 @@ run_tests_parallel <- function(student_fun, instructor_fun, test_data, tolerance
       input_args <- inject_data_into_inputs(input_args, data_cache)
     }
     
-    # Run student function with error catching
-    # Errors are captured as error objects, not thrown
-    student_out <- tryCatch(
-      do.call(student_fun, input_args),
-      error = function(e) structure(list(error = e$message), class = "error")
-    )
+    # Run student function with error catching and timeout
+    student_out <- tryCatch({
+      setTimeLimit(cpu = timeout, elapsed = timeout, transient = TRUE)
+      on.exit(setTimeLimit(cpu = Inf, elapsed = Inf, transient = FALSE), add = TRUE)
+      do.call(student_fun, input_args)
+    }, error = function(e) {
+      if (grepl("time limit|reached elapsed|reached CPU", e$message, ignore.case = TRUE)) {
+        structure(list(error = sprintf("Timeout: exceeded %d seconds", timeout)), 
+                  class = c("timeout_error", "error"))
+      } else {
+        structure(list(error = e$message), class = "error")
+      }
+    })
     
     # Run instructor function with error catching
     # If instructor function errors, it's a config problem
@@ -185,6 +196,9 @@ run_tests_parallel <- function(student_fun, instructor_fun, test_data, tolerance
 #' @keywords internal
 run_tests_sequential <- function(student_fun, instructor_fun, test_data, tolerance, data_cache = list()) {
   
+  # Get timeout from options (default: 30 seconds per test)
+  timeout <- getOption("autograder.test_timeout", 30)
+  
   # Simple lapply - process tests one by one
   results <- lapply(seq_along(test_data$inputs), function(i) {
     input_args <- test_data$inputs[[i]]
@@ -195,16 +209,21 @@ run_tests_sequential <- function(student_fun, instructor_fun, test_data, toleran
       input_args <- inject_data_into_inputs(input_args, data_cache)
     }
     
-    # ===== RUN STUDENT FUNCTION =====
-    # Wrap in tryCatch to capture errors without stopping
-    student_out <- tryCatch(
-      do.call(student_fun, input_args),
-      error = function(e) {
-        # Convert error to structured object
-        # This allows checking for errors later with inherits()
+    # ===== RUN STUDENT FUNCTION WITH TIMEOUT =====
+    # Wrap in tryCatch with timeout to prevent infinite loops
+    student_out <- tryCatch({
+      setTimeLimit(cpu = timeout, elapsed = timeout, transient = TRUE)
+      on.exit(setTimeLimit(cpu = Inf, elapsed = Inf, transient = FALSE), add = TRUE)
+      do.call(student_fun, input_args)
+    }, error = function(e) {
+      # Check for timeout error
+      if (grepl("time limit|reached elapsed|reached CPU", e$message, ignore.case = TRUE)) {
+        structure(list(error = sprintf("Timeout: exceeded %d seconds", timeout)), 
+                  class = c("timeout_error", "error"))
+      } else {
         structure(list(error = e$message), class = "error")
       }
-    )
+    })
     
     # ===== RUN INSTRUCTOR FUNCTION =====
     # Should never error (instructor code should be tested)

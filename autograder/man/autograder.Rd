@@ -10,7 +10,10 @@ autograder(
   show_hidden = FALSE,
   show_progress = FALSE,
   use_parallel = TRUE,
-  show_hints = TRUE
+  show_hints = TRUE,
+  benchmark = FALSE,
+  benchmark_runs = 50L,
+  benchmark_bonus = 0
 )
 }
 \arguments{
@@ -37,6 +40,18 @@ FALSE: Always use sequential execution}
 \item{show_hints}{Logical. Show hints for failed tests?
 TRUE (default): Display instructor hints when available
 FALSE: Hide hints (for exams/assessments)}
+
+\item{benchmark}{Logical. Run performance benchmark after tests?
+FALSE (default): Skip performance comparison
+TRUE: Compare your implementation's speed vs instructor's}
+
+\item{benchmark_runs}{Integer. Number of benchmark iterations (default: 50).
+Higher values give more accurate timing but take longer.
+Only used when benchmark = TRUE.}
+
+\item{benchmark_bonus}{Numeric. Maximum bonus percentage for performance (default: 0).
+Set to e.g. 10 to award up to 10\% bonus points for fast implementations.
+Only awarded if all tests pass and implementation is faster than reference.}
 }
 \value{
 Invisibly returns a list with test results:
@@ -44,9 +59,10 @@ Invisibly returns a list with test results:
 \item \code{passed}: Integer. Number of tests passed
 \item \code{failed}: Integer. Number of tests failed
 \item \code{total}: Integer. Total number of tests
-\item \code{score}: Numeric. Points earned
-\item \code{max_score}: Numeric. Maximum possible points
+\item \code{score}: Numeric. Points earned (includes benchmark bonus if any)
+\item \code{max_score}: Numeric. Maximum possible points (includes max bonus)
 \item \code{pass_rate}: Numeric. Percentage of tests passed (0-100)
+\item \code{benchmark}: List with performance data (if benchmark = TRUE)
 }
 }
 \description{
@@ -111,6 +127,8 @@ print(result$pass_rate)  # 100 if all passed
 autograder("fibonacci", verbose = FALSE)           # Minimal output
 autograder("fibonacci", show_hints = TRUE)         # Show hints
 autograder("fibonacci", use_parallel = FALSE)      # Force sequential
+autograder("fibonacci", benchmark = TRUE)          # Include performance benchmark
+autograder("fibonacci", benchmark = TRUE, benchmark_bonus = 10)  # With bonus points
 }
 
 }

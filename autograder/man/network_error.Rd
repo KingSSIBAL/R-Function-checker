@@ -12,12 +12,11 @@ network_error(message, call = NULL)
 \item{call}{The call that generated the error (usually NULL or sys.call())}
 }
 \value{
-An S3 object of class c("network_error", "error", "condition")
+An S3 object of class c("autograder_network_error", "autograder_error", "error", "condition")
 }
 \description{
-Creates a structured error object for network failures. This allows
-calling code to handle network issues specifically, separate from
-other types of errors.
+Creates a structured error object for network failures using rlang.
+This allows calling code to handle network issues specifically.
 }
 \details{
 Common network issues this error represents:

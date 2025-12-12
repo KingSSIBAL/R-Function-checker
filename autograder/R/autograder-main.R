@@ -68,15 +68,28 @@
 #' @param show_hints Logical. Show hints for failed tests?
 #'        TRUE (default): Display instructor hints when available
 #'        FALSE: Hide hints (for exams/assessments)
+#'        
+#' @param benchmark Logical. Run performance benchmark after tests?
+#'        FALSE (default): Skip performance comparison
+#'        TRUE: Compare your implementation's speed vs instructor's
+#'        
+#' @param benchmark_runs Integer. Number of benchmark iterations (default: 50).
+#'        Higher values give more accurate timing but take longer.
+#'        Only used when benchmark = TRUE.
+#'        
+#' @param benchmark_bonus Numeric. Maximum bonus percentage for performance (default: 0).
+#'        Set to e.g. 10 to award up to 10% bonus points for fast implementations.
+#'        Only awarded if all tests pass and implementation is faster than reference.
 #'
 #' @return Invisibly returns a list with test results:
 #' \itemize{
 #'   \item \code{passed}: Integer. Number of tests passed
 #'   \item \code{failed}: Integer. Number of tests failed
 #'   \item \code{total}: Integer. Total number of tests
-#'   \item \code{score}: Numeric. Points earned
-#'   \item \code{max_score}: Numeric. Maximum possible points
+#'   \item \code{score}: Numeric. Points earned (includes benchmark bonus if any)
+#'   \item \code{max_score}: Numeric. Maximum possible points (includes max bonus)
 #'   \item \code{pass_rate}: Numeric. Percentage of tests passed (0-100)
+#'   \item \code{benchmark}: List with performance data (if benchmark = TRUE)
 #' }
 #'
 #' @section Usage Workflow:
@@ -124,15 +137,18 @@
 #' autograder("fibonacci", verbose = FALSE)           # Minimal output
 #' autograder("fibonacci", show_hints = TRUE)         # Show hints
 #' autograder("fibonacci", use_parallel = FALSE)      # Force sequential
+#' autograder("fibonacci", benchmark = TRUE)          # Include performance benchmark
+#' autograder("fibonacci", benchmark = TRUE, benchmark_bonus = 10)  # With bonus points
 #' }
 #'
 autograder <- function(function_name, verbose = TRUE, show_hidden = FALSE, 
-                       show_progress = FALSE, use_parallel = TRUE, show_hints = TRUE) {
+                       show_progress = FALSE, use_parallel = TRUE, show_hints = TRUE,
+                       benchmark = FALSE, benchmark_runs = 50L, benchmark_bonus = 0) {
   
   # ==========================================================================
   # SECTION 1: INPUT VALIDATION
   # ==========================================================================
-  # Comprehensive validation prevents confusing errors later.
+  # Comprehensive validation using checkmate for robust type checking.
   # Better to fail fast with clear message than proceed with bad input.
   
   # ===== Check function_name is provided =====
@@ -145,25 +161,26 @@ autograder <- function(function_name, verbose = TRUE, show_hidden = FALSE,
     )
   }
   
-  # ===== Validate function_name type and length =====
-  if (!is.character(function_name) || length(function_name) != 1) {
-    stop(
-      "function_name must be a single character string.\n",
-      sprintf("Got: %s (type: %s)", deparse(function_name), class(function_name)),
-      call. = FALSE
-    )
-  }
+  # ===== Validate function_name using checkmate =====
+  checkmate::assert_string(function_name, min.chars = 1, 
+                           .var.name = "function_name")
   
-  # ===== Validate all logical parameters =====
-  # Students often pass "yes"/"no" or 1/0 instead of TRUE/FALSE
-  # Catch these early with clear error messages
-  for (param in list(verbose, show_hidden, show_progress, use_parallel, show_hints)) {
-    if (!is.logical(param) || length(param) != 1) {
-      param_name <- deparse(substitute(param))
-      stop(sprintf("%s must be TRUE or FALSE", param_name), call. = FALSE)
-    }
-  }
+  # ===== Validate all logical parameters using checkmate =====
+  checkmate::assert_flag(verbose, .var.name = "verbose")
+  checkmate::assert_flag(show_hidden, .var.name = "show_hidden")
+  checkmate::assert_flag(show_progress, .var.name = "show_progress")
+  checkmate::assert_flag(use_parallel, .var.name = "use_parallel")
+  checkmate::assert_flag(show_hints, .var.name = "show_hints")
+  checkmate::assert_flag(benchmark, .var.name = "benchmark")
   
+  # ===== Validate benchmark parameters =====
+  checkmate::assert_integerish(benchmark_runs, lower = 1, len = 1, 
+                                .var.name = "benchmark_runs")
+  benchmark_runs <- as.integer(benchmark_runs)
+  
+  checkmate::assert_number(benchmark_bonus, lower = 0, upper = 100,
+                           .var.name = "benchmark_bonus")
+
   # ===== Check internet connection =====
   # Better to check now than let download fail with cryptic error
   if (!curl::has_internet()) {
@@ -193,10 +210,7 @@ autograder <- function(function_name, verbose = TRUE, show_hidden = FALSE,
   
   # Check if function exists and is actually a function
   if (!exists(student_fun_name, envir = .GlobalEnv, mode = "function")) {
-    stop(sprintf(
-      "Function '%s' not found in your environment.\n\nPlease define:\n  %s <- function(...) { ... }\n\nThen run autograder('%s') again.",
-      student_fun_name, student_fun_name, function_name
-    ), call. = FALSE)
+    stop(student_function_error(function_name))
   }
   
   # Get the student's function
@@ -442,16 +456,128 @@ autograder <- function(function_name, verbose = TRUE, show_hidden = FALSE,
   }
   
   # ==========================================================================
-  # SECTION 8: RETURN STRUCTURED RESULTS
+  # SECTION 8: PERFORMANCE BENCHMARK (Optional)
   # ==========================================================================
-  # Return results invisibly so they can be captured but don't print by default
+  # Run performance comparison if requested and all tests passed
   
-  invisible(list(
+  benchmark_result <- NULL
+  benchmark_bonus_earned <- 0
+  
+  if (benchmark) {
+    cat("\n=== Performance Benchmark ===\n")
+    
+    if (passed != n_tests) {
+      # Can't benchmark if tests failed
+      cat("Skipped: All tests must pass before benchmarking.\n")
+      cat("Fix the failing tests first, then run again with benchmark = TRUE.\n")
+    } else {
+      # Run benchmark
+      cat(sprintf("Running %d benchmark iterations...\n", benchmark_runs))
+      
+      # Get test inputs for benchmarking (use visible tests only)
+      visible_indices <- which(!hidden)
+      bench_inputs <- if (length(visible_indices) > 0) {
+        test_data$inputs[visible_indices]
+      } else {
+        test_data$inputs
+      }
+      
+      # Warmup phase
+      for (w in seq_len(5)) {
+        for (input in bench_inputs) {
+          suppressWarnings(do.call(student_fun, input))
+          suppressWarnings(do.call(instructor_fun, input))
+        }
+      }
+      
+      # Wrap functions for quiet benchmarking
+      student_fn_quiet <- function(...) suppressWarnings(student_fun(...))
+      instructor_fn_quiet <- function(...) suppressWarnings(instructor_fun(...))
+      
+      # Run benchmark using C++ high-precision timing
+      student_times <- .cpp_benchmark(student_fn_quiet, bench_inputs, benchmark_runs)
+      instructor_times <- .cpp_benchmark(instructor_fn_quiet, bench_inputs, benchmark_runs)
+      
+      # Compute statistics
+      student_median <- median(student_times)
+      instructor_median <- median(instructor_times)
+      ratio <- student_median / instructor_median
+      
+      # Determine verdict
+      verdict <- if (ratio < 0.9) {
+        "FASTER"
+      } else if (ratio <= 1.1) {
+        "COMPARABLE"
+      } else if (ratio <= 2.0) {
+        "SLOWER"
+      } else if (ratio <= 5.0) {
+        "MUCH SLOWER"
+      } else {
+        "VERY SLOW"
+      }
+      
+      # Store benchmark results
+      benchmark_result <- list(
+        student_median = student_median,
+        instructor_median = instructor_median,
+        ratio = ratio,
+        verdict = verdict,
+        n_runs = benchmark_runs,
+        student_times = student_times,
+        instructor_times = instructor_times
+      )
+      
+      # Display benchmark results
+      cat(sprintf("\nYour time:       %.6f seconds (median)\n", student_median))
+      cat(sprintf("Reference time:  %.6f seconds (median)\n", instructor_median))
+      cat(sprintf("Performance:     %.2fx (%s)\n", ratio, verdict))
+      
+      # Calculate bonus points if applicable
+      if (benchmark_bonus > 0 && ratio < 1.0) {
+        # Bonus scales with how much faster the student is
+        # ratio=0.5 (2x faster) -> 100% of bonus
+        # ratio=0.9 (10% faster) -> ~10% of bonus
+        bonus_fraction <- min(1.0, (1.0 - ratio) / 0.5)
+        benchmark_bonus_earned <- round(total_points * (benchmark_bonus / 100) * bonus_fraction, 1)
+        
+        cat(sprintf("\n\342\230\205 PERFORMANCE BONUS: +%.1f points (%.1f%% of max %.1f%%)\n", 
+                    benchmark_bonus_earned, 
+                    bonus_fraction * benchmark_bonus,
+                    benchmark_bonus))
+      } else if (benchmark_bonus > 0) {
+        cat(sprintf("\nNo bonus earned. Implement a faster solution to earn up to %.1f%% bonus.\n",
+                    benchmark_bonus))
+      }
+    }
+  }
+  
+  # ==========================================================================
+  # SECTION 9: RETURN STRUCTURED RESULTS
+  # ==========================================================================
+  # Return an S3 object for nice printing and further processing
+  
+  # Calculate final score including bonus
+  final_score <- earned_points + benchmark_bonus_earned
+  final_max <- total_points + (if (benchmark_bonus > 0) total_points * benchmark_bonus / 100 else 0)
+  
+  # Display final score if bonus was applied
+  if (benchmark_bonus_earned > 0) {
+    cat(sprintf("\n=== Final Score: %.1f/%.1f points (%.1f%%) ===\n",
+                final_score, final_max, (final_score / final_max) * 100))
+  }
+  
+  invisible(new_autograder_result(
     passed = passed,
     failed = failed,
     total = n_tests,
-    score = earned_points,
-    max_score = total_points,
-    pass_rate = pass_rate
+    score = final_score,
+    max_score = final_max,
+    function_name = function_name,
+    details = list(
+      base_score = earned_points,
+      base_max = total_points,
+      benchmark_bonus = benchmark_bonus_earned,
+      benchmark = benchmark_result
+    )
   ))
 }

@@ -197,3 +197,116 @@ test_that("compare_relative validates inputs", {
   expect_false(compare_relative("a", "b"))
   expect_false(compare_relative(1:3, 1:2))
 })
+
+# ============================================================================
+# COMPARE_RESULTS TESTS - BASIC TYPES
+# ============================================================================
+
+test_that("compare_results matches identical numerics", {
+  expect_true(compare_results(5, 5))
+  expect_true(compare_results(3.14159, 3.14159))
+  expect_true(compare_results(-100, -100))
+  expect_true(compare_results(0, 0))
+})
+
+test_that("compare_results handles numeric tolerance", {
+  expect_true(compare_results(1.0, 1.0 + 1e-10, tolerance = 1e-6))
+  expect_false(compare_results(1.0, 1.1, tolerance = 1e-6))
+})
+
+test_that("compare_results handles empty numeric vectors", {
+  expect_true(compare_results(numeric(0), numeric(0)))
+  expect_false(compare_results(numeric(0), 1))
+})
+
+test_that("compare_results handles NA values in numerics", {
+  expect_true(compare_results(NA_real_, NA_real_))
+  result <- compare_results(NA_real_, 1)
+  expect_type(result, "logical")
+})
+
+test_that("compare_results handles NaN values", {
+  expect_true(compare_results(NaN, NaN))
+})
+
+test_that("compare_results handles Inf values", {
+  expect_true(compare_results(Inf, Inf))
+  expect_true(compare_results(-Inf, -Inf))
+  expect_false(compare_results(Inf, -Inf))
+})
+
+test_that("compare_results matches identical strings", {
+  expect_true(compare_results("hello", "hello"))
+  expect_true(compare_results("", ""))
+})
+
+test_that("compare_results handles NULL values", {
+  expect_true(compare_results(NULL, NULL))
+  expect_false(compare_results(NULL, 1))
+})
+
+test_that("compare_results handles type mismatches", {
+  expect_false(compare_results(1, "1"))
+})
+
+test_that("compare_results matches identical data frames", {
+  df1 <- data.frame(a = 1:3, b = c("x", "y", "z"))
+  df2 <- data.frame(a = 1:3, b = c("x", "y", "z"))
+  expect_true(compare_results(df1, df2))
+})
+
+test_that("compare_results matches identical matrices", {
+  m1 <- matrix(1:6, nrow = 2)
+  m2 <- matrix(1:6, nrow = 2)
+  expect_true(compare_results(m1, m2))
+})
+
+test_that("compare_results matches identical lists", {
+  expect_true(compare_results(list(a = 1), list(a = 1)))
+  expect_true(compare_results(list(), list()))
+})
+
+# ============================================================================
+# CLEAR_COMPARISONS TESTS
+# ============================================================================
+
+test_that("clear_comparisons clears cache", {
+  compare_results(1, 1)
+  clear_comparisons()
+  expect_no_error(clear_comparisons())
+})
+
+# ============================================================================
+# TOLERANCE-RELATED TESTS
+# ============================================================================
+
+test_that("autograder_tolerance respects options", {
+  old_opt <- getOption("autograder.tolerance")
+  on.exit(options(autograder.tolerance = old_opt))
+  
+  options(autograder.tolerance = 0.1)
+  expect_equal(autograder_tolerance(), 0.1)
+})
+
+# ============================================================================
+# EDGE CASE TESTS
+# ============================================================================
+
+test_that("compare_results handles very large numbers", {
+  expect_true(compare_results(1e308, 1e308))
+  expect_false(compare_results(1e308, 1e307))
+})
+
+test_that("compare_results handles very small numbers", {
+  expect_true(compare_results(1e-308, 1e-308))
+})
+
+test_that("compare_results handles integer overflow edge cases", {
+  big_int <- .Machine$integer.max
+  expect_true(compare_results(big_int, big_int))
+})
+
+test_that("compare_results handles deeply nested structures", {
+  nested <- list(a = list(b = list(c = list(d = 1))))
+  expect_true(compare_results(nested, nested))
+})

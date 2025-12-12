@@ -61,12 +61,12 @@ test_that("autograder validates function_name parameter", {
 })
 
 test_that("autograder validates boolean parameters", {
-  # Error message doesn't include parameter name, just value
-  expect_error(autograder("test", verbose = "yes"), "must be TRUE or FALSE")
-  expect_error(autograder("test", show_hidden = "no"), "must be TRUE or FALSE")
-  expect_error(autograder("test", show_hints = 1), "must be TRUE or FALSE")
-  expect_error(autograder("test", show_progress = list()), "must be TRUE or FALSE")
-  expect_error(autograder("test", use_parallel = "false"), "must be TRUE or FALSE")
+  # Error message uses checkmate format
+  expect_error(autograder("test", verbose = "yes"), "logical flag")
+  expect_error(autograder("test", show_hidden = "no"), "logical flag")
+  expect_error(autograder("test", show_hints = 1), "logical flag")
+  expect_error(autograder("test", show_progress = list()), "logical flag")
+  expect_error(autograder("test", use_parallel = "false"), "logical flag")
 })
 
 # ============================================================================
@@ -241,18 +241,27 @@ test_that("provide_feedback handles multiple differences", {
 # ============================================================================
 
 test_that("network_error creates proper error", {
-  err <- network_error("Test error message")
-  expect_true(inherits(err, "network_error") || is.character(err))
+  err <- tryCatch(
+    network_error("Test error message"),
+    error = function(e) e
+  )
+  expect_true(inherits(err, "network_error"))
 })
 
 test_that("function_not_found_error creates proper error", {
-  err <- function_not_found_error("my_function")
-  expect_true(inherits(err, "function_not_found_error") || is.character(err))
+  err <- tryCatch(
+    function_not_found_error("my_function"),
+    error = function(e) e
+  )
+  expect_true(inherits(err, "function_not_found_error"))
 })
 
 test_that("test_execution_error creates proper error", {
-  err <- test_execution_error("my_function", 3, "Test error")
-  expect_true(inherits(err, "test_execution_error") || is.character(err))
+  err <- tryCatch(
+    test_execution_error("Test error", 3),
+    error = function(e) e
+  )
+  expect_true(inherits(err, "test_execution_error"))
 })
 
 # ============================================================================
@@ -356,4 +365,150 @@ test_that(".cpp_compare_detailed shows differences", {
   expect_false(result$equal)
   # Message may be in different field or format
   expect_true(!is.null(result$message) || !is.null(result$reason) || !result$equal)
+})
+
+# ============================================================================
+# ERROR CLASS STRUCTURE TESTS
+# ============================================================================
+
+test_that("function_not_found_error includes function name", {
+  err <- tryCatch(
+    function_not_found_error("my_func"),
+    error = function(e) e
+  )
+  
+  expect_equal(err$function_name, "my_func")
+})
+
+test_that("function_not_found_error can be caught specifically", {
+  result <- tryCatch(
+    function_not_found_error("test"),
+    autograder_function_not_found_error = function(e) "caught_fnf",
+    error = function(e) "caught_generic"
+  )
+  
+  expect_equal(result, "caught_fnf")
+})
+
+test_that("type_mismatch_error creates proper error structure", {
+  err <- tryCatch(
+    type_mismatch_error("numeric", "character"),
+    error = function(e) e
+  )
+  
+  expect_s3_class(err, "autograder_type_mismatch_error")
+  expect_s3_class(err, "autograder_error")
+  expect_match(conditionMessage(err), "Type mismatch")
+})
+
+test_that("type_mismatch_error includes type information", {
+  err <- tryCatch(
+    type_mismatch_error("integer", "double"),
+    error = function(e) e
+  )
+  
+  expect_equal(err$expected_type, "integer")
+  expect_equal(err$actual_type, "double")
+})
+
+test_that("length_mismatch_error creates proper error structure", {
+  err <- tryCatch(
+    length_mismatch_error(10, 5),
+    error = function(e) e
+  )
+  
+  expect_s3_class(err, "autograder_length_mismatch_error")
+  expect_s3_class(err, "autograder_error")
+  expect_match(conditionMessage(err), "Length mismatch")
+})
+
+test_that("length_mismatch_error includes length information", {
+  err <- tryCatch(
+    length_mismatch_error(100, 50),
+    error = function(e) e
+  )
+  
+  expect_equal(err$expected_length, 100)
+  expect_equal(err$actual_length, 50)
+})
+
+test_that("student_function_error creates proper error structure", {
+  err <- tryCatch(
+    student_function_error("fibonacci"),
+    error = function(e) e
+  )
+  
+  expect_s3_class(err, "autograder_student_function_error")
+  expect_s3_class(err, "autograder_error")
+  expect_match(conditionMessage(err), "student_fibonacci")
+})
+
+test_that("timeout_error creates proper error structure", {
+  err <- tryCatch(
+    timeout_error(30),
+    error = function(e) e
+  )
+  
+  expect_s3_class(err, "autograder_timeout_error")
+  expect_s3_class(err, "autograder_error")
+  expect_match(conditionMessage(err), "30 seconds")
+})
+
+test_that("abort_validation creates proper error structure", {
+  err <- tryCatch(
+    abort_validation("x", "numeric", "character"),
+    error = function(e) e
+  )
+  
+  expect_s3_class(err, "autograder_validation_error")
+  expect_s3_class(err, "autograder_error")
+  expect_match(conditionMessage(err), "x")
+})
+
+test_that("abort_input creates proper error structure", {
+  err <- tryCatch(
+    abort_input("Invalid input"),
+    error = function(e) e
+  )
+  
+  expect_s3_class(err, "autograder_input_error")
+  expect_s3_class(err, "autograder_error")
+  expect_match(conditionMessage(err), "Invalid input")
+})
+
+test_that("all error types inherit from autograder_error", {
+  errors <- list(
+    tryCatch(network_error("test"), error = function(e) e),
+    tryCatch(function_not_found_error("test"), error = function(e) e),
+    tryCatch(test_execution_error("test", 1), error = function(e) e),
+    tryCatch(type_mismatch_error("a", "b"), error = function(e) e),
+    tryCatch(length_mismatch_error(1, 2), error = function(e) e),
+    tryCatch(student_function_error("test"), error = function(e) e),
+    tryCatch(timeout_error(10), error = function(e) e)
+  )
+  
+  for (err in errors) {
+    expect_s3_class(err, "autograder_error")
+  }
+})
+
+test_that("autograder errors can be caught with autograder_error class", {
+  errors_to_test <- list(
+    function() network_error("test"),
+    function() function_not_found_error("test"),
+    function() test_execution_error("test", 1),
+    function() type_mismatch_error("a", "b"),
+    function() length_mismatch_error(1, 2),
+    function() student_function_error("test"),
+    function() timeout_error(10)
+  )
+  
+  for (err_fn in errors_to_test) {
+    result <- tryCatch(
+      err_fn(),
+      autograder_error = function(e) "caught_autograder",
+      error = function(e) "caught_generic"
+    )
+    expect_equal(result, "caught_autograder")
+  }
 })

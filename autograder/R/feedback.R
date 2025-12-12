@@ -184,3 +184,334 @@ print_feedback <- function(feedback) {
     cat(sprintf("    * %s\n", feedback[[name]]))
   }
 }
+
+# ============================================================================
+# DIFF VIEWER FOR FAILED TESTS
+# ============================================================================
+
+#' Show side-by-side comparison of expected vs actual values
+#' 
+#' @description
+#' Provides a detailed diff view for failed tests, showing exactly where
+#' values differ. Useful for debugging complex outputs.
+#' 
+#' @param expected Expected (correct) output
+#' @param actual Student's output
+#' @param max_show Maximum number of differences to show (default: 10)
+#' @param tolerance Numeric tolerance for comparison (default: package tolerance)
+#' @param use_waldo Logical. If TRUE and waldo package is available, use waldo
+#'   for rich diff output. Set to FALSE to use built-in diff. Default uses
+#'   the option `autograder.use_waldo` (TRUE by default).
+#' 
+#' @return Invisible NULL, called for side effect of printing
+#' 
+#' @details
+#' For numeric vectors, shows:
+#'   - Indices where values differ
+#'   - Expected vs actual values at those indices
+#'   - Absolute and relative differences
+#' 
+#' For character vectors, shows:
+#'   - String differences
+#' 
+#' For data frames, shows:
+#'   - Column-wise differences
+#'
+#' When waldo is available and `use_waldo = TRUE`, provides colorful,
+#' context-aware diffs that are easier to read.
+#' 
+#' @keywords internal
+#' 
+#' @examples
+#' \dontrun{
+#' show_diff(c(1, 2, 3), c(1, 5, 3))
+#' # Shows: Index 2: Expected 2, Got 5 (diff: 3)
+#' 
+#' # Disable waldo for simpler output
+#' show_diff(c(1, 2), c(1, 3), use_waldo = FALSE)
+#' }
+show_diff <- function(expected, actual, max_show = 10, 
+                      tolerance = autograder_tolerance(),
+                      use_waldo = getOption("autograder.use_waldo", TRUE)) {
+  cat(cli::col_cyan("\n=== Diff View ===\n\n"))
+  
+  # Try waldo first if available and enabled
+  if (use_waldo && requireNamespace("waldo", quietly = TRUE)) {
+    waldo_diff <- show_waldo_diff(expected, actual, tolerance = tolerance, max_diffs = max_show)
+    if (!is.null(waldo_diff)) {
+      return(invisible(NULL))
+    }
+    # Fall through to custom diff if waldo didn't produce output
+  }
+  
+  # Type comparison
+  if (!identical(class(expected), class(actual))) {
+    cat(cli::col_yellow("Type mismatch:\n"))
+    cat(glue::glue("  Expected type: {paste(class(expected), collapse = ', ')}\n"))
+    cat(glue::glue("  Actual type:   {paste(class(actual), collapse = ', ')}\n"))
+    return(invisible(NULL))
+  }
+  
+  # Numeric comparison
+  if (is.numeric(expected) && is.numeric(actual)) {
+    show_numeric_diff(expected, actual, max_show, tolerance)
+    return(invisible(NULL))
+  }
+  
+  # Character comparison
+  if (is.character(expected) && is.character(actual)) {
+    show_character_diff(expected, actual, max_show)
+    return(invisible(NULL))
+  }
+  
+  # Data frame comparison
+  if (is.data.frame(expected) && is.data.frame(actual)) {
+    show_dataframe_diff(expected, actual, max_show, tolerance)
+    return(invisible(NULL))
+  }
+  
+  # List comparison
+  if (is.list(expected) && is.list(actual)) {
+    show_list_diff(expected, actual, max_show, tolerance)
+    return(invisible(NULL))
+  }
+  
+  # Fallback for other types
+  cat("Cannot show detailed diff for this type.\n")
+  cat(sprintf("Expected: %s\n", format_output(expected)))
+  cat(sprintf("Actual:   %s\n", format_output(actual)))
+  
+  invisible(NULL)
+}
+
+#' Show numeric vector differences
+#' @keywords internal
+show_numeric_diff <- function(expected, actual, max_show, tolerance) {
+  # Length check
+  if (length(expected) != length(actual)) {
+    cat(cli::col_yellow("Length mismatch:\n"))
+    cat(sprintf("  Expected length: %d\n", length(expected)))
+    cat(sprintf("  Actual length:   %d\n", length(actual)))
+    
+    # Show first few elements of each
+    n_show <- min(5, min(length(expected), length(actual)))
+    if (n_show > 0) {
+      cat("\n  First elements comparison:\n")
+      idx <- seq_len(n_show)
+      exp_vals <- ifelse(idx <= length(expected), sprintf("%.6g", expected[idx]), "N/A")
+      act_vals <- ifelse(idx <= length(actual), sprintf("%.6g", actual[idx]), "N/A")
+      cat(sprintf("    [%d] Expected: %s, Actual: %s\n", idx, exp_vals, act_vals), sep = "")
+    }
+    return(invisible(NULL))
+  }
+  
+  # Find differences
+  diff_indices <- .cpp_find_differences(expected, actual, tolerance, as.integer(max_show))
+  
+  if (length(diff_indices) == 0) {
+    cat(cli::col_green("No differences found within tolerance.\n"))
+    return(invisible(NULL))
+  }
+  
+  cat(sprintf("Found %d difference(s):\n\n", length(diff_indices)))
+  cat(sprintf("%-8s %-15s %-15s %-12s %-12s\n", 
+              "Index", "Expected", "Actual", "Abs Diff", "Rel Diff"))
+  cat(paste(rep("-", 65), collapse = ""), "\n")
+  
+  # Vectorized difference calculations
+  exp_vals <- expected[diff_indices]
+  act_vals <- actual[diff_indices]
+  abs_diffs <- abs(exp_vals - act_vals)
+  rel_diffs <- ifelse(abs(exp_vals) > 1e-10, abs_diffs / abs(exp_vals) * 100, NA)
+  rel_strs <- ifelse(is.na(rel_diffs), "N/A", sprintf("%.2f%%", rel_diffs))
+  
+  cat(sprintf("%-8d %-15.6g %-15.6g %-12.6g %-12s\n", 
+              diff_indices, exp_vals, act_vals, abs_diffs, rel_strs), sep = "")
+  
+  if (length(diff_indices) >= max_show) {
+    cat(cli::col_grey(sprintf("\n... (showing first %d differences)\n", max_show)))
+  }
+  
+  invisible(NULL)
+}
+
+#' Show character vector differences
+#' @keywords internal
+show_character_diff <- function(expected, actual, max_show) {
+  # Length check
+  if (length(expected) != length(actual)) {
+    cat(cli::col_yellow("Length mismatch:\n"))
+    cat(sprintf("  Expected length: %d\n", length(expected)))
+    cat(sprintf("  Actual length:   %d\n", length(actual)))
+    return(invisible(NULL))
+  }
+  
+  # Find differences
+  diffs <- which(expected != actual)
+  
+  if (length(diffs) == 0) {
+    cat(cli::col_green("No differences found.\n"))
+    return(invisible(NULL))
+  }
+  
+  n_show <- min(length(diffs), max_show)
+  cat(sprintf("Found %d difference(s):\n\n", length(diffs)))
+  
+  # Vectorized diff display
+  show_idx <- diffs[seq_len(n_show)]
+  cat(sprintf("[%d] Expected: \"%s\"\n     Actual:   \"%s\"\n\n", 
+              show_idx, expected[show_idx], actual[show_idx]), sep = "")
+  
+  if (length(diffs) > max_show) {
+    cat(cli::col_grey(sprintf("... (showing first %d differences)\n", max_show)))
+  }
+  
+  invisible(NULL)
+}
+
+#' Show data frame differences
+#' @keywords internal
+show_dataframe_diff <- function(expected, actual, max_show, tolerance) {
+  # Dimension check
+  if (nrow(expected) != nrow(actual) || ncol(expected) != ncol(actual)) {
+    cat(cli::col_yellow("Dimension mismatch:\n"))
+    cat(sprintf("  Expected: %d rows x %d cols\n", nrow(expected), ncol(expected)))
+    cat(sprintf("  Actual:   %d rows x %d cols\n", nrow(actual), ncol(actual)))
+    return(invisible(NULL))
+  }
+  
+  # Column name check
+  if (!identical(names(expected), names(actual))) {
+    cat(cli::col_yellow("Column name mismatch:\n"))
+    cat(sprintf("  Expected: %s\n", paste(names(expected), collapse = ", ")))
+    cat(sprintf("  Actual:   %s\n", paste(names(actual), collapse = ", ")))
+    return(invisible(NULL))
+  }
+  
+  # Find cell differences
+  diff_count <- 0
+  cat("Column-wise differences:\n\n")
+  
+  for (col in names(expected)) {
+    exp_col <- expected[[col]]
+    act_col <- actual[[col]]
+    
+    if (is.numeric(exp_col) && is.numeric(act_col)) {
+      diffs <- which(abs(exp_col - act_col) > tolerance)
+    } else {
+      diffs <- which(exp_col != act_col)
+    }
+    
+    if (length(diffs) > 0 && diff_count < max_show) {
+      cat(sprintf("Column '%s': %d difference(s)\n", col, length(diffs)))
+      for (idx in head(diffs, 3)) {
+        cat(sprintf("  Row %d: Expected %s, Got %s\n", 
+                    idx, format(exp_col[idx]), format(act_col[idx])))
+      }
+      diff_count <- diff_count + 1
+    }
+  }
+  
+  invisible(NULL)
+}
+
+#' Show list differences
+#' @keywords internal
+show_list_diff <- function(expected, actual, max_show, tolerance) {
+  if (length(expected) != length(actual)) {
+    cat(cli::col_yellow("Length mismatch:\n"))
+    cat(sprintf("  Expected length: %d\n", length(expected)))
+    cat(sprintf("  Actual length:   %d\n", length(actual)))
+    return(invisible(NULL))
+  }
+  
+  # Check each element
+  diff_count <- 0
+  for (i in seq_along(expected)) {
+    if (!.cpp_compare_fast(expected[[i]], actual[[i]], tolerance)) {
+      diff_count <- diff_count + 1
+      if (diff_count <= max_show) {
+        name <- if (!is.null(names(expected))) names(expected)[i] else i
+        cat(sprintf("Element [[%s]]:\n", name))
+        cat(sprintf("  Expected: %s\n", format_output(expected[[i]])))
+        cat(sprintf("  Actual:   %s\n\n", format_output(actual[[i]])))
+      }
+    }
+  }
+  
+  if (diff_count > max_show) {
+    cat(cli::col_grey(sprintf("... (%d more differences)\n", diff_count - max_show)))
+  }
+  
+  invisible(NULL)
+}
+
+# ============================================================================
+# WALDO-BASED DIFF (Enhanced diff when waldo package is available)
+# ============================================================================
+
+#' Show differences using waldo package
+#' 
+#' @description
+#' Uses the waldo package for rich, colorful diff output when available.
+#' Falls back gracefully if waldo is not installed.
+#' 
+#' @param expected The expected value
+#' @param actual The actual value from student code
+#' @param tolerance Numeric tolerance for comparisons
+#' @param max_diffs Maximum number of differences to show
+#' 
+#' @return TRUE if diff was shown, NULL if waldo produced no output
+#' 
+#' @keywords internal
+show_waldo_diff <- function(expected, actual, tolerance = 1e-10, max_diffs = 10) {
+  if (!requireNamespace("waldo", quietly = TRUE)) {
+    return(NULL)
+  }
+  
+  # Use waldo::compare for rich diff output
+  diff_output <- tryCatch({
+    waldo::compare(
+      expected, actual,
+      x_arg = "expected",
+      y_arg = "your_output",
+      tolerance = tolerance,
+      max_diffs = max_diffs
+    )
+  }, error = function(e) NULL)
+  
+  if (is.null(diff_output) || length(diff_output) == 0) {
+    return(NULL)
+  }
+  
+  # Print waldo output with styling
+  cat(cli::col_cyan("Differences (via waldo):\n\n"))
+  for (line in diff_output) {
+    cat(line, "\n")
+  }
+  cat("\n")
+  
+  invisible(TRUE)
+}
+
+#' Compare objects with waldo
+#' 
+#' @description
+#' Uses waldo::compare to check if two objects are equal, with rich diff output.
+#' 
+#' @param expected The expected value
+#' @param actual The actual value
+#' @param tolerance Numeric tolerance
+#' 
+#' @return Logical indicating if objects are equal
+#' 
+#' @keywords internal
+compare_with_waldo <- function(expected, actual, tolerance = 1e-10) {
+  if (!requireNamespace("waldo", quietly = TRUE)) {
+    # Fall back to internal comparison
+    return(.cpp_compare_fast(expected, actual, tolerance))
+  }
+  
+  diff <- waldo::compare(expected, actual, tolerance = tolerance)
+  length(diff) == 0
+}

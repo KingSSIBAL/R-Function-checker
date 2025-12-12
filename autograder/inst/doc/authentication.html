@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Authentication and Private Repositories</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Authentication and Private
+Repositories</h1>
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>The autograder uses <strong>secure authentication</strong> with
+GitHub tokens for private repository access. This ensures test cases and
+reference implementations are protected from unauthorized access.</p>
+<div id="security-features" class="section level3">
+<h3>Security Features</h3>
+<ul>
+<li><strong>Private Repository Support</strong>: Test cases stored in
+private GitHub repositories</li>
+<li><strong>Encrypted Token</strong>: GitHub token encrypted in compiled
+binary</li>
+<li><strong>No Exposure</strong>: Students cannot extract
+credentials</li>
+<li><strong>Hidden Tests</strong>: Test details can be hidden from
+students</li>
+</ul>
+</div>
+<div id="checking-authentication-status" class="section level3">
+<h3>Checking Authentication Status</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Check current mode (internal function)</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>autograder<span class="sc">:::</span><span class="fu">.cpp_get_auth_info</span>()</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; $mode</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;secure&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt; $has_token</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt; $url_length</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt; [1] 128</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt; $token_length</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt; [1] 96</span></span></code></pre></div>
+<pre><code>
+## Setting Up Secure Mode
+
+The autograder provides easy-to-use functions for configuring secure mode.
+
+### Quick Setup (Recommended)
+
+Use the one-command setup function:
+
+
+``` r
+library(autograder)
+
+# One-command configuration and build
+autograder_configure(
+  url = \&quot;https://api.github.com/repos/YourOrg/PrivateRepo/contents\&quot;,
+  token = \&quot;github_pat_xxxxxxxxxxxxxxxxxxxx\&quot;,
+  install = TRUE  # Install after building
+)</code></pre>
+<p>Or use the interactive wizard:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">autograder_setup_wizard</span>()</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co"># Guides you through each step with validation</span></span></code></pre></div>
+<p>Or use the RStudio Addin (Addins menu → Configure Autograder).</p>
+</div>
+<div id="manual-setup" class="section level3">
+<h3>Manual Setup</h3>
+<p>If you prefer manual configuration:</p>
+<div id="step-1-create-a-private-repository" class="section level4">
+<h4>Step 1: Create a Private Repository</h4>
+<ol style="list-style-type: decimal">
+<li><p>Create a new private repository on GitHub</p></li>
+<li><p>Add your test case files:</p>
+<pre><code>private-repo/
+├── functions/
+│   ├── _problems.R
+│   └── your_functions.R
+└── data/
+    └── your_data.csv</code></pre></li>
+</ol>
+</div>
+<div id="step-2-generate-a-github-token" class="section level4">
+<h4>Step 2: Generate a GitHub Token</h4>
+<ol style="list-style-type: decimal">
+<li>Go to GitHub → Settings → Developer Settings → Personal Access
+Tokens</li>
+<li>Click <strong>Generate new token (fine-grained)</strong></li>
+<li>Configure:
+<ul>
+<li><strong>Name</strong>: <code>autograder-course-name</code></li>
+<li><strong>Expiration</strong>: End of semester</li>
+<li><strong>Repository access</strong>: Only select repositories → your
+private repo</li>
+<li><strong>Permissions</strong>: Contents → Read-only</li>
+</ul></li>
+<li>Copy the generated token</li>
+</ol>
+</div>
+</div>
+<div id="step-3-configure-the-autograder" class="section level3">
+<h3>Step 3: Configure the Autograder</h3>
+<p>Create a <code>.env</code> file in the <code>tools/</code>
+directory:</p>
+<pre class="env"><code># tools/.env
+AUTH_MODE=secure
+REPO_URL=https://api.github.com/repos/YourOrg/PrivateRepo/contents
+GITHUB_TOKEN=github_pat_xxxxxxxxxxxxxxxxxxxx</code></pre>
+<div id="step-3-test-your-token" class="section level4">
+<h4>Step 3: Test Your Token</h4>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Verify token works before building</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">autograder_test_token</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="at">url =</span> \<span class="st">&quot;https://api.github.com/repos/YourOrg/PrivateRepo/contents</span><span class="sc">\&quot;</span><span class="st">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="st">  token = </span><span class="sc">\&quot;</span><span class="st">github_pat_xxxxxxxxxxxxxxxxxxxx</span><span class="sc">\&quot;</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="st">)</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="st">#&gt; ✓ Token is valid</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="st">#&gt; ✓ Repository accessible</span></span></code></pre></div>
+</div>
+<div id="step-4-build-the-package" class="section level4">
+<h4>Step 4: Build the Package</h4>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Option A: Use the built-in configure function</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">autograder_configure</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="at">url =</span> \<span class="st">&quot;https://api.github.com/repos/YourOrg/PrivateRepo/contents</span><span class="sc">\&quot;</span><span class="st">,</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="st">  token = </span><span class="sc">\&quot;</span><span class="st">github_pat_xxxxxxxxxxxxxxxxxxxx</span><span class="sc">\&quot;</span><span class="st">,</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="st">  install = TRUE</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="st">)</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="st"># Option B: Manual process using the helper script</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="st">source(&quot;</span>tools<span class="sc">/</span>encrypt_url_helper.R<span class="st">&quot;)</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="st"># Verify token works</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="st">test_token()</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="st">#&gt; ✓ Token is valid</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="st">#&gt; ✓ Repository accessible</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="st">#&gt; ✓ Functions folder found</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="st"># Configure secure mode</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="st">setup_secure_mode()</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="st">#&gt; ✓ Secure mode configured</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="st">#&gt; ✓ Token encrypted and embedded</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="st">#&gt; ✓ Package ready to build</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="st"># Build the package</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="st">build_package()</span></span></code></pre></div>
+</div>
+</div>
+<div id="step-5-distribute-to-students" class="section level3">
+<h3>Step 5: Distribute to Students</h3>
+<p>Distribute the built package (<code>.tar.gz</code> or
+<code>.zip</code>). Students install normally:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;autograder_0.4.0.tar.gz&quot;</span>, <span class="at">repos =</span> <span class="cn">NULL</span>, <span class="at">type =</span> <span class="st">&quot;source&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">library</span>(autograder)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="fu">autograder</span>(<span class="st">&quot;problem_name&quot;</span>)</span></code></pre></div>
+<p>The token is embedded and encrypted—students don’t need to configure
+anything.</p>
+</div>
+</div>
+<div id="security-considerations" class="section level2">
+<h2>Security Considerations</h2>
+<div id="token-security" class="section level3">
+<h3>Token Security</h3>
+<ul>
+<li>Token is <strong>encrypted</strong> using AES-256 with a derived
+key</li>
+<li>Each package build generates <strong>unique encryption</strong></li>
+<li>Token is <strong>never exposed</strong> in plain text</li>
+<li>Students <strong>cannot extract</strong> the original token</li>
+</ul>
+</div>
+<div id="best-practices" class="section level3">
+<h3>Best Practices</h3>
+<ol style="list-style-type: decimal">
+<li><strong>Use fine-grained tokens</strong> with minimal
+permissions</li>
+<li><strong>Set expiration dates</strong> aligned with your course</li>
+<li><strong>Rotate tokens</strong> each semester</li>
+<li><strong>Scope to specific repository</strong> only</li>
+<li><strong>Monitor repository access</strong> for suspicious
+activity</li>
+</ol>
+</div>
+<div id="what-students-can-see" class="section level3">
+<h3>What Students Can See</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Component</th>
+<th>Visible to Students?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Test inputs (visible tests)</td>
+<td>✓ Yes</td>
+</tr>
+<tr class="even">
+<td>Test inputs (hidden tests)</td>
+<td>✗ No</td>
+</tr>
+<tr class="odd">
+<td>Expected outputs (visible)</td>
+<td>✓ Yes</td>
+</tr>
+<tr class="even">
+<td>Expected outputs (hidden)</td>
+<td>✗ No</td>
+</tr>
+<tr class="odd">
+<td>Reference implementation</td>
+<td>✗ No</td>
+</tr>
+<tr class="even">
+<td>GitHub token</td>
+<td>✗ No</td>
+</tr>
+<tr class="odd">
+<td>Repository URL</td>
+<td>✗ No (encrypted)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="checking-authentication-status-1" class="section level2">
+<h2>Checking Authentication Status</h2>
+<div id="from-r" class="section level3">
+<h3>From R</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">library</span>(autograder)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co"># Get authentication info (internal function)</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>info <span class="ot">&lt;-</span> autograder<span class="sc">:::</span><span class="fu">.cpp_get_auth_info</span>()</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>info<span class="sc">$</span>mode      <span class="co"># Always &quot;secure&quot;</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>info<span class="sc">$</span>has_token <span class="co"># TRUE if token configured</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co"># Get auth mode directly</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>autograder<span class="sc">:::</span><span class="fu">.cpp_get_auth_mode</span>()</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; [1] &quot;secure&quot;</span></span></code></pre></div>
+</div>
+<div id="from-c" class="section level3">
+<h3>From C++</h3>
+<p>The package exposes C++ functions for authentication:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co">// In C++ extensions (internal)</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="bu">std::</span>string mode <span class="op">=</span> get_auth_mode<span class="op">();</span>     <span class="co">// Always &quot;secure&quot;</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="bu">std::</span>string token <span class="op">=</span> get_github_token<span class="op">();</span> <span class="co">// encrypted token</span></span></code></pre></div>
+</div>
+</div>
+<div id="troubleshooting" class="section level2">
+<h2>Troubleshooting</h2>
+<div id="token-validation-failed" class="section level3">
+<h3>“Token validation failed”</h3>
+<pre><code>Error: GitHub token validation failed</code></pre>
+<p><strong>Solutions:</strong> - Verify token hasn’t expired - Check
+token has <code>Contents: Read</code> permission - Confirm repository
+name is correct - Ensure repository is accessible with the token</p>
+</div>
+<div id="repository-not-found" class="section level3">
+<h3>“Repository not found”</h3>
+<pre><code>Error: Repository not accessible</code></pre>
+<p><strong>Solutions:</strong> - Verify the REPO_URL format: - For API:
+<code>https://api.github.com/repos/OWNER/REPO/contents</code> - For raw:
+<code>https://raw.githubusercontent.com/OWNER/REPO/BRANCH/repo</code> -
+Check repository exists and is accessible</p>
+</div>
+<div id="function-not-found-but-exists-in-repo" class="section level3">
+<h3>“Function not found” (but exists in repo)</h3>
+<pre><code>Error: Function &#39;problem_name&#39; not found</code></pre>
+<p><strong>Solutions:</strong> - Ensure functions are in
+<code>functions/</code> subfolder - Verify <code>_problems.R</code>
+lists the function - Check file permissions in repository</p>
+</div>
+</div>
+<div id="example-.env-file" class="section level2">
+<h2>Example .env File</h2>
+<pre class="env"><code># ============================================================================
+# AUTOGRADER CONFIGURATION
+# ============================================================================
+
+# Authentication mode
+AUTH_MODE=secure
+
+# Repository URL
+# Format: https://api.github.com/repos/OWNER/REPO/contents
+REPO_URL=https://api.github.com/repos/MyOrg/stat101-private/contents
+
+# GitHub Personal Access Token (required)
+GITHUB_TOKEN=github_pat_11ABCDEFG_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Optional: Custom encryption key factors (comma-separated)
+# Leave empty to use defaults
+KEY_FACTORS=</code></pre>
+</div>
+<div id="api-reference" class="section level2">
+<h2>API Reference</h2>
+<div id="r-functions-internal" class="section level3">
+<h3>R Functions (Internal)</h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Get current authentication info</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>info <span class="ot">&lt;-</span> autograder<span class="sc">:::</span><span class="fu">.cpp_get_auth_info</span>()</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co"># Returns: list with $mode, $has_token, $url_length, $token_length</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co"># Get auth mode directly</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>autograder<span class="sc">:::</span><span class="fu">.cpp_get_auth_mode</span>()</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co"># Returns: &quot;secure&quot;</span></span></code></pre></div>
+</div>
+<div id="environment-variables" class="section level3">
+<h3>Environment Variables</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>AUTH_MODE</code></td>
+<td>Yes</td>
+<td>Always <code>secure</code></td>
+</tr>
+<tr class="even">
+<td><code>REPO_URL</code></td>
+<td>Yes</td>
+<td>Full URL to repository</td>
+</tr>
+<tr class="odd">
+<td><code>GITHUB_TOKEN</code></td>
+<td>Yes</td>
+<td>Personal access token</td>
+</tr>
+<tr class="even">
+<td><code>KEY_FACTORS</code></td>
+<td>No</td>
+<td>Custom encryption factors</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

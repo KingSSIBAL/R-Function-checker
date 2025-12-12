@@ -100,28 +100,22 @@ preview_tests <- function(function_name) {
   
   cat("\n=== Test Cases Preview ===\n\n")
   
-  # ===== DISPLAY EACH TEST =====
-  visible_count <- 0
-  hidden_count <- 0
+  # ===== DISPLAY TESTS (Vectorized approach) =====
+  # Pre-calculate counts using vectorized operations
+  visible_count <- sum(!hidden)
+  hidden_count <- sum(hidden)
   
-  for (i in seq_along(test_data$inputs)) {
-    desc <- descriptions[i]
-    pts <- points[i]
-    is_hidden <- hidden[i]
-    
-    if (!is_hidden) {
-      # ===== VISIBLE TEST: Show Details =====
-      cat(sprintf("[Test %d] %s (%d pt)\n", i, desc, pts))
-      cat(sprintf("  Input: %s\n\n", format_output(test_data$inputs[[i]])))
-      visible_count <- visible_count + 1
-      
-    } else {
-      # ===== HIDDEN TEST: Show Only Existence =====
-      # Don't reveal inputs or expected outputs
-      # This maintains assessment integrity
-      cat(sprintf("[Test %d] [HIDDEN TEST] (%d pt)\n\n", i, pts))
-      hidden_count <- hidden_count + 1
-    }
+  # Process visible tests
+  visible_idx <- which(!hidden)
+  invisible(lapply(visible_idx, function(i) {
+    cat(sprintf("[Test %d] %s (%d pt)\n", i, descriptions[i], points[i]))
+    cat(sprintf("  Input: %s\n\n", format_output(test_data$inputs[[i]])))
+  }))
+  
+  # Process hidden tests
+  hidden_idx <- which(hidden)
+  if (length(hidden_idx) > 0) {
+    cat(sprintf("[Test %d] [HIDDEN TEST] (%d pt)\n\n", hidden_idx, points[hidden_idx]), sep = "")
   }
   
   # ===== DISPLAY SUMMARY =====

@@ -128,6 +128,7 @@ fetch_data <- function(filename) {
 #' downloading the same file multiple times. The returned cache
 #' is passed to the test runner.
 #' 
+#' @importFrom stats setNames
 #' @keywords internal
 prefetch_data_files <- function(test_data) {
   # Check if data_files field exists
@@ -135,14 +136,12 @@ prefetch_data_files <- function(test_data) {
     return(list())
   }
   
-  data_cache <- list()
-  
-  for (filename in test_data$data_files) {
-    cat(sprintf("  Loading data: %s...\n", filename))
-    data_cache[[filename]] <- fetch_data(filename)
-  }
-  
-  data_cache
+  # Vectorized data loading using setNames + lapply
+  cat(sprintf("  Loading data: %s...\n", test_data$data_files), sep = "")
+  setNames(
+    lapply(test_data$data_files, fetch_data),
+    test_data$data_files
+  )
 }
 
 #' Inject data into test case inputs

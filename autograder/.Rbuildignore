@@ -10,5 +10,16 @@
 ^src/.*\.o$
 ^src/.*\.so$
 ^src/.*\.dll$
+^src/.*\.rds$
 ^src/README\.md$
 ^\.Rhistory$
+^\.\.Rcheck$
+^autograder\.Rcheck$
+^cran-comments\.md$
+^CRAN-RELEASE$
+^NEWS\.md$
+^RECOMMENDATIONS\.md$
+^tools$
+^repo$
+^coverage_report\.html$
+^lib$

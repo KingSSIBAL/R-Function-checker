@@ -1,0 +1,163 @@
+---
+title: "Package Architecture"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Package Architecture}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Package Architecture
+
+This document describes the internal architecture of the autograder package,
+designed for developers and advanced users who want to understand or extend
+the system.
+
+## Overview
+
+The autograder package uses a **modular architecture** with clear separation
+between R and C++ components:
+
+```
+autograder/
+├── R/                    # High-level R interface
+│   ├── autograder-main.R # Primary user-facing function
+│   ├── fetch.R           # Network operations
+│   ├── security.R        # Rate limiting, validation
+│   ├── feedback.R        # Student feedback generation
+│   ├── comparison.R      # Comparison registry
+│   └── execution.R       # Test execution engine
+├── src/                  # High-performance C++ backend
+│   ├── comparator.cpp    # Fast object comparison
+│   ├── encryption.cpp    # AES encryption
+│   ├── fetcher.cpp       # URL handling
+│   ├── formatter.cpp     # Output formatting
+│   └── validator.cpp     # Input validation
+└── vignettes/            # Documentation
+```
+
+## Module Descriptions
+
+### Core Module (autograder-main.R)
+
+The main orchestration layer that coordinates all other components:
+
+1. **Input Validation**: Uses checkmate for robust parameter checking
+2. **Fetch Operations**: Downloads instructor code via C++ backend
+3. **Test Execution**: Runs tests with optional parallelization
+4. **Result Aggregation**: Computes scores and generates summary
+
+### Security Module (security.R)
+
+Implements defense-in-depth security measures:
+
+- **Rate Limiting**: Prevents API abuse (30 calls/minute default)
+- **Code Validation**: Scans for dangerous patterns before execution
+- **Audit Logging**: Optional security event logging
+
+### Comparison Module (comparator.cpp)
+
+High-performance C++ comparison engine:
+
+- **10-100x faster** than R's `identical()` for common cases
+- **OpenMP parallelization** for large vectors (>10,000 elements)
+- **Type-specific optimizations** for numeric, character, list types
+- **Tolerance-aware** floating-point comparison
+
+### Encryption Module (encryption.cpp)
+
+AES S-box based encryption for secure URL handling:
+
+- **Key Derivation**: Multi-factor key generation
+- **S-box Transformation**: Non-linear byte substitution
+- **Secure Memory**: Automatic clearing of sensitive data
+
+## Data Flow
+
+```
+User Input → autograder()
+                  ↓
+          Input Validation (checkmate)
+                  ↓
+          Check Rate Limit
+                  ↓
+          Fetch Instructor Code (C++ → HTTP → decrypt)
+                  ↓
+          Validate Code Safety
+                  ↓
+          Run Tests (parallel or sequential)
+                  ↓
+          Compare Results (C++ comparator)
+                  ↓
+          Generate Feedback
+                  ↓
+          Display Results
+```
+
+## Performance Considerations
+
+### Parallelization Thresholds
+
+The package automatically selects parallel vs sequential execution:
+
+| Data Size | Strategy | Reason |
+|-----------|----------|--------|
+| < 10,000 elements | Sequential | Thread overhead not worth it |
+| ≥ 10,000 elements | OpenMP parallel | Significant speedup |
+
+The threshold is dynamically adjusted based on available cores:
+```cpp
+threshold = max(5000, 50000 / num_cores)
+```
+
+### Memory Management
+
+- **Connection Pooling**: Reuses curl handles across requests
+- **Result Caching**: Instructor code cached in-session
+- **Secure Clearing**: Sensitive data zeroed before deallocation
+
+## Extending the Package
+
+### Adding New Comparison Functions
+
+Register custom comparators in R:
+
+```r
+register_comparison("my_comparator", function(actual, expected) {
+  # Custom comparison logic
+  all(abs(actual - expected) < 0.01)
+})
+```
+
+### Adding New C++ Functions
+
+1. Add declaration in appropriate header (e.g., `comparator.h`)
+2. Implement in corresponding `.cpp` file
+3. Export via `// [[Rcpp::export]]` attribute
+4. Run `Rcpp::compileAttributes()` to regenerate exports
+
+## Thread Safety
+
+The C++ backend is designed for thread safety:
+
+- All static data is `const` or protected by OpenMP critical sections
+- No global mutable state in hot paths
+- Thread-local variables used where needed
+
+## Error Handling
+
+Errors are categorized and handled appropriately:
+
+| Error Type | Handling |
+|------------|----------|
+| Network errors | Retry with exponential backoff |
+| Validation errors | Immediate fail with clear message |
+| Security errors | Log and fail |
+| Comparison errors | Return detailed diff |

@@ -144,7 +144,7 @@ private:
     Config config_;
     crypto::UrlEncryptor url_encryptor_;
     
-    // Internal download using R's download.file (legacy public repos)
+    // Internal download using R's download.file (fallback)
     Rcpp::CharacterVector download_to_temp(const std::string& url);
     
     // Authenticated download using curl (private repos)

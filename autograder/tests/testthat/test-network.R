@@ -111,7 +111,7 @@ test_that("list_problems includes known problems", {
 
 test_that("network_error class is properly defined", {
   err <- tryCatch(
-    stop(network_error("test_func", "Test network error")),
+    network_error("Test network error"),
     error = function(e) e
   )
   
@@ -121,7 +121,7 @@ test_that("network_error class is properly defined", {
 
 test_that("function_not_found_error class is properly defined", {
   err <- tryCatch(
-    stop(function_not_found_error("test_func")),
+    function_not_found_error("test_func"),
     error = function(e) e
   )
   
@@ -131,7 +131,7 @@ test_that("function_not_found_error class is properly defined", {
 
 test_that("test_execution_error class is properly defined", {
   err <- tryCatch(
-    stop(test_execution_error("Test execution failed", "details")),
+    test_execution_error("Test execution failed", 1),
     error = function(e) e
   )
   

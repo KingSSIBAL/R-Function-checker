@@ -26,3 +26,4 @@ decrypted <- decrypt_text(encrypted, key = my_key)
 }
 
 }
+\keyword{internal}

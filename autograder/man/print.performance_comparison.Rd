@@ -17,3 +17,4 @@ Invisibly returns the input object
 \description{
 Formats and displays performance comparison results in a readable format.
 }
+\keyword{internal}

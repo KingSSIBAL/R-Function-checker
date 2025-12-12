@@ -124,6 +124,37 @@ test_that("format_output handles preserve_structure parameter", {
   expect_true(nchar(result2) > 0)
 })
 
+test_that("format_output handles complex numbers", {
+  c <- complex(real = 1, imaginary = 2)
+  result <- format_output(c)
+  expect_type(result, "character")
+})
+
+test_that("format_output handles raw vectors", {
+  r <- charToRaw("hello")
+  result <- format_output(r)
+  expect_type(result, "character")
+})
+
+test_that("format_output handles Date objects", {
+  d <- Sys.Date()
+  result <- format_output(d)
+  expect_type(result, "character")
+})
+
+test_that("format_output handles POSIXct", {
+  p <- Sys.time()
+  result <- format_output(p)
+  expect_type(result, "character")
+})
+
+test_that("format_output handles tibbles if available", {
+  skip_if_not_installed("tibble")
+  tbl <- tibble::tibble(x = 1:3, y = c("a", "b", "c"))
+  result <- format_output(tbl)
+  expect_type(result, "character")
+})
+
 # ============================================================================
 # C++ FORMAT OUTPUT TESTS
 # ============================================================================

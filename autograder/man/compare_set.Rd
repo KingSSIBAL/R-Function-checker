@@ -18,6 +18,7 @@ Logical indicating if sets contain same elements.
 }
 \description{
 Compares two vectors as unordered sets (ignoring element order).
+Uses C++ implementation for better performance with sorting and comparison.
 Useful when the order of results doesn't matter.
 }
 \examples{
@@ -27,3 +28,4 @@ compare_set(c("b", "a"), c("a", "b"))  # TRUE
 }
 
 }
+\keyword{internal}

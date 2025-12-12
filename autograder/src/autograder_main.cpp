@@ -9,6 +9,7 @@
 //   - Global configuration management
 //   - Rcpp exported functions for R interface
 //   - Convenience wrappers for the modular components
+//   - OpenMP-accelerated parallel comparisons
 //
 // Author: Reijel Agub (rcagub@up.edu.ph)
 // Version: 0.4.0
@@ -18,8 +19,10 @@
 
 #include <Rcpp.h>
 #include <chrono>
+#include <algorithm>
 #include "autograder.h"
 #include "encrypted_config.h"
+#include "omp_config.h"
 
 using namespace Rcpp;
 
@@ -88,14 +91,6 @@ std::string format_object(SEXP obj, size_t max_length) {
 LogicalVector cpp_compare_fast(SEXP obj1, SEXP obj2, double tolerance = 1e-10) {
     autograder::compare::Comparator comp(tolerance);
     return LogicalVector::create(comp.equal(obj1, obj2));
-}
-
-/**
- * @brief Legacy comparison wrapper for backward compatibility
- */
-// [[Rcpp::export(".cpp_compare_identical")]]
-LogicalVector cpp_compare_identical(SEXP obj1, SEXP obj2) {
-    return cpp_compare_fast(obj1, obj2, 1e-10);
 }
 
 /**
@@ -283,6 +278,7 @@ LogicalVector cpp_compare_dataframe(DataFrame df1, DataFrame df2,
  * @brief Compare numeric values using relative tolerance
  * 
  * Better for values spanning many orders of magnitude.
+ * Uses OpenMP parallelization for large vectors.
  * 
  * @param actual Numeric vector from student
  * @param expected Expected numeric vector
@@ -297,7 +293,71 @@ LogicalVector cpp_compare_relative(NumericVector actual, NumericVector expected,
     }
     
     R_xlen_t n = actual.size();
+    bool result = true;
     
+    // Use OpenMP for large vectors
+#ifdef _OPENMP
+    if (n >= autograder::parallel::PARALLEL_THRESHOLD) {
+        #pragma omp parallel for schedule(static) shared(result)
+        for (R_xlen_t i = 0; i < n; ++i) {
+            if (!result) continue;  // Early exit pattern for OpenMP
+            
+            double a = actual[i];
+            double e = expected[i];
+            
+            // Handle special cases
+            bool a_na = NumericVector::is_na(a);
+            bool e_na = NumericVector::is_na(e);
+            
+            if (a_na && e_na) continue;
+            if (a_na || e_na) {
+                #pragma omp atomic write
+                result = false;
+                continue;
+            }
+            
+            bool a_nan = std::isnan(a);
+            bool e_nan = std::isnan(e);
+            
+            if (a_nan && e_nan) continue;
+            if (a_nan || e_nan) {
+                #pragma omp atomic write
+                result = false;
+                continue;
+            }
+            
+            bool a_inf = std::isinf(a);
+            bool e_inf = std::isinf(e);
+            
+            if (a_inf && e_inf) {
+                if ((a > 0) != (e > 0)) {
+                    #pragma omp atomic write
+                    result = false;
+                }
+                continue;
+            }
+            if (a_inf || e_inf) {
+                #pragma omp atomic write
+                result = false;
+                continue;
+            }
+            
+            if (a == 0.0 && e == 0.0) continue;
+            
+            double denominator = std::max(std::abs(e), std::numeric_limits<double>::epsilon());
+            double rel_diff = std::abs(a - e) / denominator;
+            
+            if (rel_diff > rel_tolerance) {
+                #pragma omp atomic write
+                result = false;
+            }
+        }
+        
+        return LogicalVector::create(result);
+    }
+#endif
+    
+    // Sequential fallback for small vectors
     for (R_xlen_t i = 0; i < n; ++i) {
         double a = actual[i];
         double e = expected[i];
@@ -575,13 +635,11 @@ LogicalVector cpp_is_auth_enabled() {
 /**
  * @brief Get authentication mode as string
  * 
- * @return CharacterVector "secure" or "legacy"
+ * @return CharacterVector "secure" (only mode supported)
  */
 // [[Rcpp::export(".cpp_get_auth_mode")]]
 CharacterVector cpp_get_auth_mode() {
-    return CharacterVector::create(
-        autograder::config::USE_AUTHENTICATION ? "secure" : "legacy"
-    );
+    return CharacterVector::create("secure");
 }
 
 /**
@@ -605,10 +663,159 @@ LogicalVector cpp_has_auth_token() {
 // [[Rcpp::export(".cpp_get_auth_info")]]
 List cpp_get_auth_info() {
     return List::create(
-        Named("mode") = autograder::config::USE_AUTHENTICATION ? "secure" : "legacy",
+        Named("mode") = "secure",
         Named("has_token") = autograder::config::USE_AUTHENTICATION && 
                              autograder::config::ENCRYPTED_TOKEN_LEN > 0,
         Named("url_length") = static_cast<int>(autograder::config::ENCRYPTED_URL_LEN),
         Named("token_length") = static_cast<int>(autograder::config::ENCRYPTED_TOKEN_LEN)
     );
+}
+
+// ============================================================================
+// OPENMP PARALLEL FUNCTIONS
+// ============================================================================
+
+/**
+ * @brief Get OpenMP parallel processing info
+ * 
+ * @return List with OpenMP status and configuration
+ */
+// [[Rcpp::export(".cpp_openmp_info")]]
+List cpp_openmp_info() {
+    return List::create(
+        Named("available") = autograder::parallel::is_available(),
+        Named("version") = autograder::parallel::version(),
+        Named("max_threads") = autograder::parallel::is_available() ? 
+            omp_get_max_threads() : 1,
+        Named("parallel_threshold") = static_cast<int>(autograder::parallel::PARALLEL_THRESHOLD)
+    );
+}
+
+/**
+ * @brief Parallel fast comparison for large numeric vectors
+ * 
+ * Uses OpenMP to compare very large vectors in parallel.
+ * Falls back to sequential for small vectors.
+ * 
+ * @param v1 First numeric vector
+ * @param v2 Second numeric vector
+ * @param tolerance Comparison tolerance
+ * @return LogicalVector TRUE if vectors are equal within tolerance
+ */
+// [[Rcpp::export(".cpp_compare_parallel")]]
+LogicalVector cpp_compare_parallel(NumericVector v1, NumericVector v2, 
+                                   double tolerance = 1e-10) {
+    if (v1.size() != v2.size()) {
+        return LogicalVector::create(false);
+    }
+    
+    R_xlen_t n = v1.size();
+    bool result = true;
+    
+#ifdef _OPENMP
+    if (n >= autograder::parallel::PARALLEL_THRESHOLD) {
+        int num_threads = autograder::parallel::get_num_threads(n);
+        
+        #pragma omp parallel for num_threads(num_threads) schedule(static) shared(result)
+        for (R_xlen_t i = 0; i < n; ++i) {
+            if (!result) continue;  // Skip if already found mismatch
+            
+            double a = v1[i];
+            double b = v2[i];
+            
+            // Handle NA
+            bool a_na = NumericVector::is_na(a);
+            bool b_na = NumericVector::is_na(b);
+            if (a_na && b_na) continue;
+            if (a_na || b_na) {
+                #pragma omp atomic write
+                result = false;
+                continue;
+            }
+            
+            // Handle NaN
+            if (std::isnan(a) && std::isnan(b)) continue;
+            if (std::isnan(a) || std::isnan(b)) {
+                #pragma omp atomic write
+                result = false;
+                continue;
+            }
+            
+            // Handle Inf
+            if (std::isinf(a) && std::isinf(b)) {
+                if ((a > 0) != (b > 0)) {
+                    #pragma omp atomic write
+                    result = false;
+                }
+                continue;
+            }
+            if (std::isinf(a) || std::isinf(b)) {
+                #pragma omp atomic write
+                result = false;
+                continue;
+            }
+            
+            // Standard comparison
+            if (std::abs(a - b) > tolerance) {
+                #pragma omp atomic write
+                result = false;
+            }
+        }
+        
+        return LogicalVector::create(result);
+    }
+#endif
+    
+    // Sequential fallback
+    autograder::compare::Comparator comp(tolerance);
+    return LogicalVector::create(comp.equal(v1, v2));
+}
+
+/**
+ * @brief Parallel sum of absolute differences
+ * 
+ * Computes sum of |v1[i] - v2[i]| using parallel reduction.
+ * Useful for computing total error metrics.
+ * 
+ * @param v1 First numeric vector
+ * @param v2 Second numeric vector
+ * @return NumericVector with single value (sum of absolute differences)
+ */
+// [[Rcpp::export(".cpp_sum_abs_diff")]]
+NumericVector cpp_sum_abs_diff(NumericVector v1, NumericVector v2) {
+    R_xlen_t n = std::min(v1.size(), v2.size());
+    double total = 0.0;
+    
+#ifdef _OPENMP
+    if (n >= autograder::parallel::PARALLEL_THRESHOLD) {
+        #pragma omp parallel for reduction(+:total) schedule(static)
+        for (R_xlen_t i = 0; i < n; ++i) {
+            double a = v1[i];
+            double b = v2[i];
+            
+            // Skip NA/NaN/Inf
+            if (NumericVector::is_na(a) || NumericVector::is_na(b)) continue;
+            if (std::isnan(a) || std::isnan(b)) continue;
+            if (std::isinf(a) || std::isinf(b)) continue;
+            
+            total += std::abs(a - b);
+        }
+        
+        return NumericVector::create(total);
+    }
+#endif
+    
+    // Sequential fallback
+    for (R_xlen_t i = 0; i < n; ++i) {
+        double a = v1[i];
+        double b = v2[i];
+        
+        if (NumericVector::is_na(a) || NumericVector::is_na(b)) continue;
+        if (std::isnan(a) || std::isnan(b)) continue;
+        if (std::isinf(a) || std::isinf(b)) continue;
+        
+        total += std::abs(a - b);
+    }
+    
+    return NumericVector::create(total);
 }

@@ -12,7 +12,7 @@ function_not_found_error(function_name, call = NULL)
 \item{call}{The call that generated the error (usually NULL)}
 }
 \value{
-An S3 object of class c("function_not_found_error", "error", "condition")
+An S3 object of class c("autograder_function_not_found_error", "autograder_error", "error", "condition")
 }
 \description{
 Creates a structured error when a requested function doesn't exist in

@@ -28,7 +28,7 @@ code, helping you learn and improve.
 3. **Implement** your solution as `student_function_name`
 4. **Test** with `autograder("function_name")`
 5. **Iterate** based on feedback until all tests pass
-6. **Optimize** (optional) using `compare_performance()`
+6. **Benchmark** (optional) with `autograder("function_name", benchmark = TRUE)`
 
 ## Step-by-Step Guide
 
@@ -241,17 +241,67 @@ student_analyze <- function(data, stat = "mean") {
 
 For more details, see [Working with Data Files](data-files.html).
 
-## Performance Comparison (Optional)
+## Performance Benchmarking
 
-After passing all tests, optimize your code:
+After passing all tests, you can benchmark your code to see how fast it is:
+
+### Basic Benchmark
 
 ```{r}
-result <- compare_performance("fibonacci", n_runs = 100)
-print(result)
-plot(result)
+# Run autograder with benchmark enabled
+result <- autograder("fibonacci", benchmark = TRUE)
 ```
 
-This shows how your implementation compares to the reference solution in terms of speed.
+This runs your function multiple times and compares execution time to the 
+reference solution. You'll see output like:
+
+```
+=== Performance Benchmark ===
+Running 50 benchmark iterations...
+
+Your time:       0.000123 seconds (median)
+Reference time:  0.000145 seconds (median)
+Performance:     0.85x (FASTER)
+```
+
+### Understanding the Results
+
+| Performance Ratio | Verdict | Meaning |
+|------------------|---------|---------|
+| < 0.9x | FASTER | Your code is faster than the reference |
+| 0.9x - 1.1x | COMPARABLE | Similar performance |
+| 1.1x - 2.0x | SLOWER | Somewhat slower |
+| 2.0x - 5.0x | MUCH SLOWER | Needs optimization |
+| > 5.0x | VERY SLOW | Significant optimization needed |
+
+### Benchmark Bonus Points
+
+Your instructor may enable performance bonuses. If so, you can earn extra 
+points for fast implementations:
+
+```{r}
+# With 10% max bonus for performance
+result <- autograder("fibonacci", benchmark = TRUE, benchmark_bonus = 10)
+
+# If your code is faster, you might see:
+# ☆ PERFORMANCE BONUS: +1.5 points (15% of max 10%)
+```
+
+The bonus scales based on how much faster your implementation is:
+- 2x faster (ratio = 0.5) → Full bonus
+- 10% faster (ratio = 0.9) → Small bonus
+- Not faster (ratio ≥ 1.0) → No bonus
+
+### Customizing Benchmark Runs
+
+```{r}
+# More runs = more accurate timing, but takes longer
+result <- autograder("fibonacci", 
+                     benchmark = TRUE, 
+                     benchmark_runs = 100)
+```
+
+**Note:** Benchmarks only run if all tests pass first.
 
 ## Getting Help
 

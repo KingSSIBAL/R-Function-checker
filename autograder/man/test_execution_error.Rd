@@ -14,7 +14,7 @@ test_execution_error(message, test_number, call = NULL)
 \item{call}{The call that generated the error}
 }
 \value{
-An S3 object of class c("test_execution_error", "error", "condition")
+An S3 object of class c("autograder_test_execution_error", "autograder_error", "error", "condition")
 }
 \description{
 Creates a structured error when a specific test case fails to execute.

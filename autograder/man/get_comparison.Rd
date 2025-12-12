@@ -23,3 +23,4 @@ compare_fn(1.0000001, 1.0)  # TRUE (within default tolerance)
 }
 
 }
+\keyword{internal}

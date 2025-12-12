@@ -13,12 +13,4 @@ Numeric tolerance value (default: 1e-10)
 Returns the default tolerance used for comparing numeric values.
 Can be configured via \code{options(autograder.tolerance = value)}.
 }
-\examples{
-# Get current default tolerance
-autograder_tolerance()
-
-# Set custom tolerance
-options(autograder.tolerance = 1e-8)
-autograder_tolerance()  # Returns 1e-8
-
-}
+\keyword{internal}

@@ -4,6 +4,7 @@
 //
 // File: compare/comparator.cpp
 // Purpose: Implementation of high-performance comparison functions
+//          with OpenMP parallelization for large vectors
 //
 // Author: Reijel Agub (rcagub@up.edu.ph)
 // Version: 0.4.0
@@ -13,6 +14,7 @@
 
 #include "comparator.h"
 #include <limits>
+#include <atomic>
 
 namespace autograder {
 namespace compare {
@@ -305,6 +307,42 @@ std::vector<R_xlen_t> find_differences(const Rcpp::NumericVector& v1,
     
     R_xlen_t len = std::min(v1.size(), v2.size());
     
+    // Use OpenMP for large vectors
+#ifdef _OPENMP
+    if (len >= parallel::PARALLEL_THRESHOLD) {
+        // Parallel search - find all differences first
+        std::vector<R_xlen_t> all_diffs;
+        all_diffs.reserve(len / 100);  // Estimate 1% difference rate
+        
+        #pragma omp parallel
+        {
+            std::vector<R_xlen_t> local_diffs;
+            
+            #pragma omp for nowait schedule(static)
+            for (R_xlen_t i = 0; i < len; ++i) {
+                if (std::abs(v1[i] - v2[i]) > tolerance) {
+                    local_diffs.push_back(i);
+                }
+            }
+            
+            #pragma omp critical
+            {
+                all_diffs.insert(all_diffs.end(), 
+                                local_diffs.begin(), 
+                                local_diffs.end());
+            }
+        }
+        
+        // Sort and take first max_diffs
+        std::sort(all_diffs.begin(), all_diffs.end());
+        size_t count = std::min(all_diffs.size(), max_diffs);
+        diffs.assign(all_diffs.begin(), all_diffs.begin() + count);
+        
+        return diffs;
+    }
+#endif
+    
+    // Sequential fallback for small vectors
     for (R_xlen_t i = 0; i < len && diffs.size() < max_diffs; ++i) {
         if (std::abs(v1[i] - v2[i]) > tolerance) {
             diffs.push_back(i);
@@ -316,3 +354,180 @@ std::vector<R_xlen_t> find_differences(const Rcpp::NumericVector& v1,
 
 } // namespace compare
 } // namespace autograder
+
+// ============================================================================
+// ADDITIONAL RCPP EXPORTS FOR PERFORMANCE
+// ============================================================================
+
+#include <Rcpp.h>
+using namespace Rcpp;
+
+//' Case-insensitive string comparison (C++)
+//' 
+//' @param actual Character vector from student
+//' @param expected Expected character vector
+//' @return TRUE if all strings match (case-insensitive)
+//' @keywords internal
+// [[Rcpp::export(.cpp_compare_case_insensitive)]]
+LogicalVector cpp_compare_case_insensitive(CharacterVector actual, CharacterVector expected) {
+    // Length check
+    if (actual.size() != expected.size()) {
+        return LogicalVector::create(false);
+    }
+    
+    R_xlen_t n = actual.size();
+    
+    // For very large vectors, use OpenMP
+#ifdef _OPENMP
+    if (n >= 10000) {
+        bool all_equal = true;
+        
+        #pragma omp parallel for reduction(&& : all_equal)
+        for (R_xlen_t i = 0; i < n; ++i) {
+            if (!all_equal) continue;
+            
+            std::string s1 = Rcpp::as<std::string>(actual[i]);
+            std::string s2 = Rcpp::as<std::string>(expected[i]);
+            
+            if (s1.size() != s2.size()) {
+                all_equal = false;
+                continue;
+            }
+            
+            for (size_t j = 0; j < s1.size(); ++j) {
+                if (std::tolower(static_cast<unsigned char>(s1[j])) != 
+                    std::tolower(static_cast<unsigned char>(s2[j]))) {
+                    all_equal = false;
+                    break;
+                }
+            }
+        }
+        
+        return LogicalVector::create(all_equal);
+    }
+#endif
+    
+    // Sequential for smaller vectors
+    for (R_xlen_t i = 0; i < n; ++i) {
+        std::string s1 = Rcpp::as<std::string>(actual[i]);
+        std::string s2 = Rcpp::as<std::string>(expected[i]);
+        
+        if (s1.size() != s2.size()) {
+            return LogicalVector::create(false);
+        }
+        
+        for (size_t j = 0; j < s1.size(); ++j) {
+            if (std::tolower(static_cast<unsigned char>(s1[j])) != 
+                std::tolower(static_cast<unsigned char>(s2[j]))) {
+                return LogicalVector::create(false);
+            }
+        }
+    }
+    
+    return LogicalVector::create(true);
+}
+
+//' Unordered set comparison with sorting (C++)
+//' 
+//' @param actual Vector from student
+//' @param expected Expected vector
+//' @param tolerance Numeric tolerance for numeric vectors
+//' @return TRUE if sets contain same elements
+//' @keywords internal
+// [[Rcpp::export(.cpp_compare_set)]]
+LogicalVector cpp_compare_set(SEXP actual, SEXP expected, double tolerance = 1e-10) {
+    // Length check
+    if (Rf_xlength(actual) != Rf_xlength(expected)) {
+        return LogicalVector::create(false);
+    }
+    
+    int type1 = TYPEOF(actual);
+    int type2 = TYPEOF(expected);
+    
+    if (type1 != type2) {
+        return LogicalVector::create(false);
+    }
+    
+    if (type1 == REALSXP) {
+        // Numeric vectors - sort and compare with tolerance
+        NumericVector v1 = Rcpp::clone(NumericVector(actual));
+        NumericVector v2 = Rcpp::clone(NumericVector(expected));
+        
+        std::sort(v1.begin(), v1.end());
+        std::sort(v2.begin(), v2.end());
+        
+        R_xlen_t n = v1.size();
+        
+#ifdef _OPENMP
+        if (n >= 10000) {
+            bool all_equal = true;
+            
+            #pragma omp parallel for reduction(&& : all_equal)
+            for (R_xlen_t i = 0; i < n; ++i) {
+                if (std::abs(v1[i] - v2[i]) > tolerance) {
+                    all_equal = false;
+                }
+            }
+            
+            return LogicalVector::create(all_equal);
+        }
+#endif
+        
+        for (R_xlen_t i = 0; i < n; ++i) {
+            if (std::abs(v1[i] - v2[i]) > tolerance) {
+                return LogicalVector::create(false);
+            }
+        }
+        
+        return LogicalVector::create(true);
+        
+    } else if (type1 == INTSXP) {
+        // Integer vectors
+        IntegerVector v1 = Rcpp::clone(IntegerVector(actual));
+        IntegerVector v2 = Rcpp::clone(IntegerVector(expected));
+        
+        std::sort(v1.begin(), v1.end());
+        std::sort(v2.begin(), v2.end());
+        
+        for (R_xlen_t i = 0; i < v1.size(); ++i) {
+            if (v1[i] != v2[i]) {
+                return LogicalVector::create(false);
+            }
+        }
+        
+        return LogicalVector::create(true);
+        
+    } else if (type1 == STRSXP) {
+        // Character vectors - sort and compare
+        CharacterVector v1 = Rcpp::clone(CharacterVector(actual));
+        CharacterVector v2 = Rcpp::clone(CharacterVector(expected));
+        
+        // Convert to std::vector for sorting
+        std::vector<std::string> s1(v1.size());
+        std::vector<std::string> s2(v2.size());
+        
+        for (R_xlen_t i = 0; i < v1.size(); ++i) {
+            s1[i] = Rcpp::as<std::string>(v1[i]);
+            s2[i] = Rcpp::as<std::string>(v2[i]);
+        }
+        
+        std::sort(s1.begin(), s1.end());
+        std::sort(s2.begin(), s2.end());
+        
+        for (size_t i = 0; i < s1.size(); ++i) {
+            if (s1[i] != s2[i]) {
+                return LogicalVector::create(false);
+            }
+        }
+        
+        return LogicalVector::create(true);
+    }
+    
+    // Fallback to R's identical for other types
+    Function identical("identical");
+    Function r_sort("sort");
+    return LogicalVector::create(
+        Rcpp::as<bool>(identical(r_sort(actual), r_sort(expected)))
+    );
+}
+

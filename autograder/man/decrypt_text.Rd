@@ -29,3 +29,4 @@ plaintext <- decrypt_text(encrypted_data, encoding = "base64")
 }
 
 }
+\keyword{internal}

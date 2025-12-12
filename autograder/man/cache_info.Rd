@@ -24,3 +24,4 @@ cache_info()
 }
 
 }
+\keyword{internal}

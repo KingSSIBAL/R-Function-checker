@@ -28,3 +28,4 @@ encrypted <- encrypt_text("data", key = key)
 }
 
 }
+\keyword{internal}

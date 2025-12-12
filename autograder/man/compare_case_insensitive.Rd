@@ -16,6 +16,7 @@ Logical indicating if strings match (case-insensitive).
 }
 \description{
 Compares character values ignoring case differences.
+Uses C++ implementation for better performance on large vectors.
 }
 \examples{
 \dontrun{
@@ -24,3 +25,4 @@ compare_case_insensitive("abc", "ABC")  # TRUE
 }
 
 }
+\keyword{internal}

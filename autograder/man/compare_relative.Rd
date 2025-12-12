@@ -27,3 +27,4 @@ compare_relative(1000, 1100, rel_tolerance = 0.01)  # FALSE (10\% difference)
 }
 
 }
+\keyword{internal}
